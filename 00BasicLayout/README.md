@@ -3,10 +3,11 @@
 - [Basic Layout](#basic-layout)
 	- [`View` and `ViewGroup` Objects](#view-and-viewgroup-objects)
 	- [Containers](#containers)
-	- [FrameLayout](#framelayout)
 	- [LinearLayout](#linearlayout)
 	- [Padding versus margin](#padding-versus-margin)
 		- [Android match_parent, wrap_content and fill_parent](#android-match_parent-wrap_content-and-fill_parent)
+		- [Layout Weight](#layout-weight)
+	- [FrameLayout](#framelayout)
 
 ## `View` and `ViewGroup` Objects
 
@@ -18,7 +19,7 @@ other views, but they are not meant to contain child views; they are intended to
 alone. A `ViewGroup`, on the other hand, can contain child views which are other views and view groups—it’s the reason why they’re sometimes called *containers*.
 
 <div align="center">
-	<img src="img/vg.jpg" alt="vg.jpg" width="600px">
+ <img src="img/vg.jpg" alt="vg.jpg" width="600px">
 </div>
 
 *Each View object ultimately becomes a Java object at runtime*, but we work
@@ -46,84 +47,6 @@ basis for layout managers. *A layout manager is a container responsible for cont
 - `FrameLayout`: Stacks child views on top of each other. The last entry on the XML layout file is the one on top of the stack
 - `RelativeLayout`: Views are positioned relative to other views and the container by specifying *alignments* and *margins* on each view
 - `ConstraintLayout`: The ConstraintLayout is the newest layout. It positions widgets relative to each other and the container (like RelativeLayout). But it accomplishes the layout management by using more than just *alignments* and *margins*. It introduces the idea of a `“constraint”` object, which *anchors* a widget to target. This target could be another widget or a container or another anchor point.
-
-## FrameLayout
-
-Android Framelayout is a ViewGroup subclass which is used to specify the position of multiple views **placed on the top of each other** to represent a single view screen.
-
-Generally, we can say FrameLayout simply blocks a particular area on the screen to display a single view. Here, all the child views or elements are added in stack format means the most recently added child will be shown on the top of the screen.
-
-But, we can add multiple children view and control their positions only by using `gravity` attributes in FrameLayout.
-
-<div align="center">
-<img src="img/fl.jpeg" alt="fl.jpeg" width="700px">
-</div>
-
-Creating New Layouts: Under `res/layout` folder. Create `Layout Resource File` and add the following code:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_launcher_background" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-</FrameLayout>
-```
-
-<div align="center">
-<img src="img/flex1.jpg" alt="flex1.jpg" width="700px">
-</div>
-
-We can see `TextView` is on top of the other child view - `ImageView`, as Stack with the most recently added child on top.
-
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:baselineAlignBottom="false"
-        android:paddingBottom="10dp"
-        android:textAlignment="center"
-        app:srcCompat="@drawable/ic_launcher_background" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:background="@color/black"
-        android:gravity="center"
-        android:text="TextView"
-        android:textColor="@color/white" />
-</FrameLayout>
-```
-
-<div align="center">
-<img src="img/flex2.jpg" alt="flex2.jpg" width="1000px">
-</div>
 
 ## LinearLayout
 
@@ -172,5 +95,112 @@ Conclusion :
 `wrap_content` is used when we want the view to occupy only as much space as required by it.
 
 <div align="center">
-<img src="img/wmfp.jpg" alt="wmfp.jpg" width="300px">
+<img src="img/wmfp.jpg" alt="wmfp.jpg" width="400px">
+</div>
+
+### Layout Weight
+
+One of the most used attribute for LinearLayout is the `weight` of its **child** views. Weight defines how much space a view will consume compared to other views within a LinearLayout.
+
+By default, the Layout Weight is set to `0` for each child view in a linear layout. However, this can be changed manually using:
+
+<div align="center">
+<img src="img/lw.jpg" alt="lw.jpg" width="600px">
+</div>
+
+```xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Name" />
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Age" />
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Address" />
+</LinearLayout>
+```
+
+## FrameLayout
+
+Android Framelayout is a ViewGroup subclass which is used to specify the position of multiple views **placed on the top of each other** to represent a single view screen.
+
+Generally, we can say FrameLayout simply blocks a particular area on the screen to display a single view. Here, all the child views or elements are added in stack format means the most recently added child will be shown on the top of the screen.
+
+But, we can add multiple children view and control their positions only by using `gravity` attributes in FrameLayout.
+
+<div align="center">
+<img src="img/fl.jpeg" alt="fl.jpeg" width="700px">
+</div>
+
+Creating New Layouts: Under `res/layout` folder. Create `Layout Resource File` and add the following code:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+</FrameLayout>
+```
+
+<div align="center">
+<img src="img/flex1.jpg" alt="flex1.jpg" width="700px">
+</div>
+
+We can see `TextView` is on top of the other child view - `ImageView`, as Stack with the most recently added child on top.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:baselineAlignBottom="false"
+        android:paddingBottom="10dp"
+        android:textAlignment="center"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="@color/black"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/white" />
+</FrameLayout>
+```
+
+<div align="center">
+<img src="img/flex2.jpg" alt="flex2.jpg" width="1000px">
 </div>
