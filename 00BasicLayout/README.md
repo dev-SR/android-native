@@ -1,13 +1,19 @@
 # Basic Layout
 
 - [Basic Layout](#basic-layout)
-	- [`View` and `ViewGroup` Objects](#view-and-viewgroup-objects)
-	- [Containers](#containers)
-	- [LinearLayout](#linearlayout)
-	- [Padding versus margin](#padding-versus-margin)
-		- [Android match_parent, wrap_content and fill_parent](#android-match_parent-wrap_content-and-fill_parent)
-		- [Layout Weight](#layout-weight)
-	- [FrameLayout](#framelayout)
+  - [`View` and `ViewGroup` Objects](#view-and-viewgroup-objects)
+  - [Containers](#containers)
+  - [Android Layout Attributes](#android-layout-attributes)
+    - [Padding versus margin](#padding-versus-margin)
+    - [Android match_parent, wrap_content and fill_parent](#android-match_parent-wrap_content-and-fill_parent)
+  - [FrameLayout](#framelayout)
+  - [LinearLayout](#linearlayout)
+    - [Layout Weight](#layout-weight)
+  - [Relative Layout](#relative-layout)
+    - [Center relative to Parent View](#center-relative-to-parent-view)
+    - [Align by the parent view](#align-by-the-parent-view)
+    - [Place new View relative to existing sibling View](#place-new-view-relative-to-existing-sibling-view)
+    - [Align new View relative to existing sibling View](#align-new-view-relative-to-existing-sibling-view)
 
 ## `View` and `ViewGroup` Objects
 
@@ -48,15 +54,28 @@ basis for layout managers. *A layout manager is a container responsible for cont
 - `RelativeLayout`: Views are positioned relative to other views and the container by specifying *alignments* and *margins* on each view
 - `ConstraintLayout`: The ConstraintLayout is the newest layout. It positions widgets relative to each other and the container (like RelativeLayout). But it accomplishes the layout management by using more than just *alignments* and *margins*. It introduces the idea of a `“constraint”` object, which *anchors* a widget to target. This target could be another widget or a container or another anchor point.
 
-## LinearLayout
+## Android Layout Attributes
 
-In a `LinearLayout` view group, the UI elements are arranged either *horizontally* or *vertically*.
+- `android:id` : This is the ID which uniquely identifies the view
+- `android:layout_width` : This is the width of the layout
+- `android:layout_height` : This is the height of the layout
+- `android:layout_margin` : This is the extra space outside of the view. For example if you give android:marginLeft=20dp, then the view will be arranged after 20dp from left
+- `android:layout_padding` : This is similar to android:layout_margin except that it specifies the extra space inside the view
+- `android:layout_gravity` : This specifies how child Views are positioned
+- `android:layout_weight` : This specifies how much of the extra space in the layout should be allocated to the view
+- `android:layout_x` : This specifies the x-coordinate of the layout
+- `android:layout_y` : This specifies the y-coordinate of the layout
+- `android:layout_width=wrap_content` tells the view to size itself to the dimensions required by its content.
+- `android:layout_width=match_parent` tells the view to become as big as its parent view.
 
-<div align="center">
-<img src="img/lr.png" alt="lr.png" width="400px">
-</div>
+**View Identification:**
 
-## Padding versus margin
+The syntax for an ID, inside an XML tag is:
+
+- The at-symbol (@) at the beginning of the string indicates that the XML parser should parse and expand the rest of the ID string and identify it as an ID resource
+- The plus-symbol (+) means that this is a new resource name that must be created and added to our resources
+
+### Padding versus margin
 
 `Padding` is the space inside the boundaries of a view or element. It is the space between the edges of the view and the view's content, as shown in the figure below.
 
@@ -97,36 +116,6 @@ Conclusion :
 <div align="center">
 <img src="img/wmfp.jpg" alt="wmfp.jpg" width="400px">
 </div>
-
-### Layout Weight
-
-One of the most used attribute for LinearLayout is the `weight` of its **child** views. Weight defines how much space a view will consume compared to other views within a LinearLayout.
-
-By default, the Layout Weight is set to `0` for each child view in a linear layout. However, this can be changed manually using:
-
-<div align="center">
-<img src="img/lw.jpg" alt="lw.jpg" width="600px">
-</div>
-
-```xml
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
-
-    <TextView
-        android:layout_weight="1"
-        android:text="Name" />
-
-    <TextView
-        android:layout_weight="1"
-        android:text="Age" />
-
-    <TextView
-        android:layout_weight="1"
-        android:text="Address" />
-</LinearLayout>
-```
 
 ## FrameLayout
 
@@ -204,3 +193,98 @@ We can see `TextView` is on top of the other child view - `ImageView`, as Stack 
 <div align="center">
 <img src="img/flex2.jpg" alt="flex2.jpg" width="1000px">
 </div>
+
+## LinearLayout
+
+Android LinearLayout organizes elements along a single line. We can specify whether that line is vertical or horizontal using `android:orientation`. The orientation is horizontal by default.
+
+A vertical LinearLayout will only have one child per row (so it is a column of single elements), and a horizontal LinearLayout will only have one single row of elements on the screen.
+
+<div align="center">
+<img src="img/lr.png" alt="lr.png" width="400px">
+</div>
+
+### Layout Weight
+
+android:layout_weight attribute depicts the importance of the element. Weight defines how much space a view will consume compared to other views within a LinearLayout. An element with larger weight occupies more screen space.
+
+By default, the Layout Weight is set to `0` for each child view in a linear layout. However, this can be changed manually using:
+
+<div align="center">
+<img src="img/lw.jpg" alt="lw.jpg" width="600px">
+</div>
+
+```xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Name" />
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Age" />
+
+    <TextView
+        android:layout_weight="1"
+        android:text="Address" />
+</LinearLayout>
+```
+
+## Relative Layout
+
+### Center relative to Parent View
+
+<div align="center">
+<img src="img/r1.jpg" alt="r1.jpg" width="400px">
+</div>
+
+- `android:layout_centerHorizontal` : Centers the element horizontally within its parent container
+- `android:layout_centerInParent` : Centers the element both horizontally and vertically within its container
+- `android:layout_centerVertical` : Centers the element vertically within its parent contain
+
+### Align by the parent view
+
+<div align="center">
+<img src="img/r2.jpg" alt="r1.jpg" width="400px">
+</div>
+
+- `android:layout_alignParentBottom` : Places the bottom of the element on the bottom of the container
+- `android:layout_alignParentLeft` : Places the left of the element on the left side of the container
+- `android:layout_alignParentRight` : Places the right of the element on the right side of the container
+- `android:layout_alignParentTop` : Places the element at the top of the container
+
+### Place new View relative to existing sibling View
+
+In a RelativeLayout you can keep(position) the new views relative to other existing views. Following attributes can be used for doing so.
+
+Suppose there is one view in the center and its id is given as `android:id="@+id/main"` Therefore, the other new views can be placed relative to this view as following:
+
+
+<div align="center">
+<img src="img/r3.jpg" alt="r1.jpg" width="400px">
+</div>
+
+- `android:layout_above` : Places the element above the specified element
+- `android:layout_below` : Places the element below the specified element
+- `android:layout_toLeftOf` : Places the element to the left of the specified element
+- `android:layout_toRightOf` : Places the element to the right of the specified element
+
+`“@id/XXXXX”` is used to reference an element by its `id`. One thing to remember is that referencing an element before it has been declared will produce an error so `@+id/` should be used in such cases.
+
+### Align new View relative to existing sibling View
+
+If you want to align the new view relative to any existing view, then you can use the following attributes.
+
+<div align="center">
+<img src="img/r4.jpg" alt="r1.jpg" width="400px">
+</div>
+
+- `android:layout_alignBaseline` : Aligns baseline of the new element with the baseline of the specified element
+- `android:layout_alignBottom` : Aligns the bottom of new element in with the bottom of the specified element
+- `android:layout_alignLeft` : Aligns left edge of the new element with the left edge of the specified element
+- `android:layout_alignRight` : Aligns right edge of the new element with the right edge of the specified element
+- `android:layout_alignTop` : Places top of the new element in alignment with the top of the specified element
