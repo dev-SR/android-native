@@ -16,10 +16,12 @@
     - [Align new View relative to existing sibling View](#align-new-view-relative-to-existing-sibling-view)
   - [Constraint Layout](#constraint-layout)
     - [Correct Ways of Anchoring](#correct-ways-of-anchoring)
-    - [layout_width/height properties:](#layout_widthheight-properties)
+    - [Dimension Constraints](#dimension-constraints)
+    - [Relative Positioning](#relative-positioning)
     - [Toolbar Options](#toolbar-options)
       - [Pack](#pack)
       - [Align](#align)
+    - [Chains](#chains)
 
 ## `View` and `ViewGroup` Objects
 
@@ -364,7 +366,7 @@ A view inside the ConstraintLayout has handles(or *anchor* points) on each side 
 <img src="img/c3.gif" alt="c3.gif" width="900px">
 </div>
 
-### layout_width/height properties:
+### Dimension Constraints
 
 <div align="center">
 <img src="img/c5.jpg" alt="c5.jpg" width="900px">
@@ -374,6 +376,34 @@ example:
 
 <div align="center">
 <img src="img/c4.gif" alt="c4.gif" width="900px">
+</div>
+
+### Relative Positioning
+Relative positioning is to constraint a given side of the widget relative to a side of any other widget or to the parent ViewGroup either horizontally or vertically.
+
+You can constrain a widget on the horizontal and vertical axis:
+
+- Horizontal Axis: left, right, start and end sides
+- Vertical Axis: top, bottom sides and text baseline
+
+> again both horizontal and vertical axis is required
+
+For example, constraining only horizontal axis, destroy the vertical axis:
+
+<div align="center">
+<img src="img/cr1.gif" alt="cr1.gif" width="900px">
+</div>
+
+That's why both X and Y axis is required.
+
+<div align="center">
+<img src="img/cr2.gif" alt="cr2.gif" width="900px">
+</div>
+
+> baseline alignment
+
+<div align="center">
+<img src="img/cr3.gif" alt="cr3.gif" width="900px">
 </div>
 
 ### Toolbar Options
@@ -388,4 +418,35 @@ example:
 
 <div align="center">
 <img src="img/c7.gif" alt="c7.gif" width="900px">
+</div>
+
+### Chains
+
+A chain is a group of views that are linked to each other with bi-directional position constraints. The views within a chain can be distributed either vertically or horizontally.
+
+Chains can be styled in one of the following ways:
+
+<div align="center">
+<img src="img/ch1.png" alt="ch1.png" width="800px">
+</div>
+
+<div align="center">
+<img src="img/cr4.gif" alt="cr4.gif" width="900px">
+</div>
+
+**Weighted**: When the chain is set to either spread or spread inside, you can fill the remaining space by setting one or more views to `“match constraints” (0dp)`. By default, space is evenly distributed between each view that’s set to `“match constraints,”`
+
+<div align="center">
+<img src="img/cc.gif" alt="cc.gif" width="900px">
+</div>
+
+but you can assign a **weight** of importance to each view using the attributes:
+
+- `layout_constraintHorizontal_weight`
+- `layout_constraintVertical_weight`
+
+For example, on a chain containing three buttons using width MATCH_CONSTRAINT, with the first button using a weight of `1`, second, a weight of `2` and third with a weight of `3`, the space occupied by the third button will be thrice that of the first button and the space occupied by the second button will be twice that of the first button.
+
+<div align="center">
+<img src="img/cc1.gif" alt="cc1.gif" width="900px">
 </div>
