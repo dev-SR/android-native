@@ -14,6 +14,8 @@
     - [Align by the parent view](#align-by-the-parent-view)
     - [Place new View relative to existing sibling View](#place-new-view-relative-to-existing-sibling-view)
     - [Align new View relative to existing sibling View](#align-new-view-relative-to-existing-sibling-view)
+  - [Constraint Layout](#constraint-layout)
+    - [Correct Ways of Anchoring](#correct-ways-of-anchoring)
 
 ## `View` and `ViewGroup` Objects
 
@@ -263,7 +265,6 @@ In a RelativeLayout you can keep(position) the new views relative to other exist
 
 Suppose there is one view in the center and its id is given as `android:id="@+id/main"` Therefore, the other new views can be placed relative to this view as following:
 
-
 <div align="center">
 <img src="img/r3.jpg" alt="r1.jpg" width="400px">
 </div>
@@ -290,7 +291,6 @@ If you want to align the new view relative to any existing view, then you can us
 - `android:layout_alignTop` : Places top of the new element in alignment with the top of the specified element
 
 Example:
-
 
 ```xml
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -322,4 +322,40 @@ Example:
 
 <div align="center">
 <img src="img/relative.gif" alt="relative.gif" width="900px">
+</div>
+
+## Constraint Layout
+
+ConstraintLayout is an advanced version of a Relative layout. It is used to remove the child view hierarchies resulting in improved performance. It is the most commonly used layout for UI Developments. ConstraintLayout gives one adaptable and flexible ways to create views for android apps and is now the default layout in Android Studio which provides us with many ways to place objects.
+
+- [https://developer.android.com/reference/android/support/constraint/ConstraintLayout](https://developer.android.com/reference/android/support/constraint/ConstraintLayout)
+
+A view inside the ConstraintLayout has handles(or *anchor* points) on each side which are used to assign the constraints. Let’s drag and drop a TextView on the layout and assign the constraints to it.
+
+### Correct Ways of Anchoring
+
+> Anchoring just **one** or **both** **vertical** point: ❌ `Top` ❌ `Top-Bottom`
+
+<div align="center">
+<img src="img/c1.gif" alt="c1.gif" width="900px">
+</div>
+
+<div align="center">
+<img src="img/c1-1.gif" alt="c1-1.gif" width="900px">
+</div>
+
+> Anchoring just **one** or **both** **horizontal** point: ❌ `Start` ❌ `Start-End`
+
+<div align="center">
+<img src="img/c2.gif" alt="c2.gif" width="900px">
+</div>
+
+<div align="center">
+<img src="img/c2-1.gif" alt="c2-1.gif" width="900px">
+</div>
+
+> Anchoring at least **one** **horizontal** and **one** **vertical** point together: ✔️ `Start-Top` ✔️
+
+<div align="center">
+<img src="img/c3.gif" alt="c3.gif" width="900px">
 </div>
