@@ -288,3 +288,38 @@ If you want to align the new view relative to any existing view, then you can us
 - `android:layout_alignLeft` : Aligns left edge of the new element with the left edge of the specified element
 - `android:layout_alignRight` : Aligns right edge of the new element with the right edge of the specified element
 - `android:layout_alignTop` : Places top of the new element in alignment with the top of the specified element
+
+Example:
+
+
+```xml
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/name"
+        android:text="Age" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:text="Address" />
+</RelativeLayout>
+```
+
+<div align="center">
+<img src="img/relative.gif" alt="relative.gif" width="900px">
+</div>
