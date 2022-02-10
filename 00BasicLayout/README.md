@@ -16,6 +16,7 @@
     - [Align new View relative to existing sibling View](#align-new-view-relative-to-existing-sibling-view)
   - [Constraint Layout](#constraint-layout)
     - [Correct Ways of Anchoring](#correct-ways-of-anchoring)
+    - [layout_width/height properties:](#layout_widthheight-properties)
 
 ## `View` and `ViewGroup` Objects
 
@@ -358,4 +359,16 @@ A view inside the ConstraintLayout has handles(or *anchor* points) on each side 
 
 <div align="center">
 <img src="img/c3.gif" alt="c3.gif" width="900px">
+</div>
+
+### layout_width/height properties:
+
+<div align="center">
+<img src="img/c5.jpg" alt="c5.jpg" width="900px">
+</div>
+
+example:
+
+<div align="center">
+<img src="img/c4.gif" alt="c4.gif" width="900px">
 </div>
