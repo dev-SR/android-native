@@ -17,6 +17,9 @@
   - [Constraint Layout](#constraint-layout)
     - [Correct Ways of Anchoring](#correct-ways-of-anchoring)
     - [layout_width/height properties:](#layout_widthheight-properties)
+    - [Toolbar Options](#toolbar-options)
+      - [Pack](#pack)
+      - [Align](#align)
 
 ## `View` and `ViewGroup` Objects
 
@@ -371,4 +374,18 @@ example:
 
 <div align="center">
 <img src="img/c4.gif" alt="c4.gif" width="900px">
+</div>
+
+### Toolbar Options
+
+#### Pack
+
+<div align="center">
+<img src="img/c6.gif" alt="c6.gif" width="900px">
+</div>
+
+#### Align
+
+<div align="center">
+<img src="img/c7.gif" alt="c7.gif" width="900px">
 </div>
