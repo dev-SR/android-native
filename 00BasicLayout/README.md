@@ -22,6 +22,9 @@
       - [Pack](#pack)
       - [Align](#align)
     - [Chains](#chains)
+    - [Virtual Helper Objects](#virtual-helper-objects)
+      - [Guideline](#guideline)
+      - [Barrier](#barrier)
 
 ## `View` and `ViewGroup` Objects
 
@@ -449,4 +452,80 @@ For example, on a chain containing three buttons using width MATCH_CONSTRAINT, w
 
 <div align="center">
 <img src="img/cc1.gif" alt="cc1.gif" width="900px">
+</div>
+
+### Virtual Helper Objects
+
+Virtual Helper Objects are views that are not displayed on the device and are only used for layout purposes.
+
+The three basic Virtual Helper Objects are:
+
+- Guideline
+- Barrier
+- Group
+
+#### Guideline
+
+Guideline is a helper view that is used to align other views.
+
+The position of all the views that are aligned to a guideline can be changed at once or allowing reactive layout behavior by using percent positioning. A Guideline can be either horizontal or vertical.
+
+To create a guideline, click `Guidelines`  in the toolbar, and then click either `Add Vertical Guideline` or `Add Horizontal Guideline`.
+
+<div align="center">
+<img src="img/cycle_guidelines.gif" alt="cycle_guidelines.gif" width="600px">
+</div>
+
+Positioning a Guideline is possible in three different ways:
+
+- `layout_constraintGuide_begin` : specifying a fixed distance from the left or the top of a layout
+- `layout_constraintGuide_end`: specifying a fixed distance from the right or the bottom of a layout
+- `layout_constraintGuide_percent`: specifying a percentage of the width or the height of a layout
+
+In the below figure, all the four TextViews are constrained with the guideline and if I move the guideline all the TextViews that are constrained with the guideline are moving along with it.
+
+<div align="center">
+<img src="img/guideline.gif" alt="guideline.gif" width="600px">
+</div>
+
+#### Barrier
+
+A **barrier** is a view that takes references of multiple widgets as input and creates a virtual guideline based on the most extreme widget on the specified side.
+
+Similar to a guideline, a barrier is an invisible line that you can constrain views to. Except a barrier does not define its own position; instead, the barrier position moves based on the position of views contained within it.
+
+This is useful when you want to constrain a view to a set of views rather than to one specific view.
+
+Let’s take a use case and understand the barrier.
+
+Here we have three TextViews what we want is we want TextView with long text to be on the right of `Name` and `Email` TextViews. So we are going to constrain the left anchor point of longer TextView with the right anchor point of `Name` TextView.
+
+> Remember: constrain handle can only be anchored to one point
+
+<div align="center">
+<img src="img/bb0.jpg" alt="bb0.jpg" width="500px">
+</div>
+
+In case if we change the text `Email` to `jhon@gmail.com` you can see the TextView with longer text run over the TextViews on the left of it.
+
+<div align="center">
+<img src="img/bb.gif" alt="bb.gif" width="900px">
+</div>
+
+To solve this problem we can make use of barrier. Barrier basically takes **reference id** of views as input to create a barrier for them. So we are going to add **references** of TextViews `Name` and `Email` .
+
+<div align="center">
+<img src="img/bb2.gif" alt="bb3.gif" width="900px">
+</div>
+
+Select `barrier` from the component tree and change barrier direction to `end`.
+
+<div align="center">
+<img src="img/bb3.gif" alt="bb3.gif" width="900px">
+</div>
+
+Now to get the expected result constrain the left anchor point of longer TextView with the barrier.
+
+<div align="center">
+<img src="img/bb4.gif" alt="bb4.gif" width="900px">
 </div>
