@@ -25,6 +25,7 @@
     - [Virtual Helper Objects](#virtual-helper-objects)
       - [Guideline](#guideline)
       - [Barrier](#barrier)
+      - [Group](#group)
 
 ## `View` and `ViewGroup` Objects
 
@@ -528,4 +529,18 @@ Now to get the expected result constrain the left anchor point of longer TextVie
 
 <div align="center">
 <img src="img/bb4.gif" alt="bb4.gif" width="900px">
+</div>
+
+#### Group
+
+Group is a helper view that controls the **visibility** of a set of referenced widgets. **It is a convenient way to hide or show a set of widgets.**
+
+Using Group we don’t have to set the visibility of each widget individually and same as barrier it takes references of multiple widgets.
+
+Group is useful in the case where we want to change the visibility of a set of views like in case of **error** occurred, **loading** where we don’t want to show a set of widgets.
+
+In the below-animated figure, you can see after setting the visibility of the group to **gone** it is no more visible on the screen.
+
+<div align="center">
+<img src="img/group.gif" alt="group.gif" width="800px">
 </div>

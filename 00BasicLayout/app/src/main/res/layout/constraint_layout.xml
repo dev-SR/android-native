@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="44dp"
-        android:text="Jhon"
+        android:text="Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:text="jhon@gmail.com"
+        android:text="Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
@@ -31,18 +31,9 @@
         android:id="@+id/textView6"
         android:layout_width="279dp"
         android:layout_height="228dp"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="44dp"
         android:text="Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Risus quis varius quam quisque id. Donec pretium vulputate sapien nec. Purus ut faucibus pulvinar elementum integer enim neque volutpat. Iaculis nunc sed augue lacus. Duis ut diam quam nulla porttitor massa id. Odio ut enim blandit volutpat maecenas volutpat blandit. Ante in nibh mauris cursus mattis molestie a iaculis at. Viverra adipiscing at in tellus. Pretium lectus quam id leo in vitae turpis massa. Urna cursus eget nunc scelerisque viverra mauris in aliquam sem. Hendrerit gravida rutrum quisque non tellus orci. Eu scelerisque felis imperdiet proin fermentum leo. Et tortor consequat id porta nibh venenatis cras sed. Ornare lectus sit amet est. A iaculis at erat pellentesque adipiscing commodo elit at. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit. Integer malesuada nunc vel risus commodo viverra. Facilisi cras fermentum odio eu feugiat pretium nibh ipsum. "
-        app:layout_constraintStart_toEndOf="@+id/barrier4"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="end"
-        app:constraint_referenced_ids="textView18,textView19"
-        tools:layout_editor_absoluteX="411dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="63dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
