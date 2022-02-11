@@ -1,10 +1,10 @@
 # Event Handling in Android - Java
 
 - [Event Handling in Android - Java](#event-handling-in-android---java)
-	- [Android View Binding - Button Onclick Function](#android-view-binding---button-onclick-function)
-	- [Android View Binding - Button setOnclickListener](#android-view-binding---button-setonclicklistener)
-		- [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
-		- [Function Type in java??](#function-type-in-java)
+  - [Android View Binding - Button Onclick Function](#android-view-binding---button-onclick-function)
+  - [Android View Binding - Button setOnclickListener](#android-view-binding---button-setonclicklistener)
+    - [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
+    - [Function Type in java??](#function-type-in-java)
 
 ## Android View Binding - Button Onclick Function
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 ```
 
 <div align="center">
-<img src="img/btn.jpg" alt="btn.jpg" width="600px">
+<img src="img/btn.gif" alt="btn.gif" width="800px">
 </div>
 
 ## Android View Binding - Button setOnclickListener
