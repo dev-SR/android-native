@@ -4,24 +4,15 @@
   - [Android View Binding - Button Onclick Function](#android-view-binding---button-onclick-function)
   - [Android View Binding - Button setOnclickListener](#android-view-binding---button-setonclicklistener)
     - [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
-    - [Function Type in java??](#function-type-in-java)
+    - [Function Type,CallBacks in java??](#function-typecallbacks-in-java)
 
 ## Android View Binding - Button Onclick Function
 
 `activity_main.xml`
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-  <!-- ... -->
->
     <Button
-  <!-- ... -->
-        android:onClick="onButtonClick"
-     <!-- ... -->
- />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:onClick="onButtonClick"/>
 ```
 
 `MainActivity.java`
@@ -48,6 +39,39 @@ public class MainActivity extends AppCompatActivity {
 ## Android View Binding - Button setOnclickListener
 
 ### Introduction to Function Type, Callbacks - typescript/react
+
+simple javascript callback function:
+
+```html
+<button id="myBtn">Try it</button>
+
+<script>
+function callback() {
+  alert ("Hello World!");
+}
+
+const btn = document.getElementById("myBtn");
+btn.addEventListener("click", callback);
+</script>
+```
+
+callback example with react:
+
+```tsx
+export default function App() {
+  const clickHandler = (e) => {
+    alert("Button Clicked");
+  };
+
+  return (
+    <div className="App">
+      <button onClick={clickHandler}>Download</button>
+    </div>
+  );
+}
+```
+
+Function types with callbacks:
 
 ```tsx
 import React from "react";
@@ -100,5 +124,133 @@ export default function App() {
 
 ```
 
-### Function Type in java??
+### Function Type,CallBacks in java??
 
+Before Java 8, we would usually create a class for every case where we needed to encapsulate a single piece of functionality because In java we can't use a function **stand alone** or as a callback. Instead we use `Single Abstract Method Interfaces (SAM Interfaces)`.For example Android's `setOnClickListener()` method  accepts a SAM interface called `View.OnClickListener` .
+
+```java
+public interface OnClickListener {
+    void onClick(View var1);
+}
+```
+
+We can use a function(`onClick`) as a callback by implementing the `OnClickListener` interface.
+
+```java
+class OnClickCallback implements View.OnClickListener{
+
+    @Override
+    public void onClick(View view) {
+        Log.d("BTN","Button Clicked");
+    }
+}
+```
+
+Then we pass the `OnClickCallback` object to the `setOnClickListener` method.
+
+```java
+Button btn = findViewById(R.id.btn);
+btn.setOnClickListener(new OnClickCallback());
+```
+
+Comparing Callback passing in java with javascript:
+
+`javascript`:
+
+```js
+function callback() {
+  alert ("Hello World!");
+}
+
+const btn = document.getElementById("myBtn");
+btn.addEventListener("click", callback);
+
+```
+
+```java
+class OnClickCallback implements View.OnClickListener{
+
+    @Override
+    public void onClick(View view) {
+        Log.d("BTN","Button Clicked");
+    }
+}
+
+Button btn = findViewById(R.id.btn);
+btn.setOnClickListener(new OnClickCallback());
+```
+
+Using An **Anonymous Class** we can declare and instantiate a class at the same time.
+
+```java
+btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("BTN", "Button Clicked");
+            }
+});
+// class OnClickCallback implements View.OnClickListener{
+//     @Override
+//     public void onClick(View view) {
+//         Log.d("BTN","Button Clicked");
+//     }
+// }
+// btn.setOnClickListener(new OnClickCallback());
+
+
+```
+
+Above code still implied a lot of unnecessary boilerplate code to define something that served as a primitive function representation.
+
+Java 8 brought a powerful new syntactic improvement in the form of **lambda expressions**. A lambda is an anonymous function that we can handle as a first-class language citizen. For instance, we can pass it to or return it from a method.
+
+ **Any interface with aSAM(Single Abstract Method) is a functional interface**, and its implementation may be treated as **lambda expressions**.
+
+
+```java
+
+btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
+
+// 1.
+//class OnClickCallback implements View.OnClickListener{
+//
+//    @Override
+//    public void onClick(View view) {
+//        Log.d("BTN","Button Clicked");
+//    }
+//}
+// btn.setOnClickListener(new OnClickCallback());
+
+// 2.
+//  btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d("BTN", "Button Clicked");
+//            }
+//        });
+```
+> Full Code:
+
+`activity_main.xml`
+
+```xml
+    <Button
+        android:id="@+id/btn"/>
+```
+
+`MainActivity.java`
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button btn = findViewById(R.id.btn);
+
+        btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
+
+    }
+}
+```
