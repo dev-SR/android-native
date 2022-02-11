@@ -5,6 +5,7 @@
   - [Android View Binding - Button setOnclickListener](#android-view-binding---button-setonclicklistener)
     - [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
     - [Function Type,CallBacks in java??](#function-typecallbacks-in-java)
+  - [Example Project](#example-project)
 
 ## Android View Binding - Button Onclick Function
 
@@ -252,5 +253,58 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
 
     }
+}
+```
+
+## Example Project
+
+<div align="center">
+<img src="img/ex1.gif" alt="ex1.gif" width="800px">
+</div>
+
+```xml
+    <EditText
+        android:id="@+id/num1"/>
+
+    <EditText
+        android:id="@+id/num2"/>
+
+    <Button
+        android:id="@+id/btnAdd" />
+
+    <TextView
+        android:id="@+id/res" />
+```
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.example1_layout);
+        EditText etNum1 = findViewById(R.id.num1);
+        EditText etNum2 = findViewById(R.id.num2);
+        Button btnAdd = findViewById(R.id.btnAdd);
+        TextView tvResult = findViewById(R.id.res);
+        tvResult.setVisibility(View.INVISIBLE);
+
+        btnAdd.setOnClickListener(view -> {
+            int n1 = Integer.valueOf(etNum1.getText().toString());
+            int n2 = Integer.valueOf(etNum2.getText().toString());
+            int result = n1 + n2;
+            String msg = "Result :" + result;
+            tvResult.setVisibility(View.VISIBLE);
+            tvResult.setText(msg);
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+/**
+It is not possible to set the gravity of toast in android 11 because this method is deprecated in API 30+
+**/
+//            Toast toast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
+//            toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+//            toast.show();
+        });
+    }
+
 }
 ```
