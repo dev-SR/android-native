@@ -45,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
         EditText etNum2 = findViewById(R.id.num2);
         Button btnAdd = findViewById(R.id.btnAdd);
         TextView tvResult = findViewById(R.id.res);
+
         tvResult.setVisibility(View.INVISIBLE);
+        etNum1.requestFocus();
 
         btnAdd.setOnClickListener(view -> {
             int n1 = Integer.valueOf(etNum1.getText().toString());
