@@ -8,6 +8,7 @@
   - [Example Project](#example-project)
   - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
     - [CheckBox](#checkbox)
+    - [Radio Buttons](#radio-buttons)
 
 ## Android View Binding - Button Onclick Function
 
@@ -409,3 +410,45 @@ Handling Set of Checkboxes:
         checkCheese.setOnCheckedChangeListener(checkListener);
         checkMeat.setOnCheckedChangeListener(checkListener);
 ```
+
+[https://developer.android.com/guide/topics/ui/controls/checkbox.html](https://developer.android.com/guide/topics/ui/controls/checkbox.html)
+
+`xml`
+
+### Radio Buttons
+
+Radio buttons allow the user to select one option from a set.
+
+To create each radio button option, create a `RadioButton` in the layout. However, because radio buttons are mutually exclusive, we must group them together inside a `RadioGroup`. By grouping them together, the system ensures that only one radio button can be selected at a time
+
+```xml
+<RadioGroup
+        android:id="@+id/rdGroup"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/radio_yes"
+            android:text="Yes" />
+
+        <RadioButton
+            android:id="@+id/radio_no"
+            android:text="No" />
+    </RadioGroup>
+```
+
+and within the activity:
+
+```java
+        RadioGroup radioGroup = findViewById(R.id.rdGroup);
+        radioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
+            switch (checkedId) {
+                case R.id.radio_yes:
+                    Log.d("BTN", "Yes");
+                    break;
+                case R.id.radio_no:
+                    Log.d("BTN", "No");
+                    break;
+            }
+        });
+```
+
+[https://developer.android.com/guide/topics/ui/controls/radiobutton#java](https://developer.android.com/guide/topics/ui/controls/radiobutton#java)

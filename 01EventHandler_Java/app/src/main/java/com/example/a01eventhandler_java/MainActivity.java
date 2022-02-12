@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 
@@ -24,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Button btn = (Button) findViewById(R.id.btn);
+//        setContentView(R.layout.activity_main);
+//        Button btn = (Button) findViewById(R.id.btn);
         //2.2
 //        btn.setOnClickListener(new OnClickCallback());
         ///3.
@@ -68,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         /**  CheckBox **/
-        setContentView(R.layout.checkbox_layout);
-        CheckBox checkCheese = findViewById(R.id.checkbox_cheese);
-        CheckBox checkMeat = findViewById(R.id.checkbox_meat);
+//        setContentView(R.layout.checkbox_layout);
+//        CheckBox checkCheese = findViewById(R.id.checkbox_cheese);
+//        CheckBox checkMeat = findViewById(R.id.checkbox_meat);
 
 //        checkCheese.setOnCheckedChangeListener((v, isChecked) -> {
 //            if (isChecked) {
@@ -79,32 +80,48 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        CompoundButton.OnCheckedChangeListener checkListener = (view, checked) -> {
+        // multiple checkbox
+//        CompoundButton.OnCheckedChangeListener checkListener = (view, checked) -> {
+//
+//            switch (view.getId()) {
+//                case R.id.checkbox_meat:
+//                    if (checked) {
+//                        Log.d("BTN", "Meat Checked");
+//                    } else {
+//                        Log.d("BTN", "Meat UnChecked");
+//                    }
+//                    break;
+//                case R.id.checkbox_cheese:
+//                    if (checked) {
+//                        Log.d("BTN", "Cheese Checked");
+//                    } else {
+//                        Log.d("BTN", "Cheese UnChecked");
+//
+//                    }
+//                    break;
+//            }
+//        };
+//        checkCheese.setOnCheckedChangeListener(checkListener);
+//        checkMeat.setOnCheckedChangeListener(checkListener);
 
-            switch (view.getId()) {
-                case R.id.checkbox_meat:
-                    if (checked) {
-                        Log.d("BTN", "Meat Checked");
-                    } else {
-                        Log.d("BTN", "Meat UnChecked");
-                    }
+        /**
+         * RadioGroup
+         * */
+        setContentView(R.layout.radio_layout);
+        RadioGroup radioGroup = findViewById(R.id.rdGroup);
+        radioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
+            switch (checkedId) {
+                case R.id.radio_yes:
+                    Log.d("BTN", "Yes");
                     break;
-                case R.id.checkbox_cheese:
-                    if (checked) {
-                        Log.d("BTN", "Cheese Checked");
-                    } else {
-                        Log.d("BTN", "Cheese UnChecked");
-
-                    }
+                case R.id.radio_no:
+                    Log.d("BTN", "No");
                     break;
             }
-        };
-        checkCheese.setOnCheckedChangeListener(checkListener);
-        checkMeat.setOnCheckedChangeListener(checkListener);
+        });
 
 
     }
-
 //    1.
 //    public void  onButtonClick(View v){
 //        Log.d("BTN","Button Clicked");
