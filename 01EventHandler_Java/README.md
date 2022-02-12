@@ -13,6 +13,7 @@
       - [Populate the Spinner with User Choices](#populate-the-spinner-with-user-choices)
         - [pre-determined array string resource file](#pre-determined-array-string-resource-file)
           - [Customizing Spinner Items Using Resource File](#customizing-spinner-items-using-resource-file)
+        - [Creating Spinner From Dynamically](#creating-spinner-from-dynamically)
 
 ## Android View Binding - Button Onclick Function
 
@@ -647,4 +648,46 @@ In main activity:
                 R.array.planets_array, R.layout.custom_spinner);
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         spinner.setAdapter(adapter);
+```
+
+##### Creating Spinner From Dynamically
+
+`spinner_layout.xml`
+
+```xml
+<Spinner
+    android:id="@+id/spinner"
+/>
+```
+
+`MainActivity.java`
+
+```java
+        setContentView(R.layout.spinner_layout);
+        Spinner spinner = findViewById(R.id.spinner);
+        // Spinner Drop down elements
+        List<String> categories = new ArrayList<String>();
+        categories.add("Item 1");
+        categories.add("Item 2");
+        categories.add("Item 3");
+        categories.add("Item 4");
+        categories.add("Item 5");
+        categories.add("Item 6");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("BTN", spinner.getItemAtPosition(i).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 ```

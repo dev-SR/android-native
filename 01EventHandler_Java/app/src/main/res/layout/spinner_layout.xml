@@ -10,11 +10,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
-        android:background="@android:color/white"
-        android:entries="@array/planets_array"
         android:minHeight="48dp"
         android:paddingRight="10dp"
-        android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

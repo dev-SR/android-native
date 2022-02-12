@@ -16,6 +16,9 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 // 2.1
 //class OnClickCallback implements View.OnClickListener{
@@ -154,26 +157,55 @@ public class MainActivity extends AppCompatActivity {
         /**
          * Spinner
          * */
+//        setContentView(R.layout.spinner_layout);
+//        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+//        // Create an ArrayAdapter using the string array and a `default spinner layout`
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+//                R.array.planets_array, R.layout.custom_spinner);
+//        // Specify the layout to use when the list of choices appears
+//        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
+//        // Apply the adapter to the spinner
+//        spinner.setAdapter(adapter);
+//        /**
+//         * `simple_spinner_item` and `simple_spinner_dropdown_item` both are default layout
+//         * */
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+////                Get the selected item out a spinner using:
+//                String value = spinner.getSelectedItem().toString();
+//                String value1 = spinner.getItemAtPosition(pos).toString();
+//                Log.d("BTN", value + " " + pos + " " + id);
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+
+//        creating Spinner Dynamically
         setContentView(R.layout.spinner_layout);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a `default spinner layout`
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, R.layout.custom_spinner);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        /**
-         * `simple_spinner_item` and `simple_spinner_dropdown_item` both are default layout
-         * */
+        Spinner spinner = findViewById(R.id.spinner);
+        // Spinner Drop down elements
+        List<String> categories = new ArrayList<String>();
+        categories.add("Item 1");
+        categories.add("Item 2");
+        categories.add("Item 3");
+        categories.add("Item 4");
+        categories.add("Item 5");
+        categories.add("Item 6");
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-//                Get the selected item out a spinner using:
-                String value = spinner.getSelectedItem().toString();
-                String value1 = spinner.getItemAtPosition(pos).toString();
-                Log.d("BTN", value + " " + pos + " " + id);
-
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("BTN", spinner.getItemAtPosition(i).toString());
             }
 
             @Override
