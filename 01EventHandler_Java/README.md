@@ -9,6 +9,10 @@
   - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
     - [CheckBox](#checkbox)
     - [Radio Buttons](#radio-buttons)
+    - [Spinner](#spinner)
+      - [Populate the Spinner with User Choices](#populate-the-spinner-with-user-choices)
+        - [pre-determined array string resource file](#pre-determined-array-string-resource-file)
+          - [Customizing Spinner Items Using Resource File](#customizing-spinner-items-using-resource-file)
 
 ## Android View Binding - Button Onclick Function
 
@@ -493,6 +497,154 @@ and within the activity:
         });
 ```
 
-
 - [https://developer.android.com/guide/topics/ui/controls/radiobutton#java](https://developer.android.com/guide/topics/ui/controls/radiobutton#java)
 - [https://www.geeksforgeeks.org/android-how-to-add-radio-buttons-in-an-android-application/](https://www.geeksforgeeks.org/android-how-to-add-radio-buttons-in-an-android-application/)
+
+### Spinner
+
+<div align="center">
+<img src="img/spinner.jpg" alt="spinner.jpg" width="400px">
+</div>
+
+Spinners provide a quick way to select one value from a set. In the default state, a spinner shows its currently selected value. Touching the spinner displays a dropdown menu with all other available values, from which the user can select a new one.
+
+You can add a spinner to your layout with the Spinner object. You should usually do so in your XML layout with a `<Spinner>` element. For example:
+
+<Spinner
+    android:id="@+id/planets_spinner"
+/>
+
+To populate the spinner with a list of choices, you then need to specify a `SpinnerAdapter` in your `Activity` or `Fragment` source code.
+
+#### Populate the Spinner with User Choices
+
+The choices you provide for the spinner can come from**any source**, but must be provided through an `SpinnerAdapter`, such as an `ArrayAdapter` if the choices are available in an `array` or a `CursorAdapter` if the choices are available from a database query.
+
+##### pre-determined array string resource file
+
+For instance, if the available choices for your spinner are **pre-determined**, you can provide them with a **string array** defined in a **string resource** file:
+
+`spinner_layout.xml`
+
+<Spinner
+    android:id="@+id/planets_spinner"
+    android:entries="@array/planets_array"
+/>
+
+`src/main/res/values/planets_array.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+    </string-array>
+</resources>
+```
+
+With an array such as this one, you can use the following code in your `Activity` or `Fragment` to supply the spinner with the array using an instance of `ArrayAdapter`:
+
+
+```java
+        Spinner spinner = findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a `default spinner layout`
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.planets_array,
+                android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        /**
+         * `simple_spinner_item` and `simple_spinner_dropdown_item` both are default layout
+         * */
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+//              Get the selected item out a spinner using:
+                String value = spinner.getSelectedItem().toString();
+                String value1 = spinner.getItemAtPosition(pos).toString();
+                Log.d("BTN", value + " " + pos + " " + id);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+```
+
+###### Customizing Spinner Items Using Resource File
+
+<div align="center">
+<img src="img/cs-2.jpg" alt="cs-2.jpg" width="400px">
+</div>
+
+Changing text size on the `<Spinner>` tag has no effect on the actual dropdown items. To change their styles, you need to create a custom array adapter and layout file. First, you should create a spinner_item1.xml
+
+`custom_spinner.xml`
+
+<div align="center">
+<img src="img/cs.jpg" alt="cs.jpg" width="400px">
+</div>
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    style="?attr/spinnerDropDownItemStyle"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/dropdownListPreferredItemHeight"
+    android:ellipsize="marquee"
+    android:textColor="@android:color/white"
+    android:background="@drawable/abc_spinner_mtrl_am_alpha"
+    android:backgroundTint="@android:color/white"/>
+```
+
+Hiding default `background` and `backgroundTint`:
+
+`activity_main.xml`
+
+```xml
+<Spinner
+        android:id="@+id/spinner"
+        android:entries="@array/planets_array"
+        android:background="@android:color/white"
+        android:spinnerMode="dialog"
+/>
+```
+
+`custom_spinner_dropdown.xml`
+
+<div align="center">
+<img src="img/cs-1.jpg" alt="cs-1.jpg" width="400px">
+</div>
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    style="?attr/spinnerDropDownItemStyle"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/dropdownListPreferredItemHeight"
+    android:ellipsize="marquee"
+    android:textColor="@android:color/holo_blue_light"
+    android:background="@android:color/white"
+    android:textAlignment="center"/>
+```
+
+In main activity:
+
+```java
+        setContentView(R.layout.activity_main);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.planets_array, R.layout.custom_spinner);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
+        spinner.setAdapter(adapter);
+```

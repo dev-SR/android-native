@@ -2,14 +2,18 @@ package com.example.a01eventhandler_java;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -108,43 +112,74 @@ public class MainActivity extends AppCompatActivity {
         /**
          * RadioGroup
          * */
-        setContentView(R.layout.radio_layout);
-        RadioGroup radioGroup = findViewById(R.id.rdGroup);
-        Button btnSubmit = findViewById(R.id.btnSubmit);
-        Button btnClear = findViewById(R.id.btnClear);
-        radioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
-            switch (checkedId) {
-                case R.id.radio_yes:
-                    Log.d("BTN", "Yes");
-                    break;
-                case R.id.radio_no:
-                    Log.d("BTN", "No");
-                    break;
+//        setContentView(R.layout.radio_layout);
+//        RadioGroup radioGroup = findViewById(R.id.rdGroup);
+//        Button btnSubmit = findViewById(R.id.btnSubmit);
+//        Button btnClear = findViewById(R.id.btnClear);
+//        radioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
+//            switch (checkedId) {
+//                case R.id.radio_yes:
+//                    Log.d("BTN", "Yes");
+//                    break;
+//                case R.id.radio_no:
+//                    Log.d("BTN", "No");
+//                    break;
+//            }
+//        });
+//
+//        btnSubmit.setOnClickListener(v -> {
+//            int selectedId = radioGroup.getCheckedRadioButtonId();
+//            if (selectedId == -1) {
+//                Toast.makeText(MainActivity.this,
+//                        "No answer has been selected",
+//                        Toast.LENGTH_SHORT)
+//                        .show();
+//            } else {
+//                // Get the selected Radio Button
+//                RadioButton radioButton = radioGroup.findViewById(selectedId);
+//
+//                // Now display the value of selected item
+//                // by the Toast message
+//                Toast.makeText(getApplicationContext(),
+//                        radioButton.getText(),
+//                        Toast.LENGTH_SHORT)
+//                        .show();
+//            }
+//        });
+//
+//        btnClear.setOnClickListener(v -> {
+//            radioGroup.clearCheck();
+//        });
+
+        /**
+         * Spinner
+         * */
+        setContentView(R.layout.spinner_layout);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a `default spinner layout`
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.planets_array, R.layout.custom_spinner);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        /**
+         * `simple_spinner_item` and `simple_spinner_dropdown_item` both are default layout
+         * */
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+//                Get the selected item out a spinner using:
+                String value = spinner.getSelectedItem().toString();
+                String value1 = spinner.getItemAtPosition(pos).toString();
+                Log.d("BTN", value + " " + pos + " " + id);
+
             }
-        });
 
-        btnSubmit.setOnClickListener(v -> {
-            int selectedId = radioGroup.getCheckedRadioButtonId();
-            if (selectedId == -1) {
-                Toast.makeText(MainActivity.this,
-                        "No answer has been selected",
-                        Toast.LENGTH_SHORT)
-                        .show();
-            } else {
-                // Get the selected Radio Button
-                RadioButton radioButton = radioGroup.findViewById(selectedId);
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                // Now display the value of selected item
-                // by the Toast message
-                Toast.makeText(getApplicationContext(),
-                        radioButton.getText(),
-                        Toast.LENGTH_SHORT)
-                        .show();
             }
-        });
-
-        btnClear.setOnClickListener(v -> {
-            radioGroup.clearCheck();
         });
 
 

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">01EventHandler_Java</string>
+    <string name="spinner_title">Choose Planet</string>
 </resources>
