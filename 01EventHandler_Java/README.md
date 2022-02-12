@@ -6,6 +6,8 @@
     - [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
     - [Function Type,CallBacks in java??](#function-typecallbacks-in-java)
   - [Example Project](#example-project)
+  - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
+    - [CheckBox](#checkbox)
 
 ## Android View Binding - Button Onclick Function
 
@@ -154,7 +156,7 @@ Button btn = findViewById(R.id.btn);
 btn.setOnClickListener(new OnClickCallback());
 ```
 
-Comparing Callback passing in java with javascript:
+Comparing Callback passing in `java` with `javascript`:
 
 `javascript`:
 
@@ -162,6 +164,7 @@ Comparing Callback passing in java with javascript:
 function callback() {
   alert ("Hello World!");
 }
+// const callback = () => {alert ("Hello World!");}
 
 const btn = document.getElementById("myBtn");
 btn.addEventListener("click", callback);
@@ -207,10 +210,10 @@ Java 8 brought a powerful new syntactic improvement in the form of **lambda expr
 
  **Any interface with aSAM(Single Abstract Method) is a functional interface**, and its implementation may be treated as **lambda expressions**.
 
-
 ```java
-
-btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
+View.OnClickListener cb= (view) -> Log.d("BTN","clicked");
+btn.setOnClickListener(cb);
+// btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
 
 // 1.
 //class OnClickCallback implements View.OnClickListener{
@@ -230,7 +233,35 @@ btn.setOnClickListener(view -> Log.d("BTN", "Button Clicked"));
 //            }
 //        });
 ```
-> Full Code:
+
+Now, Comparing Callback passing in `java` with `javascript`:
+
+```ts
+// interface OnClickLister {
+//  (e: MouseEvent): void;
+// }
+// const callback: OnClickLister = (e: MouseEvent) => {
+//  console.log('first');
+// };
+const callback = (e) => console.log('first';
+};
+const btn = document.getElementById("myBtn");
+btn.addEventListener("click", callback);
+
+```
+
+```java
+// class View{
+//     public interface OnClickListener {
+//         void onClick(View var1);
+//     }
+// }
+Button btn = (Button) findViewById(R.id.btn);
+View.OnClickListener callback = (view) -> Log.d("BTN","clicked");
+btn.setOnClickListener(callback);
+```
+
+> **Full Code:**
 
 `activity_main.xml`
 
@@ -308,4 +339,73 @@ It is not possible to set the gravity of toast in android 11 because this method
     }
 
 }
+```
+
+## Working with Different Types of Input Views
+
+### CheckBox
+
+Checkboxes allow the user to select one or more options from a set.
+
+```xml
+    <CheckBox
+        android:id="@+id/checkbox_meat" />
+
+    <CheckBox
+        android:id="@+id/checkbox_cheese"
+ />
+```
+
+We can access whether or not a checkbox is checked with:
+
+```java
+CheckBox checkCheese = (CheckBox) findViewById(R.id.checkbox_cheese);
+// Check if the checkbox is checked
+boolean isChecked = checkCheese.isChecked();
+// Set the checkbox as checked
+checkCheese.setChecked(true);
+```
+
+and in our activity, we can manage checkboxes using a checked listener with `OnCheckedChangeListener` as show below:
+
+```java
+        CheckBox checkCheese = findViewById(R.id.checkbox_cheese);
+        //  new CompoundButton.OnCheckedChangeListener(){}
+        checkCheese.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                Toast.makeText(this, "Cheese Checked", Toast.LENGTH_LONG).show();
+            Log.d("BTN","checked");
+            }
+        });
+```
+
+Handling Set of Checkboxes:
+
+```java
+        CheckBox checkCheese = findViewById(R.id.checkbox_cheese);
+        CheckBox checkMeat = findViewById(R.id.checkbox_meat);
+
+        CompoundButton.OnCheckedChangeListener checkListener = (view, checked) -> {
+
+            switch (view.getId()) {
+                case R.id.checkbox_meat:
+                    if (checked) {
+                        Log.d("BTN", "Meat Checked");
+                    } else {
+                        Log.d("BTN", "Meat UnChecked");
+                    }
+                    break;
+                case R.id.checkbox_cheese:
+                    if (checked) {
+                        Log.d("BTN", "Cheese Checked");
+                    } else {
+                        Log.d("BTN", "Cheese UnChecked");
+
+                    }
+                    break;
+            }
+        };
+
+        checkCheese.setOnCheckedChangeListener(checkListener);
+        checkMeat.setOnCheckedChangeListener(checkListener);
 ```
