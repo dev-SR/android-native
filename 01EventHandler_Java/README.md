@@ -14,6 +14,7 @@
         - [pre-determined array string resource file](#pre-determined-array-string-resource-file)
           - [Customizing Spinner Items Using Resource File](#customizing-spinner-items-using-resource-file)
         - [Creating Spinner From Dynamically](#creating-spinner-from-dynamically)
+        - [Custom ArrayAdapter + Custom View](#custom-arrayadapter--custom-view)
 
 ## Android View Binding - Button Onclick Function
 
@@ -683,6 +684,193 @@ In main activity:
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("BTN", spinner.getItemAtPosition(i).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+```
+
+##### Custom ArrayAdapter + Custom View
+
+<div align="center">
+<img src="img/csss.jpg" alt="csss.jpg" width="400px">
+</div>
+
+`layout/spinner_layout.xml`
+
+```xml
+<Spinner
+        android:id="@+id/spinner"
+ />
+```
+
+`layout/item_fruit.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/orange" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_toRightOf="@+id/image"
+        android:text="Name" />
+
+</RelativeLayout>
+```
+
+<div align="center">
+<img src="img/sss.jpg" alt="sss.jpg" width="400px">
+</div>
+
+`Fruit.java`
+
+```java
+public class Fruit {
+    private String name;
+    private int image;
+    public Fruit() {}
+    public String getName() {return name;}
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getImage() {
+        return image;
+    }
+    public void setImage(int image) {
+        this.image = image;
+    }
+}
+```
+
+`Data.java`
+
+```java
+public class Data {
+
+    public static List<Fruit> getFruitList() {
+        List<Fruit> fruitList = new ArrayList<>();
+
+        Fruit Avocado = new Fruit();
+        Avocado.setName("Avocado");
+        Avocado.setImage(R.drawable.avocado);
+        fruitList.add(Avocado);
+
+        Fruit Banana = new Fruit();
+        Banana.setName("Banana");
+        Banana.setImage(R.drawable.banana);
+        fruitList.add(Banana);
+
+        Fruit Coconut = new Fruit();
+        Coconut.setName("Coconut");
+        Coconut.setImage(R.drawable.coconut);
+        fruitList.add(Coconut);
+
+        Fruit Guava = new Fruit();
+        Guava.setName("Guava");
+        Guava.setImage(R.drawable.guava);
+        fruitList.add(Guava);
+
+        Fruit Lemon = new Fruit();
+        Lemon.setName("Lemon");
+        Lemon.setImage(R.drawable.lemon);
+        fruitList.add(Lemon);
+
+        Fruit Mango = new Fruit();
+        Mango.setName("Mango");
+        Mango.setImage(R.drawable.mango);
+        fruitList.add(Mango);
+
+        Fruit Orange = new Fruit();
+        Orange.setName("Orange");
+        Orange.setImage(R.drawable.orange);
+        fruitList.add(Orange);
+
+        return fruitList;
+    }
+}
+```
+
+`FruitAdapter.java`
+
+
+```java
+public class FruitAdapter extends BaseAdapter {
+    private Context context;
+    private List<Fruit> fruitList;
+    public FruitAdapter(Context context, List<Fruit> fruitList) {
+        this.context = context;
+        this.fruitList = fruitList;
+    }
+
+    @Override
+    public int getCount() {
+        return fruitList != null ? fruitList.size() : 0;
+    }
+    @Override
+    public Object getItem(int i) {
+        return i;
+    }
+    @Override
+    public long getItemId(int i) {
+        return i;
+    }
+    /**
+     `getView` method will return the final view that a Spinner will set to it’s row’s ith (first parameter) position.  If Spinner has six rows then compiler will this method for six times. In every iteration,
+     compiler will fetch or inflate the XML file which will provide UI widgets (Textview, Button, ImageView etc.)
+     for the row item. Then it will set the appropriate values to the UI widgets (Textview, Button, ImageView etc.)
+     */
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        /** When you write an XML layout, it will be inflated by the Android OS which basically
+         * means that it will be rendered by creating view object in memory.
+
+         You can also inflate views explicitly by using the LayoutInflater. In that case you have to:
+         In that case you have to:
+         */
+        //1. Get an instance of the LayoutInflater
+        //2. Specify the XML to inflate
+        View rootView = LayoutInflater.from(context)
+                .inflate(R.layout.item_fruit, viewGroup, false);
+        //3. Use the returned RootView to get it's children
+        TextView txtName = rootView.findViewById(R.id.name);
+        ImageView image = rootView.findViewById(R.id.image);
+        //4. Set the content view with returned view
+        txtName.setText(fruitList.get(i).getName());
+        image.setImageResource(fruitList.get(i).getImage());
+
+        return rootView;
+    }
+}
+```
+
+`MainActivity.java`
+
+```java
+        setContentView(R.layout.spinner_layout);
+        Spinner spinner = findViewById(R.id.spinner);
+
+        FruitAdapter fruitAdapter = new FruitAdapter(getApplicationContext(), Data.getFruitList());
+        spinner.setAdapter(fruitAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("BTN",Data.getFruitList().get(i).getName());
             }
 
             @Override
