@@ -346,6 +346,10 @@ It is not possible to set the gravity of toast in android 11 because this method
 
 ### CheckBox
 
+<div align="center">
+<img src="img/checkboxes.png" alt="checkboxes.png" width="350px">
+</div>
+
 Checkboxes allow the user to select one or more options from a set.
 
 ```xml
@@ -417,6 +421,10 @@ Handling Set of Checkboxes:
 
 ### Radio Buttons
 
+<div align="center">
+<img src="img/radiobuttons.png" alt="radiobuttons.png" width="400px">
+</div>
+
 Radio buttons allow the user to select one option from a set.
 
 To create each radio button option, create a `RadioButton` in the layout. However, because radio buttons are mutually exclusive, we must group them together inside a `RadioGroup`. By grouping them together, the system ensures that only one radio button can be selected at a time
@@ -432,7 +440,15 @@ To create each radio button option, create a `RadioButton` in the layout. Howeve
         <RadioButton
             android:id="@+id/radio_no"
             android:text="No" />
-    </RadioGroup>
+</RadioGroup>
+<Button
+        android:id="@+id/btnSubmit"
+        android:text="Submit"
+/>
+<Button
+        android:id="@+id/btnClear"
+        android:text="Clear"
+/>
 ```
 
 and within the activity:
@@ -451,4 +467,32 @@ and within the activity:
         });
 ```
 
-[https://developer.android.com/guide/topics/ui/controls/radiobutton#java](https://developer.android.com/guide/topics/ui/controls/radiobutton#java)
+```java
+ btnSubmit.setOnClickListener(v -> {
+            int selectedId = radioGroup.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(MainActivity.this,
+                        "No answer has been selected",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                // Get the selected Radio Button
+                RadioButton radioButton = radioGroup.findViewById(selectedId);
+
+                // Now display the value of selected item
+                // by the Toast message
+                Toast.makeText(getApplicationContext(),
+                        radioButton.getText(),
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
+        btnClear.setOnClickListener(v -> {
+            radioGroup.clearCheck();
+        });
+```
+
+
+- [https://developer.android.com/guide/topics/ui/controls/radiobutton#java](https://developer.android.com/guide/topics/ui/controls/radiobutton#java)
+- [https://www.geeksforgeeks.org/android-how-to-add-radio-buttons-in-an-android-application/](https://www.geeksforgeeks.org/android-how-to-add-radio-buttons-in-an-android-application/)

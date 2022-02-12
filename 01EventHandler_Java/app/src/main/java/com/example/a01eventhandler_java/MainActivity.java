@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -109,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
          * */
         setContentView(R.layout.radio_layout);
         RadioGroup radioGroup = findViewById(R.id.rdGroup);
+        Button btnSubmit = findViewById(R.id.btnSubmit);
+        Button btnClear = findViewById(R.id.btnClear);
         radioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
             switch (checkedId) {
                 case R.id.radio_yes:
@@ -118,6 +121,30 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("BTN", "No");
                     break;
             }
+        });
+
+        btnSubmit.setOnClickListener(v -> {
+            int selectedId = radioGroup.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(MainActivity.this,
+                        "No answer has been selected",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                // Get the selected Radio Button
+                RadioButton radioButton = radioGroup.findViewById(selectedId);
+
+                // Now display the value of selected item
+                // by the Toast message
+                Toast.makeText(getApplicationContext(),
+                        radioButton.getText(),
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
+        btnClear.setOnClickListener(v -> {
+            radioGroup.clearCheck();
         });
 
 
