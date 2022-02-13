@@ -26,6 +26,8 @@
       - [Guideline](#guideline)
       - [Barrier](#barrier)
       - [Group](#group)
+  - [ImageView](#imageview)
+  - [ShapeableImageView](#shapeableimageview)
 
 ## `View` and `ViewGroup` Objects
 
@@ -544,3 +546,79 @@ In the below-animated figure, you can see after setting the visibility of the gr
 <div align="center">
 <img src="img/group.gif" alt="group.gif" width="800px">
 </div>
+
+## ImageView
+
+Load Image:
+
+<div align="center">
+<img src="img/li.gif" alt="li.gif" width="800px">
+</div>
+
+Important XML Attributes of ImageView :
+
+| XML Attribute               | Description                                                 |
+| --------------------------- | ----------------------------------------------------------- |
+| `android:src/app:srcCompat` | To add the file path of the inserted image                  |
+| `android:scaleType`         | To re-size the image or to move it in order to fix its size |
+
+```xml
+<ImageView
+        android:layout_width="123dp"
+        android:layout_height="143dp"
+        app:srcCompat="@drawable/cat_1" />
+<ImageView
+        android:layout_width="123dp"
+        android:layout_height="143dp"
+        app:srcCompat="@drawable/cat_1"
+        android:scaleType="centerCrop"
+ />
+```
+
+<div align="center">
+<img src="img/sci.jpg" alt="sci.jpg" width="700px">
+</div>
+
+## ShapeableImageView
+
+<div align="center">
+<img src="img/Shapeable-Imageview-poster-rect.png" alt="Shapeable-Imageview-poster-rect.png" width="700px">
+</div>
+
+```xml
+<com.google.android.material.imageview.ShapeableImageView
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/Circular"
+        app:strokeColor="@color/purple_200"
+        app:strokeWidth="5dp"
+        app:srcCompat="@drawable/cat_1"
+
+        />
+    <com.google.android.material.imageview.ShapeableImageView
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CornerSize10Percent"
+        app:strokeColor="@color/purple_200"
+        app:strokeWidth="5dp"
+        app:srcCompat="@drawable/cat_1" />
+```
+
+`values/custom_image_style.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Circular" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="CornerSize10Percent" parent="">
+        <item name="cornerSize">10%</item>
+    </style>
+</resources>
+```
+
+<div align="center">
+<img src="img/sim.jpg" alt="sim.jpg" width="600px">
+</div>
+
+- All Shape: [https://howtodoandroid.com/shapeableimageview-material-components-android/](https://howtodoandroid.com/shapeableimageview-material-components-android/)
+- [https://www.youtube.com/watch?v=jihLJ0oVmGo](https://www.youtube.com/watch?v=jihLJ0oVmGo)
