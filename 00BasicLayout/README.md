@@ -27,7 +27,13 @@
       - [Barrier](#barrier)
       - [Group](#group)
   - [ImageView](#imageview)
+    - [Load Image:](#load-image)
+    - [Important XML Attributes of ImageView :](#important-xml-attributes-of-imageview-)
+    - [Vector Asset - Icon](#vector-asset---icon)
   - [ShapeableImageView](#shapeableimageview)
+  - [Button](#button)
+    - [Material Button](#material-button)
+    - [Gradient Button](#gradient-button)
 
 ## `View` and `ViewGroup` Objects
 
@@ -549,13 +555,13 @@ In the below-animated figure, you can see after setting the visibility of the gr
 
 ## ImageView
 
-Load Image:
+### Load Image:
 
 <div align="center">
 <img src="img/li.gif" alt="li.gif" width="800px">
 </div>
 
-Important XML Attributes of ImageView :
+### Important XML Attributes of ImageView :
 
 | XML Attribute               | Description                                                 |
 | --------------------------- | ----------------------------------------------------------- |
@@ -577,6 +583,12 @@ Important XML Attributes of ImageView :
 
 <div align="center">
 <img src="img/sci.jpg" alt="sci.jpg" width="700px">
+</div>
+
+### Vector Asset - Icon
+
+<div align="center">
+<img src="img/icon.gif" alt="icon.gif" width="900px">
 </div>
 
 ## ShapeableImageView
@@ -622,3 +634,73 @@ Important XML Attributes of ImageView :
 
 - All Shape: [https://howtodoandroid.com/shapeableimageview-material-components-android/](https://howtodoandroid.com/shapeableimageview-material-components-android/)
 - [https://www.youtube.com/watch?v=jihLJ0oVmGo](https://www.youtube.com/watch?v=jihLJ0oVmGo)
+
+
+## Button
+
+### Material Button
+
+<div align="center">
+<img src="img/btn.png" alt="btn.png" width="700px">
+</div>
+
+```xml
+<com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        android:text="TextButton"
+        app:icon="@android:drawable/ic_btn_speak_now"
+/>
+
+<com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        app:icon="@drawable/ic_baseline_access_time_24"
+        android:text="Outlined"
+        app:strokeWidth="2dp"
+        app:strokeColor = "#673AB7"
+/>
+```
+
+- [https://material.io/components/buttons/android](https://material.io/components/buttons/android)
+- [https://velmurugan-murugesan.medium.com/material-button-in-android-e4391a243b17](https://velmurugan-murugesan.medium.com/material-button-in-android-e4391a243b17)
+
+### Gradient Button
+
+<div align="center">
+<img src="img/gbtn.jpg" alt="gbtn.jpg" width="400px">
+</div>
+
+`drawable/bg_grad_btn.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:startColor="@color/teal_200"
+        android:endColor="@color/purple_200"
+        android:angle="0"
+        />
+    <corners android:radius="5dp"/>
+</shape>
+```
+
+```xml
+<Button
+        app:backgroundTint="@null"
+        android:background="@drawable/bg_grad_btn"
+>
+
+<com.google.android.material.button.MaterialButton
+        app:backgroundTint="@null"
+        android:background="@drawable/bg_grad_btn"
+ />
+```
+
+To use a custom drawable background with the MaterialButton you can use the `android:background` attribute. Currently it is very important to add `app:backgroundTint="@null"` to avoid that the custom background doesn't get tinted by default with the `backgroundTint` color.
+
+`theme.xml`
+
+```xml
+<style name="Theme.Lab1_ex" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+```
+
+
+
