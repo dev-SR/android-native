@@ -13,8 +13,8 @@
       - [Populate the Spinner with User Choices](#populate-the-spinner-with-user-choices)
         - [pre-determined array string resource file](#pre-determined-array-string-resource-file)
           - [Customizing Spinner Items Using Resource File](#customizing-spinner-items-using-resource-file)
-        - [Creating Spinner From Dynamically](#creating-spinner-from-dynamically)
-        - [Custom ArrayAdapter + Custom View](#custom-arrayadapter--custom-view)
+      - [Creating Spinner Dynamically](#creating-spinner-dynamically)
+      - [Custom ArrayAdapter + Custom View](#custom-arrayadapter--custom-view)
 
 ## Android View Binding - Button Onclick Function
 
@@ -651,7 +651,7 @@ In main activity:
         spinner.setAdapter(adapter);
 ```
 
-##### Creating Spinner From Dynamically
+#### Creating Spinner Dynamically
 
 `spinner_layout.xml`
 
@@ -693,7 +693,7 @@ In main activity:
         });
 ```
 
-##### Custom ArrayAdapter + Custom View
+#### Custom ArrayAdapter + Custom View
 
 <div align="center">
 <img src="img/csss.jpg" alt="csss.jpg" width="400px">
