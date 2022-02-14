@@ -9,6 +9,8 @@
   - [FrameLayout](#framelayout)
   - [LinearLayout](#linearlayout)
     - [Layout Weight](#layout-weight)
+    - [gravity and layout_gravity](#gravity-and-layout_gravity)
+    - [Dummy `Views` Widgets with `layout_weight` for space in-between](#dummy-views-widgets-with-layout_weight-for-space-in-between)
   - [Relative Layout](#relative-layout)
     - [Center relative to Parent View](#center-relative-to-parent-view)
     - [Align by the parent view](#align-by-the-parent-view)
@@ -34,6 +36,7 @@
   - [Button](#button)
     - [Material Button](#material-button)
     - [Gradient Button](#gradient-button)
+  - [Custom Font](#custom-font)
 
 ## `View` and `ViewGroup` Objects
 
@@ -253,6 +256,20 @@ By default, the Layout Weight is set to `0` for each child view in a linear layo
         android:text="Address" />
 </LinearLayout>
 ```
+
+### gravity and layout_gravity
+
+If we want to set the **gravity of content inside a view** then we will use `"android:gravity"`, and if we want to set the gr**avity of this view (as a whole) with in its parent view** then we will use `"android:layout_gravity"`.
+
+<div align="center">
+<img src="img/nymDt.png" alt="nymDt.png" width="600px">
+</div>
+
+### Dummy `Views` Widgets with `layout_weight` for space in-between
+
+<div align="center">
+<img src="img/view.gif" alt="view.gif" width="900px">
+</div>
 
 ## Relative Layout
 
@@ -632,6 +649,21 @@ In the below-animated figure, you can see after setting the visibility of the gr
 <img src="img/sim.jpg" alt="sim.jpg" width="600px">
 </div>
 
+> Tips: use `android:padding` to fix cut-off of rounded corners
+
+```xml
+<com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/Circular"
+        android:padding="3dp"
+        app:strokeColor="@color/purple_200"
+        app:strokeWidth="5dp"
+        />
+```
+
+<div align="center">
+<img src="img/ipad.jpg" alt="sim.jpg" width="400px">
+</div>
+
 - All Shape: [https://howtodoandroid.com/shapeableimageview-material-components-android/](https://howtodoandroid.com/shapeableimageview-material-components-android/)
 - [https://www.youtube.com/watch?v=jihLJ0oVmGo](https://www.youtube.com/watch?v=jihLJ0oVmGo)
 
@@ -702,5 +734,16 @@ To use a custom drawable background with the MaterialButton you can use the `and
 <style name="Theme.Lab1_ex" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 ```
 
+## Custom Font
 
+<div align="center">
+<img src="img/font-1.gif" alt="font-1.gif" width="900px">
+</div>
 
+Selected font - `Inter` not yet downloaded. !!Once downloaded it will show in `preview` section.
+
+!! Wait for preview - takes time for download !!
+
+<div align="center">
+<img src="img/font-2.gif" alt="font-2.gif" width="900px">
+</div>
