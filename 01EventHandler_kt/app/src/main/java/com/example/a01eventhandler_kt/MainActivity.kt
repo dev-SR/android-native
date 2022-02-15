@@ -9,18 +9,36 @@ import android.widget.Toast
 import com.example.a01eventhandler_kt.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    //Names _, __, ___, ..., are reserved in Kotlin
+    private lateinit var vb: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
         setContentView(view)
 
-        binding.btnSubmit.setOnClickListener {
-            var name = binding.etName.text.toString();
-            Toast.makeText(this, name, Toast.LENGTH_LONG).show()
+        // 1
+        vb.btnSubmit.setOnClickListener {
+            var name = vb.etName.text.toString();
+            Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
         }
+
+        // 2. using Scope functions - with
+        with(vb) {
+            btnSubmit.setOnClickListener {
+                var name = vb.etName.text.toString();
+                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            }
+        }
+        // 3. using Scope functions - apply
+        vb.apply {
+            btnSubmit.setOnClickListener {
+                var name = vb.etName.text.toString();
+                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            }
+        }
+
 
     }
 }
