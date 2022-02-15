@@ -676,6 +676,8 @@ In the below-animated figure, you can see after setting the visibility of the gr
 <img src="img/btn.png" alt="btn.png" width="700px">
 </div>
 
+Icon Button using `MaterialButton` and `app:icon` attributes:
+
 ```xml
 <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
@@ -691,6 +693,24 @@ In the below-animated figure, you can see after setting the visibility of the gr
         app:strokeColor = "#673AB7"
 />
 ```
+
+`com.google.android.material.button.MaterialButton` can be changed to `Button` if `Theme.MaterialComponents..` theme is used.
+
+`android:drawableLeft`, `android:drawableRight`, `android:drawableTop`, `android:drawableBottom` attributes can be used to add icon to the button.
+
+```xml
+    <Button
+        android:drawableRight="@drawable/ic_baseline_settings_24"
+        android:text="Settings" />
+
+    <Button
+        android:text="Settings"
+        app:icon="@drawable/ic_baseline_settings_24" />
+```
+
+<div align="center">
+<img src="img/btn-icon.jpg" alt="btn-icon.jpg" width="400px">
+</div>
 
 - [https://material.io/components/buttons/android](https://material.io/components/buttons/android)
 - [https://velmurugan-murugesan.medium.com/material-button-in-android-e4391a243b17](https://velmurugan-murugesan.medium.com/material-button-in-android-e4391a243b17)
