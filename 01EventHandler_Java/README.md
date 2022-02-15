@@ -7,6 +7,10 @@
     - [Function Type,CallBacks in java??](#function-typecallbacks-in-java)
     - [Example Project](#example-project)
     - [Bug: Calling `getText()` inside `OnCreate()`](#bug-calling-gettext-inside-oncreate)
+  - [Jetpack View Binding 🚀🚀](#jetpack-view-binding-)
+    - [Setup View Binding](#setup-view-binding)
+    - [Usage](#usage)
+    - [Use view binding in activities](#use-view-binding-in-activities)
   - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
     - [CheckBox](#checkbox)
     - [Radio Buttons](#radio-buttons)
@@ -413,6 +417,120 @@ public class MainActivity extends AppCompatActivity {
 <div align="center">
 <img src="img/getText1.gif" alt="getText1.gif" width="900px">
 </div>
+
+## Jetpack View Binding 🚀🚀
+
+View binding is a feature that allows us to more easily write code that interacts with views. Once view binding is enabled in a module, **it generates a binding class for each XML layout file present in that module**. An instance of a binding class contains direct references to all views that have an ID in the corresponding layout.
+
+New in Android Studio 3.6, view binding gives you the ability to replace `findViewById` with **generated binding objects/classes** to simplify code, remove bugs, and avoid all the boilerplate of `findViewById`.
+
+TL;DR:
+
+- Enable view binding in `build.gradle`
+- View binding **generates a binding object for every layout** in your module (`activity_awesome.xml` → `ActivityAwesomeBinding.java`,  `result_profile.xml` -> `ResultProfileBinding.java`)
+-**Binding object contains one property for every view with an `id`** in the layout — with the correct type and null-safety
+- Full support for both the `Java` programming language and `Kotlin`
+
+Main advantages:
+
+- `Null safety`: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
+- `Type safety`: All the View binding fields are generated matching the same type as the ones referenced in XML, so there’s no need to typecast. This means that the risk of a class cast exception is much lower, since If for some reason your layout and code doesn’t match, the build will fail at compile time instead at runtime.
+- `Speed`: it doesn’t have any build time speed impact since it does not use annotation processors like ButterKnife or DataBinding.
+
+### Setup View Binding
+
+To enable view binding in a module, set the viewBinding build option to true in the module-level `build.gradle ` file.
+
+```xml
+android {
+    ...
+    buildFeatures {
+        viewBinding true
+    }
+}
+```
+
+### Usage
+
+Once enabled for a project, view binding will **generate a binding class** for all of your layouts automatically. You don’t have to make changes to your XML — it’ll automatically work with your existing layouts.
+
+You can use the b**inding class**whenever you inflate layouts such as `Fragment`, `Activity`, or even a `RecyclerView` `Adapter` (or `ViewHolder`).
+
+For example, given a layout file called `loginpage_layout.xml`:
+
+```java
+    <EditText
+        android:id="@+id/etEmail" />
+
+    <EditText
+        android:id="@+id/etPass" />
+
+    <Button
+        android:id="@+id/btnLogin"/>
+
+    <Button
+        android:id="@+id/btnReset"
+           />
+```
+
+The generated binding class is called `LoginpageLayoutBinding` (from `loginpage_layout.xml`). This class has  fields: EditTexts - `etEmail`,`etPass` Buttons - `btnLogin`,`btnReset`.
+
+Every binding class also includes a `getRoot()` method, providing a direct reference for the root view of the corresponding layout file. In this example, the `getRoot()` method in the `LoginpageLayoutBinding` class returns the `ConstraintLayoutroot` view.
+
+### Use view binding in activities
+
+To use View Binding in Activity, **create an instance of the binding clas**s, get the root view, and pass it to `setContentView()`.
+
+```java
+public class MainActivity extends AppCompatActivity {
+    private LoginpageLayoutBinding _;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ = LoginpageLayoutBinding.inflate(getLayoutInflater());
+        View view = _.getRoot();
+        setContentView(view);
+
+        _.btnLogin.setOnClickListener(v -> {
+            String email = _.etEmail.getText().toString();
+            String pass = _.etPass.getText().toString();
+            Toast.makeText(getApplicationContext(), email
+                    + " " + pass, Toast.LENGTH_SHORT).show();
+        });
+
+   }
+}
+```
+
+equivalent to:
+
+```java
+public class MainActivity extends AppCompatActivity {
+    Button btnLogin, btnReset;
+    EditText etEmail, etPass;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.loginpage_layout);
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        etPass = (EditText) findViewById(R.id.etPass);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnReset = (Button) findViewById(R.id.btnReset);
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = etEmail.getText().toString();
+                String pass = etPass.getText().toString();
+                Toast.makeText(getApplicationContext(), email
+                        + " " + pass, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+```
+
 
 ## Working with Different Types of Input Views
 
