@@ -1,7 +1,64 @@
 # Event Handling in Android - Kotlin
 
 - [Event Handling in Android - Kotlin](#event-handling-in-android---kotlin)
+  - [Basic Event Handling](#basic-event-handling)
   - [View Binding](#view-binding)
+
+## Basic Event Handling
+
+`activity_main.xml`
+
+```xml
+<EditText
+        android:id="@+id/etName" />
+
+<Button
+        android:id="@+id/btnSubmit"
+ />
+```
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val etName = findViewById<EditText>(R.id.etName)
+        val btnSubmit: Button = findViewById(R.id.btnSubmit)
+
+        //Using object - anonymous inner class
+        btnSubmit.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                var name = etName.text.toString();
+                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            }
+
+        })
+
+        //Using lambda
+        btnSubmit.setOnClickListener {
+            TODO("Not yet implemented")
+        }
+
+        //Using scope function
+        with(btnSubmit) {
+
+            setOnClickListener {
+                TODO("Not yet implemented")
+            }
+        }
+        //or
+        btnSubmit.apply {
+            setOnClickListener {
+                TODO("Not yet implemented")
+            }
+        }
+    }
+}
+```
+
+
 
 ## View Binding
 
