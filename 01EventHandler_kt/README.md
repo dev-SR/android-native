@@ -76,3 +76,15 @@ class MainActivity : AppCompatActivity() {
 
 - [https://howtodoandroid.com/view-binding-android/](https://howtodoandroid.com/view-binding-android/)
 - [https://developer.android.com/topic/libraries/view-binding#kts](https://developer.android.com/topic/libraries/view-binding#kts)
+
+> Kotlin Android Extensions is deprecated, which means that using Kotlin `synthetics` for view binding is no longer supported. If your app uses Kotlin synthetics for view binding, use this guide to migrate to `Jetpack` view binding.
+
+```kotlin
+// Reference to "name" TextView using `synthetic` properties.
+`name`.text = viewModel.nameString
+
+// Reference to "name" TextView using the `binding` class instance.
+`binding`.`name`.text = viewModel.nameString
+```
+
+[https://developer.android.com/topic/libraries/view-binding/migration](https://developer.android.com/topic/libraries/view-binding/migration)
