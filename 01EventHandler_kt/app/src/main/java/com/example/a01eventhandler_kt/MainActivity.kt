@@ -2,17 +2,25 @@ package com.example.a01eventhandler_kt
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.Toast
+import com.example.a01eventhandler_kt.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Hide the status bar.
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-        // Remember that you should never show the action bar if the
-        // status bar is hidden, so hide that too if necessary.
-        actionBar?.hide()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.btnSubmit.setOnClickListener {
+            var name = binding.etName.text.toString();
+            Toast.makeText(this, name, Toast.LENGTH_LONG).show()
+        }
 
     }
 }
