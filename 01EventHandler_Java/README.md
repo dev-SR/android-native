@@ -5,7 +5,8 @@
   - [Android View Binding - Button setOnclickListener](#android-view-binding---button-setonclicklistener)
     - [Introduction to Function Type, Callbacks - typescript/react](#introduction-to-function-type-callbacks---typescriptreact)
     - [Function Type,CallBacks in java??](#function-typecallbacks-in-java)
-  - [Example Project](#example-project)
+    - [Example Project](#example-project)
+    - [Bug: Calling `getText()` inside `OnCreate()`](#bug-calling-gettext-inside-oncreate)
   - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
     - [CheckBox](#checkbox)
     - [Radio Buttons](#radio-buttons)
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-## Example Project
+### Example Project
 
 <div align="center">
 <img src="img/ex1.gif" alt="ex1.gif" width="800px">
@@ -347,6 +348,71 @@ It is not possible to set the gravity of toast in android 11 because this method
 
 }
 ```
+
+### Bug: Calling `getText()` inside `OnCreate()`
+
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    EditText etEmail;
+    Button btnLogin;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.loginpage_layout);
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+
+        // Calling `getText()` inside `OnCreate()`
+        String email = etEmail.getText().toString();
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // then referring `email` inside `onClick()`
+                Log.d("BTN", "Login Successful: " + email);
+            }
+        });
+    }
+}
+```
+
+But as we run the application and we see the log, we can see that the `email` is not available.
+
+<div align="center">
+<img src="img/getText.gif" alt="getText.gif" width="900px">
+</div>
+
+Beacuse `getText()` is called inside `OnCreate()` which is a `protected` method. Whereas, `OnClick()` is a `public` method. So, we can't access `email` inside `OnClick()`.
+
+To solve this problem, we have to use `getText().toString()` inside `OnCreate()` and then refer it inside `OnClick()`.
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    EditText etEmail;
+    Button btnLogin;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.loginpage_layout);
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+
+        btnLogin.setOnClickListener(view -> {
+            String email = etEmail.getText().toString();
+            Log.d("BTN", "Login Successful: " + email);
+        });
+    }
+}
+```
+
+<div align="center">
+<img src="img/getText1.gif" alt="getText1.gif" width="900px">
+</div>
 
 ## Working with Different Types of Input Views
 
