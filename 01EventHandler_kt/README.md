@@ -36,8 +36,6 @@ For example, given a layout file called `activity_main.xml`. The generated bindi
 To use View Binding in Activity, create **an instance of the binding class**(`ActivityMainBinding`), get the root view, and pass it to `setContentView()`.
 
 ```kotlin
-import com.example.a01eventhandler_kt.databinding.ActivityMainBinding
-
 class MainActivity : AppCompatActivity() {
     //Names _, __, ___, ..., are reserved in Kotlin
     private lateinit var vb: ActivityMainBinding
@@ -48,30 +46,38 @@ class MainActivity : AppCompatActivity() {
         val view = vb.root
         setContentView(view)
 
-        // 1
+        vb.btnSubmit.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                var name = vb.etName.text.toString();
+                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+}
+```
+
+Other Possible ways of implementing `setOnClickListener()`
+
+
+```kotlin
         vb.btnSubmit.setOnClickListener {
             var name = vb.etName.text.toString();
             Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
         }
-
-        // 2. using Scope functions - with
+        // using Scope functions - with
         with(vb) {
             btnSubmit.setOnClickListener {
                 var name = vb.etName.text.toString();
                 Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
             }
         }
-        // 3. using Scope functions - apply
+        // using Scope functions - apply
         vb.apply {
             btnSubmit.setOnClickListener {
                 var name = vb.etName.text.toString();
                 Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
             }
         }
-
-
-    }
-}
 ```
 
 - [https://howtodoandroid.com/view-binding-android/](https://howtodoandroid.com/view-binding-android/)

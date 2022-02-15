@@ -17,28 +17,32 @@ class MainActivity : AppCompatActivity() {
         vb = ActivityMainBinding.inflate(layoutInflater)
         val view = vb.root
         setContentView(view)
-
-        // 1
-        vb.btnSubmit.setOnClickListener {
-            var name = vb.etName.text.toString();
-            Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
-        }
-
-        // 2. using Scope functions - with
-        with(vb) {
-            btnSubmit.setOnClickListener {
-                var name = vb.etName.text.toString();
-                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
-            }
-        }
-        // 3. using Scope functions - apply
+//
+//        vb.btnSubmit.setOnClickListener {
+//            var name = vb.etName.text.toString();
+//            Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+//        }
+//        vb.btnSubmit.setOnClickListener(object : View.OnClickListener {
+//            override fun onClick(p0: View?) {
+//                var name = vb.etName.text.toString();
+//                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+//            }
+//        })
+//
+//        // using Scope functions - with
+//        with(vb) {
+//            btnSubmit.setOnClickListener {
+//                var name = vb.etName.text.toString();
+//                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+//            }
+//        }
+        // using Scope functions - apply
         vb.apply {
             btnSubmit.setOnClickListener {
                 var name = vb.etName.text.toString();
                 Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
             }
         }
-
 
     }
 }
