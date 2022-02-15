@@ -37,6 +37,7 @@
     - [Material Button](#material-button)
     - [Gradient Button](#gradient-button)
   - [Custom Font](#custom-font)
+  - [Hide UI Bars](#hide-ui-bars)
 
 ## `View` and `ViewGroup` Objects
 
@@ -767,3 +768,42 @@ Selected font - `Inter` not yet downloaded. !!Once downloaded it will show in `p
 <div align="center">
 <img src="img/font-2.gif" alt="font-2.gif" width="900px">
 </div>
+
+## Hide UI Bars
+
+NoActionBar Theme `values/theme.xml`
+
+```xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.01EventHandler_kt" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
+</resources>
+```
+
+<div align="center">
+<img src="img/nab.jpg" alt="nab.jpg" width="350px">
+</div>
+
+Hiding StatusBar:
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Hide the status bar.
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        // Remember that you should never show the action bar if the
+        // status bar is hidden, so hide that too if necessary.
+        actionBar?.hide()
+        setContentView(R.layout.activity_main)
+
+    }
+}
+```
+
+<div align="center">
+<img src="img/nsb.jpg" alt="nsb.jpg" width="350px">
+</div>
+
+- [https://developer.android.com/training/system-ui/status](https://developer.android.com/training/system-ui/status)
