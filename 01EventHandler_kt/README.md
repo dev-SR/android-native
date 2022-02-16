@@ -3,6 +3,7 @@
 - [Event Handling in Android - Kotlin](#event-handling-in-android---kotlin)
   - [Basic Event Handling](#basic-event-handling)
   - [View Binding](#view-binding)
+    - [Snippets](#snippets)
 
 ## Basic Event Handling
 
@@ -151,3 +152,28 @@ Other Possible ways of implementing `setOnClickListener()`
 ```
 
 [https://developer.android.com/topic/libraries/view-binding/migration](https://developer.android.com/topic/libraries/view-binding/migration)
+
+### Snippets
+
+abbreviation:`vb`,  application context: `groovy,others`
+
+```groovy
+buildFeatures {
+    viewBinding true
+}
+```
+
+abbreviation:`vbk`,  application context: `kotlin`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: $BindingClass$
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = $BindingClass$.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+        $END$
+    }
+}
+```

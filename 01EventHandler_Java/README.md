@@ -11,6 +11,7 @@
     - [Setup View Binding](#setup-view-binding)
     - [Usage](#usage)
     - [Use view binding in activities](#use-view-binding-in-activities)
+    - [Snippets](#snippets)
   - [Working with Different Types of Input Views](#working-with-different-types-of-input-views)
     - [CheckBox](#checkbox)
     - [Radio Buttons](#radio-buttons)
@@ -527,6 +528,33 @@ public class MainActivity extends AppCompatActivity {
                         + " " + pass, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+}
+```
+
+### Snippets
+
+abbreviation:`vb`,  application context: `groovy,others`
+
+```groovy
+buildFeatures {
+    viewBinding true
+}
+```
+
+abbreviation:`vbj`,  application context: `kotlin`
+
+```kotlin
+public class MainActivity extends AppCompatActivity {
+    private $BindingClass$ _;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ = $BindingClass$.inflate(getLayoutInflater());
+        View view = _.getRoot();
+        setContentView(view);
+        $END$
     }
 }
 ```
