@@ -6,6 +6,10 @@ import android.os.Bundle
 import com.example.a02intents_kt.databinding.ActivityExplicitBinding
 import com.example.a02intents_kt.databinding.ActivityImplicitBinding
 
+const val KEY_1 = "Name"
+const val KEY_2 = "Age"
+const val KEY_3 = "isStudent"
+
 class ExplicitActivity : AppCompatActivity() {
     private lateinit var vb: ActivityExplicitBinding
 
@@ -16,7 +20,19 @@ class ExplicitActivity : AppCompatActivity() {
         setContentView(view)
 
         vb.btnFirst.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
+            val name: String = "jhon"
+            val age: Int = 22
+            val isStudent: Boolean = false
+//            val intent = Intent(this, SecondActivity::class.java)
+//            intent.putExtra(KEY_1, name)
+//            intent.putExtra(KEY_2, age)
+//            intent.putExtra(KEY_3, isStudent)
+            //or
+            val intent = Intent().apply {
+                putExtra(KEY_1, name)
+                putExtra(KEY_2, age)
+                putExtra(KEY_3, isStudent)
+            }
             startActivity(intent)
         }
     }

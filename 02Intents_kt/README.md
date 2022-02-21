@@ -6,6 +6,8 @@
   - [Explicit Intent](#explicit-intent)
     - [Switching Activities Using Intents](#switching-activities-using-intents)
     - [Send Data to Activities using Extras](#send-data-to-activities-using-extras)
+      - [Using `putExtra()`](#using-putextra)
+      - [Receiving Data from Intent](#receiving-data-from-intent)
   - [Implicit Intent](#implicit-intent)
 
 ## Intro
@@ -137,7 +139,7 @@ Defining launcher activity in manifest file:
 
 ```xml
 <activity
-    android:name=".ExplicitActivity"
+    android:name=".FirstActivity"
     android:exported="true">
     <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -159,7 +161,7 @@ Creating New Black Activity - `SecondActivity`:
             android:name=".SecondActivity"
             android:exported="false" />
         <activity
-            android:name=".ExplicitActivity"
+            android:name=".FirstActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -168,10 +170,10 @@ Creating New Black Activity - `SecondActivity`:
         </activity>
 ```
 
-`ExplicitActivity.kt`
+`FirstActivity.kt`
 
 ```kotlin
-class ExplicitActivity : AppCompatActivity() {
+class FirstActivity : AppCompatActivity() {
     private lateinit var vb: ActivityExplicitBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -202,7 +204,7 @@ class SecondActivity : AppCompatActivity() {
 
         vb.btnSecond.setOnClickListener {
             // Launch First Activity
-            val intent = Intent(this, ExplicitActivity::class.java)
+            val intent = Intent(this, FirstActivity::class.java)
             startActivity(intent)
         }
 
@@ -211,6 +213,81 @@ class SecondActivity : AppCompatActivity() {
 ```
 
 ### Send Data to Activities using Extras
+
+<div align="center">
+<img src="img/ex2.gif" alt="ex2.gif" width="600px">
+</div>
+
+Whenever you need data from an activity to be in another activity, you can pass data between then while starting the activities. Intents in android offers this convenient way to pass data between activities using **Extras**.
+
+#### Using `putExtra()`
+
+
+We can start adding data into the Intent object, we use the method defined in the Intent class putExtra() or `putExtras()` to store certain data as a key value pair or Bundle data object. These key-value pairs are known as Extras in the sense we are talking about Intents.
+
+We’ll see an example of storing a string in this Intent object using a key.
+
+`FirstActivity.kt`
+
+```kotlin
+const val KEY_1 = "Name"
+const val KEY_2 = "Age"
+const val KEY_3 = "isStudent"
+
+class FirstActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityExplicitBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityExplicitBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnFirst.setOnClickListener {
+            val name: String = "jhon"
+            val age: Int = 22
+            val isStudent: Boolean = false
+            //val intent = Intent(this, SecondActivity::class.java)
+            //intent.putExtra(KEY_1, name)
+            //intent.putExtra(KEY_2, age)
+            //intent.putExtra(KEY_3, isStudent)
+            //or
+            val intent = Intent().apply {
+                putExtra(KEY_1, name)
+                putExtra(KEY_2, age)
+                putExtra(KEY_3, isStudent)
+            }
+            startActivity(intent)
+        }
+    }
+}
+```
+
+#### Receiving Data from Intent
+
+`SecondActivity.kt`
+
+```kotlin
+class SecondActivity : AppCompatActivity() {
+    private lateinit var vb: ActivitySecondBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivitySecondBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        // Retrieving data from intent
+        val name: String? = intent.getStringExtra(KEY_1)
+        //Java: Intent intent = getIntent();
+        val age: Int = intent.getIntExtra(KEY_1, 0)
+        val isStudent: Boolean? = intent.getBooleanExtra(KEY_3, true)
+
+        vb.tvShow.text = "Name: $name\nAge: $age\nStudent: ${isStudent.toString()}"
+
+    }
+}
+```
 
 ## Implicit Intent
 
