@@ -4,7 +4,7 @@
   - [Intro](#intro)
   - [Intent Filters](#intent-filters)
   - [Explicit Intent](#explicit-intent)
-    - [Switching Activivtes Using Intents](#switching-activivtes-using-intents)
+    - [Switching Activities Using Intents](#switching-activities-using-intents)
     - [Send Data to Activities using Extras](#send-data-to-activities-using-extras)
   - [Implicit Intent](#implicit-intent)
 
@@ -115,10 +115,100 @@ Example:
 
 ## Explicit Intent
 
+Explicit Intent specifies the component. In such case, intent provides the external class to be invoked.
 
+```kotlin
+Intent i = new Intent(getApplicationContext(), ActivityTwo.class);
+//kotlin
+//Intent i = Intent(getApplicationContext(), ActivityTwo::class.java);
 
+startActivity(i);
+```
 
-### Switching Activivtes Using Intents
+### Switching Activities Using Intents
+
+<div align="center">
+<img src="img/ex1.gif" alt="ex1.gif" width="600px">
+</div>
+
+Defining launcher activity in manifest file:
+
+`AndroidManifest.xml`
+
+```xml
+<activity
+    android:name=".ExplicitActivity"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+```
+
+Creating New Black Activity - `SecondActivity`:
+
+<div align="center">
+<img src="img/exp1.jpg" alt="exp1.jpg" width="700px">
+</div>
+
+`AndroidManifest.xml` Now:
+
+```xml
+        <activity
+            android:name=".SecondActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExplicitActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+```
+
+`ExplicitActivity.kt`
+
+```kotlin
+class ExplicitActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityExplicitBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityExplicitBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnFirst.setOnClickListener {
+            // Launch SecondActivity
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivity(intent)
+        }
+    }
+}
+```
+
+`SecondActivity.kt`
+
+```kotlin
+class SecondActivity : AppCompatActivity() {
+    private lateinit var vb: ActivitySecondBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivitySecondBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnSecond.setOnClickListener {
+            // Launch First Activity
+            val intent = Intent(this, ExplicitActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+}
+```
 
 ### Send Data to Activities using Extras
 
