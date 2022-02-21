@@ -18,10 +18,7 @@
     - [Radio Buttons](#radio-buttons)
     - [Spinner](#spinner)
       - [Populate the Spinner with User Choices](#populate-the-spinner-with-user-choices)
-        - [pre-determined array string resource file](#pre-determined-array-string-resource-file)
-          - [Customizing Spinner Items Using Resource File](#customizing-spinner-items-using-resource-file)
       - [Creating Spinner Dynamically](#creating-spinner-dynamically)
-      - [Custom ArrayAdapter + Custom View](#custom-arrayadapter--custom-view)
 
 ## Android View Binding - Button Onclick Function
 
@@ -806,8 +803,6 @@ To populate the spinner with a list of choices, you then need to specify a `Spin
 
 The choices you provide for the spinner can come from**any source**, but must be provided through an `SpinnerAdapter`, such as an `ArrayAdapter` if the choices are available in an `array` or a `CursorAdapter` if the choices are available from a database query.
 
-##### pre-determined array string resource file
-
 For instance, if the available choices for your spinner are **pre-determined**, you can provide them with a **string array** defined in a **string resource** file:
 
 `spinner_layout.xml`
@@ -832,7 +827,6 @@ For instance, if the available choices for your spinner are **pre-determined**, 
 ```
 
 With an array such as this one, you can use the following code in your `Activity` or `Fragment` to supply the spinner with the array using an instance of `ArrayAdapter`:
-
 
 ```java
         Spinner spinner = findViewById(R.id.spinner);
@@ -859,80 +853,6 @@ With an array such as this one, you can use the following code in your `Activity
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
-```
-
-###### Customizing Spinner Items Using Resource File
-
-<div align="center">
-<img src="img/cs-2.jpg" alt="cs-2.jpg" width="400px">
-</div>
-
-Changing text size on the `<Spinner>` tag has no effect on the actual dropdown items. To change their styles, you need to create a custom array adapter and layout file. First, you should create a spinner_item1.xml
-
-`custom_spinner.xml`
-
-<div align="center">
-<img src="img/cs.jpg" alt="cs.jpg" width="400px">
-</div>
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    style="?attr/spinnerDropDownItemStyle"
-    android:singleLine="true"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/dropdownListPreferredItemHeight"
-    android:ellipsize="marquee"
-    android:textColor="@android:color/white"
-    android:background="@drawable/abc_spinner_mtrl_am_alpha"
-    android:backgroundTint="@android:color/white"/>
-```
-
-Hiding default `background` and `backgroundTint`:
-
-`activity_main.xml`
-
-```xml
-<Spinner
-        android:id="@+id/spinner"
-        android:entries="@array/planets_array"
-        android:background="@android:color/white"
-        android:spinnerMode="dialog"
-/>
-```
-
-`custom_spinner_dropdown.xml`
-
-<div align="center">
-<img src="img/cs-1.jpg" alt="cs-1.jpg" width="400px">
-</div>
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    style="?attr/spinnerDropDownItemStyle"
-    android:singleLine="true"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/dropdownListPreferredItemHeight"
-    android:ellipsize="marquee"
-    android:textColor="@android:color/holo_blue_light"
-    android:background="@android:color/white"
-    android:textAlignment="center"/>
-```
-
-In main activity:
-
-```java
-        setContentView(R.layout.activity_main);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, R.layout.custom_spinner);
-        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
-        spinner.setAdapter(adapter);
 ```
 
 #### Creating Spinner Dynamically
@@ -968,193 +888,6 @@ In main activity:
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d("BTN", spinner.getItemAtPosition(i).toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-```
-
-#### Custom ArrayAdapter + Custom View
-
-<div align="center">
-<img src="img/csss.jpg" alt="csss.jpg" width="400px">
-</div>
-
-`layout/spinner_layout.xml`
-
-```xml
-<Spinner
-        android:id="@+id/spinner"
- />
-```
-
-`layout/item_fruit.xml`
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="8dp"
-        android:src="@drawable/orange" />
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="8dp"
-        android:layout_toRightOf="@+id/image"
-        android:text="Name" />
-
-</RelativeLayout>
-```
-
-<div align="center">
-<img src="img/sss.jpg" alt="sss.jpg" width="400px">
-</div>
-
-`Fruit.java`
-
-```java
-public class Fruit {
-    private String name;
-    private int image;
-    public Fruit() {}
-    public String getName() {return name;}
-    public void setName(String name) {
-        this.name = name;
-    }
-    public int getImage() {
-        return image;
-    }
-    public void setImage(int image) {
-        this.image = image;
-    }
-}
-```
-
-`Data.java`
-
-```java
-public class Data {
-
-    public static List<Fruit> getFruitList() {
-        List<Fruit> fruitList = new ArrayList<>();
-
-        Fruit Avocado = new Fruit();
-        Avocado.setName("Avocado");
-        Avocado.setImage(R.drawable.avocado);
-        fruitList.add(Avocado);
-
-        Fruit Banana = new Fruit();
-        Banana.setName("Banana");
-        Banana.setImage(R.drawable.banana);
-        fruitList.add(Banana);
-
-        Fruit Coconut = new Fruit();
-        Coconut.setName("Coconut");
-        Coconut.setImage(R.drawable.coconut);
-        fruitList.add(Coconut);
-
-        Fruit Guava = new Fruit();
-        Guava.setName("Guava");
-        Guava.setImage(R.drawable.guava);
-        fruitList.add(Guava);
-
-        Fruit Lemon = new Fruit();
-        Lemon.setName("Lemon");
-        Lemon.setImage(R.drawable.lemon);
-        fruitList.add(Lemon);
-
-        Fruit Mango = new Fruit();
-        Mango.setName("Mango");
-        Mango.setImage(R.drawable.mango);
-        fruitList.add(Mango);
-
-        Fruit Orange = new Fruit();
-        Orange.setName("Orange");
-        Orange.setImage(R.drawable.orange);
-        fruitList.add(Orange);
-
-        return fruitList;
-    }
-}
-```
-
-`FruitAdapter.java`
-
-
-```java
-public class FruitAdapter extends BaseAdapter {
-    private Context context;
-    private List<Fruit> fruitList;
-    public FruitAdapter(Context context, List<Fruit> fruitList) {
-        this.context = context;
-        this.fruitList = fruitList;
-    }
-
-    @Override
-    public int getCount() {
-        return fruitList != null ? fruitList.size() : 0;
-    }
-    @Override
-    public Object getItem(int i) {
-        return i;
-    }
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-    /**
-     `getView` method will return the final view that a Spinner will set to it’s row’s ith (first parameter) position.  If Spinner has six rows then compiler will this method for six times. In every iteration,
-     compiler will fetch or inflate the XML file which will provide UI widgets (Textview, Button, ImageView etc.)
-     for the row item. Then it will set the appropriate values to the UI widgets (Textview, Button, ImageView etc.)
-     */
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        /** When you write an XML layout, it will be inflated by the Android OS which basically
-         * means that it will be rendered by creating view object in memory.
-
-         You can also inflate views explicitly by using the LayoutInflater. In that case you have to:
-         In that case you have to:
-         */
-        //1. Get an instance of the LayoutInflater
-        //2. Specify the XML to inflate
-        View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.item_fruit, viewGroup, false);
-        //3. Use the returned RootView to get it's children
-        TextView txtName = rootView.findViewById(R.id.name);
-        ImageView image = rootView.findViewById(R.id.image);
-        //4. Set the content view with returned view
-        txtName.setText(fruitList.get(i).getName());
-        image.setImageResource(fruitList.get(i).getImage());
-
-        return rootView;
-    }
-}
-```
-
-`MainActivity.java`
-
-```java
-        setContentView(R.layout.spinner_layout);
-        Spinner spinner = findViewById(R.id.spinner);
-
-        FruitAdapter fruitAdapter = new FruitAdapter(getApplicationContext(), Data.getFruitList());
-        spinner.setAdapter(fruitAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("BTN",Data.getFruitList().get(i).getName());
             }
 
             @Override
