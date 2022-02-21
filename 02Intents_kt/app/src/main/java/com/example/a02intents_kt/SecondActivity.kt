@@ -21,7 +21,10 @@ class SecondActivity : AppCompatActivity() {
         val age: Int = intent.getIntExtra(KEY_1, 0)
         val isStudent: Boolean? = intent.getBooleanExtra(KEY_3, true)
 
-        vb.tvShow.text = "Name: $name\nAge: $age\nStudent: ${isStudent.toString()}"
+        name?.let {
+            vb.tvShow.text = "Name: $it\nAge: $age\nStudent: ${isStudent.toString()}"
+        }
+
 
     }
 }
