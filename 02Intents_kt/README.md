@@ -9,6 +9,8 @@
       - [Using `putExtra()`](#using-putextra)
       - [Receiving Data from Intent](#receiving-data-from-intent)
   - [Implicit Intent](#implicit-intent)
+  - [Runtime Permissions](#runtime-permissions)
+    - [Phone Calls](#phone-calls)
 
 ## Intro
 
@@ -65,7 +67,6 @@ startActivity(i);
 Implicit Type of Intents are those that do not mention any component name and only declare the actions.
 
 Implicit Intents specifies these actions that are to be performed. These actions can invoke any application component that can perform these actions. These are useful when your action is important but your application is not capable of performing it.
-
 
 <div align="center">
  <img src="img/implicit-intent.jpg" alt="implicit-intent.jpg" width="600px">
@@ -222,7 +223,6 @@ Whenever you need data from an activity to be in another activity, you can pass 
 
 #### Using `putExtra()`
 
-
 We can start adding data into the Intent object, we use the method defined in the Intent class putExtra() or `putExtras()` to store certain data as a key value pair or Bundle data object. These key-value pairs are known as Extras in the sense we are talking about Intents.
 
 We’ll see an example of storing a string in this Intent object using a key.
@@ -304,9 +304,9 @@ class SecondActivity : AppCompatActivity() {
 
  How an implicit intent is delivered through the system to start another activity:
 
- - Activity `A` creates an Intent with an action description and passes it to `startActivity()`.
- - The Android System searches all apps for an intent filter that matches the intent. When a match is found,
- - the system starts the matching activity (Activity `B`) by invoking its `onCreate()` method and passing it the Intent.
+- Activity `A` creates an Intent with an action description and passes it to `startActivity()`.
+- The Android System searches all apps for an intent filter that matches the intent. When a match is found,
+- the system starts the matching activity (Activity `B`) by invoking its `onCreate()` method and passing it the Intent.
 
 - [https://developer.android.com/guide/components/intents-common](https://developer.android.com/guide/components/intents-common)
 - [https://developer.android.com/guide/components/intents-filters](https://developer.android.com/guide/components/intents-filters)
@@ -420,3 +420,333 @@ Custom Function For Sending Email:
 
 - [https://developer.android.com/guide/components/intents-common#ComposeEmail](https://developer.android.com/guide/components/intents-common#ComposeEmail)
 - [https://betterprogramming.pub/the-imperfect-android-send-email-action-59610dfd1c2d](https://betterprogramming.pub/the-imperfect-android-send-email-action-59610dfd1c2d)
+
+## Runtime Permissions
+
+[https://developer.android.com/training/permissions/requesting](https://developer.android.com/training/permissions/requesting)
+
+### Phone Calls
+
+```kotlin
+class PhoneCallActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityPhoneCallBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityPhoneCallBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnCall.setOnClickListener {
+            makePhoneCall()
+        }
+    }
+
+    private fun makePhoneCall() {
+        val intent = Intent().apply {
+            action = ACTION_CALL
+            data = Uri.parse("tel: 999")
+        }
+        startActivity(intent)
+    }
+}
+```
+
+But app fails to run as permission is required.
+
+<div align="center">
+<img src="img/rp.gif" alt="rp.gif" width="800px">
+</div>
+
+Starting from Android 6.0 (API 23), users are not asked for permissions at the time of installation rather developers need to request the permissions at the run time. Only the permissions that are defined in the manifest file can be requested at run time.
+
+Declare the permission in the Android Manifest file: In Android, permissions are declared in the `AndroidManifest.xml` file using the `uses-permission` tag.
+
+```xml
+<uses-permission android:name="android.permission.PERMISSION_NAME"/>
+
+<!--Declaring the required permissions-->
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.CAMERA" />
+```
+
+For Phone Call Permission:
+
+```xml
+<manifest>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <application >
+        <activity
+            <intent-filter>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+```
+
+<div align="center">
+    <img src="img/rp.gif" alt="rp.gif" width="800px">
+</div>
+
+Workflow for requesting permissions:
+
+1. Check if the permission is already granted.
+2. If not, request the permission.
+3. If the permission is granted, do the task.
+
+
+```kotlin
+const val CALL_PERMISSION_CODE = 121
+
+class PhoneCallActivity : AppCompatActivity() {
+    //..
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //...
+        vb.btnCall.setOnClickListener {
+            //makePhoneCall()
+            makeCallAfterPermission()
+        }
+    }
+    private fun makeCallAfterPermission() {
+        // Check if Permission Already Granted
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Yes: makeCall
+            makePhoneCall()
+        } else {
+            // NO: request for permission
+            requestCallPermission()
+        }
+    }
+
+    private fun requestCallPermission() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.CALL_PHONE),
+            CALL_PERMISSION_CODE
+        )
+    }
+}
+```
+
+<div align="center">
+<img src="img/rp1.gif" alt="rp1.gif" width="800px">
+</div>
+
+we can see now that we are requesting for the permission. **But nothings happens as we are not handling the result - user `allows` or `denies` the permission.**
+
+`onRequestPermissionsResult()` is called when user grant or decline the permission. `RequestCode` is one of the parameters of this function which is used to check user action for the corresponding requests. Here a toast message is shown indicating the permission and user action.
+
+Syntax:
+
+```kotlin
+override fun onRequestPermissionsResult(requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+    when (requestCode) {
+        PERMISSION_REQUEST_CODE -> {
+            // If request is cancelled, the result arrays are empty.
+            if ((grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission is granted. Continue the action or workflow
+                // in your app.
+            } else {
+                // Explain to the user that the feature is unavailable because
+                // the features requires a permission that the user has denied.
+                // At the same time, respect the user's decision. Don't link to
+                // system settings in an effort to convince the user to change
+                // their decision.
+            }
+            return
+        }
+
+        // Add other 'when' lines to check for other
+        // permissions this app might request.
+        else -> {
+            // Ignore all other requests.
+        }
+    }
+}
+```
+
+for our example:
+
+```kotlin
+const val CALL_PERMISSION_CODE = 121
+class PhoneCallActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //...
+        vb.btnCall.setOnClickListener {
+            makeCallAfterPermission()
+        }
+    }
+
+    //...
+    private fun requestCallPermission() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.CALL_PHONE),
+            CALL_PERMISSION_CODE
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CALL_PERMISSION_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                makePhoneCall()
+            } else {
+                Toast.makeText(this, "Permission denied to make phone call", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+}
+```
+
+<div align="center">
+<img src="img/rp2.gif" alt="rp2.gif" width="800px">
+</div>
+
+Still we are not handling user declination of the permission. In that case we need to **explain why your app needs the permission and ask the user to grant the permission**.
+
+<div align="center">
+<img src="img/rp3.gif" alt="rp3.gif" width="800px">
+</div>
+
+`Rationale` is an android library that helps manage permission request. With Rationale, the permission flow can be reduced to :
+
+<div align="center">
+    <img src="img/rational.jpg" alt="rational.jpg" width="800px">
+</div>
+
+```kotlin
+    private fun requestCallPermission(view: View) {
+//        ActivityCompat.requestPermissions(
+//            this, arrayOf(Manifest.permission.CALL_PHONE),
+//            CALL_PERMISSION_CODE
+//        )
+        // Explain why your app needs the permission
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CALL_PHONE
+            )
+        ) {
+            val snack = Snackbar.make(
+                view, "We need you permission to make. " +
+                        "When ask please give the permission", Snackbar.LENGTH_INDEFINITE
+            )
+            snack.setAction("OK", View.OnClickListener {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.CALL_PHONE),
+                    CALL_PERMISSION_CODE
+                )
+            })
+            snack.show()
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.CALL_PHONE),
+                CALL_PERMISSION_CODE
+            )
+        }
+    }
+```
+
+<div align="center">
+<img src="img/rp4.gif" alt="rp4.gif" width="800px">
+</div>
+
+Complete:
+
+
+```kotlin
+const val CALL_PERMISSION_CODE = 121
+
+class PhoneCallActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityPhoneCallBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityPhoneCallBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnCall.setOnClickListener {
+//            makePhoneCall()
+            makeCallAfterPermission(it)
+        }
+    }
+
+    private fun makePhoneCall() {
+        val intent = Intent().apply {
+            action = ACTION_CALL
+            data = Uri.parse("tel: 9990")
+        }
+        startActivity(intent)
+    }
+
+    private fun makeCallAfterPermission(view: View) {
+        // Check if Permission Already Granted
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Yes: makeCall
+            makePhoneCall()
+        } else {
+            // NO: request for permission
+            requestCallPermission(view)
+        }
+    }
+
+    private fun requestCallPermission(view: View) {
+//        ActivityCompat.requestPermissions(
+//            this, arrayOf(Manifest.permission.CALL_PHONE),
+//            CALL_PERMISSION_CODE
+//        )
+        // Explain why your app needs the permission
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CALL_PHONE
+            )
+        ) {
+            val snack = Snackbar.make(
+                view, "We need you permission to make. " +
+                        "When ask please give the permission", Snackbar.LENGTH_INDEFINITE
+            )
+            snack.setAction("OK", View.OnClickListener {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.CALL_PHONE),
+                    CALL_PERMISSION_CODE
+                )
+            })
+            snack.show()
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.CALL_PHONE),
+                CALL_PERMISSION_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CALL_PERMISSION_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                makePhoneCall()
+            } else {
+                Toast.makeText(this, "Permission denied to make phone call", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+}
+```
