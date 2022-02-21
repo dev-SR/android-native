@@ -5,13 +5,13 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.a02intents_kt.databinding.ActivityMainBinding
+import com.example.a02intents_kt.databinding.ActivityImplicitBinding
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var vb: ActivityMainBinding
+class ImplicitActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityImplicitBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vb = ActivityMainBinding.inflate(layoutInflater)
+        vb = ActivityImplicitBinding.inflate(layoutInflater)
         val view = vb.root
         setContentView(view)
 

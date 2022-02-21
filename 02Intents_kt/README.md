@@ -1,30 +1,42 @@
 # Intent
 
 - [Intent](#intent)
-	- [Intro](#intro)
-	- [Explicit Intent](#explicit-intent)
-		- [Switching Activivtes Using Intents](#switching-activivtes-using-intents)
-		- [Send Data to Activities using Extras](#send-data-to-activities-using-extras)
-	- [Implicit Intent](#implicit-intent)
+  - [Intro](#intro)
+  - [Intent Filters](#intent-filters)
+  - [Explicit Intent](#explicit-intent)
+    - [Switching Activivtes Using Intents](#switching-activivtes-using-intents)
+    - [Send Data to Activities using Extras](#send-data-to-activities-using-extras)
+  - [Implicit Intent](#implicit-intent)
 
 ## Intro
 
-Intent is an **messaging object** which passes between components like **services, content providers, activities**etc. Normally `startActivity()` method is used for invoking any activity.
+Intent is an **messaging object** which passes between components like **services, content providers, activities**etc.
 
-Some of the general functions of intent are:
+Intent performs the following three tasks mainly:
 
-- Start service
-- Launch activity
-- Display web page
-- Display contact list
-- Message broadcasting
+1. `Starting an Activity`: An Activity starts/performs a task when we pass the Intent object to the content.startActivity() method. When an intent object is passed to startActivity(), it starts a new activity or an existing one.
 
-There are two important things in intent
+2. `Starting a Service`: An Intent object is passed to the content.startService() method, to start a Service. We can also send a required request to an existing service.
+
+3. `Delivering a Broadcast`:Passing the Intent object in content.sendBroadcast(), sends messages to broadcast receivers.
+
+Any Intent object contains the following six things :
+
+- Component Name
+- Action
+- Data
+- Category
+- Extras
+- Flag
+
+Two important things in intent:
 
 - `action`: The general action to be performed, such as `ACTION_VIEW`, `ACTION_EDIT`, `ACTION_MAIN`, etc.
 - `data`: The data to operate on, such as a person record in the contacts database, is expressed as a `Uri`
 
 > Note: Uniform Resource Identifier (`URI`) is a string of characters used to identify a resource. A URI identifies a resource either by location, or a name, or both.
+
+- `Extras`: A Bundle object which contains additional information. It is just an extra key-value pair for the component.
 
 There are two types of intents in android:
 
@@ -33,7 +45,7 @@ There are two types of intents in android:
 
 **1. Explicit Intent**
 
-You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
+Explicit Type are those Intents that specifically mention the component that it targets. The Android system calls these components by explicitly mentioning them. We can use Explicit Intent for the purpose of launching an application component. For example, you might start a new activity within your app in response to a user action, or start a service to download a file in the background.
 
 <div align="center">
 <img src="img/explicit-intent.jpg" alt="explicit-intent.jpg" width="600px">
@@ -48,9 +60,10 @@ startActivity(i);
 
 **2. Implicit Intent**
 
-Implicit intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
+Implicit Type of Intents are those that do not mention any component name and only declare the actions.
 
-You don't specify the exact activity (or other component) to run—instead, you include just enough information in the intent about the task you want to perform. The Android system matches the information in your request intent with any activity available on the device that can perform that task. If there's only one activity that matches, that activity is launched. If more than one activity matches the intent, the user is presented with an app chooser and picks which app they would like to perform the task..
+Implicit Intents specifies these actions that are to be performed. These actions can invoke any application component that can perform these actions. These are useful when your action is important but your application is not capable of performing it.
+
 
 <div align="center">
  <img src="img/implicit-intent.jpg" alt="implicit-intent.jpg" width="600px">
@@ -72,7 +85,38 @@ startActivity(intent);
 
 - [https://developer.android.com/guide/components/intents-filters](https://developer.android.com/guide/components/intents-filters)
 
+## Intent Filters
+
+**Intent Filters**are expressions in the `Manifest` file of an Android Application. These are responsible for deciding the behavior of the Intent.
+
+- Implicit intent uses the intent filter to serve the user request.
+- The intent filter specifies the types of intents that an activity, service, or broadcast receiver can respond.
+- Intent filters are declared in the Android manifest file.
+- Intent filter must contain `<action>`
+
+Generally, the Intent Filters (`<intent-filter>`) whatever we define in the manifest file can be nested in the corresponding app components and we can specify the type of intents to accept using these three elements.
+
+- `<action>`: It defines the name of an intended action to be accepted and it must be a literal string value of an action, not the class constant.
+- `<category>`: It defines the name of an intent category to be accepted and it must be the literal string value of an action, not the class constant.
+- `<data>`: It defines the type of data to be accepted and by using one or more attributes we can specify various aspects of the data URI (scheme, host, port, path) and MIME type.
+
+Example:
+
+```xml
+<activity
+    android:name=".MainActivity"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity
+```
+
 ## Explicit Intent
+
+
+
 
 ### Switching Activivtes Using Intents
 
@@ -96,7 +140,6 @@ startActivity(intent);
 
 - [https://developer.android.com/guide/components/intents-common](https://developer.android.com/guide/components/intents-common)
 - [https://developer.android.com/guide/components/intents-filters](https://developer.android.com/guide/components/intents-filters)
-
 
 ```xml
     <Button
@@ -172,8 +215,8 @@ class MainActivity : AppCompatActivity() {
 <activity>
  <intent-filter>
   <action android:name="android.intent.action.SENDTO" />
-  <data android:scheme="mailto" />
   <category android:name="android.intent.category.DEFAULT" />
+  <data android:scheme="mailto" />
  </intent-filter>
 </activity>
 ```

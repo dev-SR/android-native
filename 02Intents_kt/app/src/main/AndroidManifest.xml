@@ -10,16 +10,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.02Intents_kt">
         <activity
-            android:name=".MainActivity"
+            android:name=".ExplicitActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ImplicitActivity"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
-                <data android:scheme="mailto" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="mailto" />
             </intent-filter>
         </activity>
     </application>
