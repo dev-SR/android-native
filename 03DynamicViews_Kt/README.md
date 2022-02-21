@@ -4,6 +4,7 @@
   - [Dynamic Views and LayoutInflater](#dynamic-views-and-layoutinflater)
     - [`inflate()` in details](#inflate-in-details)
   - [EX: Custom Spinner - Java](#ex-custom-spinner---java)
+    - [BaseAdapter](#baseadapter)
 
 ## Dynamic Views and LayoutInflater
 
@@ -178,6 +179,20 @@ rootView.addView(footerView)
 <img src="img/csss.jpg" alt="csss.jpg" width="400px">
 </div>
 
+### BaseAdapter
+
+BaseAdapter is a generic class that provides a simple interface to display a list of data. It is an abstract class that must be extended to provide implementations for the `getView()` and `getItem()` methods. `getView()` method is called by the Spinner for each row.
+
+<div align="center">
+<img src="img/adpt.png" alt="adpt.png" width="800px">
+</div>
+
+The principle of listview data display is actually MVC design mode, as shown in the following figure:
+
+- `Model (model)`– data set, used to store data organization
+- `View (view)` – listview/spinner, responsible for data display
+- `Controller (controller)` -Manage the model and set which specific data to display
+
 `layout/spinner_layout.xml`
 
 ```xml
@@ -285,6 +300,7 @@ public class Data {
 }
 ```
 
+
 `FruitAdapter.java`
 
 ```java
@@ -309,9 +325,7 @@ public class FruitAdapter extends BaseAdapter {
         return i;
     }
     /**
-     `getView` method will return the final view that a Spinner will set to it’s row’s ith (first parameter) position.  If Spinner has six rows then compiler will this method for six times. In every iteration,
-     compiler will fetch or inflate the XML file which will provide UI widgets (Textview, Button, ImageView etc.)
-     for the row item. Then it will set the appropriate values to the UI widgets (Textview, Button, ImageView etc.)
+     //Get the display content of each line item.
      */
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
