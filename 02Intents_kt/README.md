@@ -9,8 +9,9 @@
       - [Using `putExtra()`](#using-putextra)
       - [Receiving Data from Intent](#receiving-data-from-intent)
   - [Implicit Intent](#implicit-intent)
-  - [Runtime Permissions](#runtime-permissions)
-    - [Phone Calls](#phone-calls)
+  - [Permissions](#permissions)
+    - [Normal Permissions: ex Network Connectivity.](#normal-permissions-ex-network-connectivity)
+    - [Run-Time Permissions: ex -> Phone Calls](#run-time-permissions-ex---phone-calls)
 
 ## Intro
 
@@ -421,11 +422,58 @@ Custom Function For Sending Email:
 - [https://developer.android.com/guide/components/intents-common#ComposeEmail](https://developer.android.com/guide/components/intents-common#ComposeEmail)
 - [https://betterprogramming.pub/the-imperfect-android-send-email-action-59610dfd1c2d](https://betterprogramming.pub/the-imperfect-android-send-email-action-59610dfd1c2d)
 
-## Runtime Permissions
+## Permissions
 
-[https://developer.android.com/training/permissions/requesting](https://developer.android.com/training/permissions/requesting)
+- [https://developer.android.com/guide/topics/manifest/manifest-intro](https://developer.android.com/guide/topics/manifest/manifest-intro)
+- [https://developer.android.com/guide/topics/permissions/overview](https://developer.android.com/guide/topics/permissions/overview)
+- [https://developer.android.com/training/permissions/requesting](https://developer.android.com/training/permissions/requesting)
 
-### Phone Calls
+### Normal Permissions: ex Network Connectivity.
+
+Every app project must have an `AndroidManifest.xml` file (with precisely that name) at the root of the project source set. The manifest file describes essential information about your app to the Android build tools, the Android operating system, and Google Play.
+
+Beginning with Android 6.0 (API level 23), the user can approve or reject some app permisions at runtime. But no matter which Android version your app supports, you must declare all permission requests with a `<uses-permission>` element in the manifest. If the permission is granted, the app is able to use the protected features. If not, its attempts to access those features fail.
+
+Your app can also protect its own components with permissions. It can use any of the permissions that are defined by Android, as listed in android.Manifest.permission, or a permission that's declared in another app. Your app can also define its own permissions. A new permission is declared with the `<permission>` element.
+
+`AndroidManifest.xml`
+
+```xml
+<manifest>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application >
+        <activity
+            <intent-filter>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+```
+
+```kotlin
+class NetworkActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityNetworkBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityNetworkBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnStatusBar.setOnClickListener {
+            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = cm.activeNetworkInfo
+            val isConnected: Boolean = networkInfo != null && networkInfo.isConnected
+            vb.tvStatus.text = if (isConnected) "Connected" else "Disconnected"
+        }
+    }
+}
+```
+
+<div align="center">
+<img src="img/np.jpg" alt="np.jpg" width="400px">
+</div>
+
+### Run-Time Permissions: ex -> Phone Calls
 
 ```kotlin
 class PhoneCallActivity : AppCompatActivity() {
