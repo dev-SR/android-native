@@ -308,5 +308,5 @@ Output:
 ```
 
 <div align="center">
-<img src="img/fclvjpg" alt="fclvjpg" width="400px">
+<img src="img/fclv.jpg" alt="fclvjpg" width="400px">
 </div>
