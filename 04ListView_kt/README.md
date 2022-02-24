@@ -1,12 +1,18 @@
 # ListView
 
 - [ListView](#listview)
-	- [Adapters: Servants of the ListView](#adapters-servants-of-the-listview)
-		- [Defining the Layout of the ListView’s Rows:](#defining-the-layout-of-the-listviews-rows)
-		- [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout)
-		- [Defining the `ArrayAdapter`](#defining-the-arrayadapter)
-		- [`setOnItemClickListener`](#setonitemclicklistener)
-	- [Custom Adapter for ListView](#custom-adapter-for-listview)
+  - [Adapters: Servants of the ListView](#adapters-servants-of-the-listview)
+    - [Defining the Layout of the ListView’s Rows:](#defining-the-layout-of-the-listviews-rows)
+    - [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout)
+    - [Defining the `ArrayAdapter`](#defining-the-arrayadapter)
+    - [`setOnItemClickListener`](#setonitemclicklistener)
+  - [Custom Adapter for ListView](#custom-adapter-for-listview)
+    - [Why Custom Array Adapter??](#why-custom-array-adapter)
+    - [Defining the Layout of the ListView’s Rows](#defining-the-layout-of-the-listviews-rows-1)
+    - [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout-1)
+    - [Defining Model Class](#defining-model-class)
+    - [Building Adapters](#building-adapters)
+
 ## Adapters: Servants of the ListView
 
 <div align="center">
@@ -113,6 +119,194 @@ public ArrayAdapter(this, R.layout.itemListView, R.id.itemTextView, T[] objects)
 
 ## Custom Adapter for ListView
 
+### Why Custom Array Adapter??
+
+Android framework by default provides us the ability to create **listItems which includes only a single information or a single** `TextView`. But we always come across apps that show multiple information in a single ListItem such as Instagram, BookMyShow, Whatsapp and many more. In this case, we need to create our own custom adapter to display multiple information in a single ListItem.
+
+### Defining the Layout of the ListView’s Rows
+
+`movie_list_item.xml`
+
+```xml
+<ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imgvPoster"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/finding_nemo"/>
+
+    <TextView
+        android:id="@+id/tvMovieName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Finding Nemo"/>
+
+    <TextView
+        android:id="@+id/tvRelease"
+        android:text="Release Date:" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:text="10/1/2020" />
+</ConstraintLayout>
+```
+
 <div align="center">
- <img src="img/clv.jpg" alt="clv.jpg" width="1000px">
+<img src="img/clvi.jpg" alt="clvi.jpg" width="400px">
+</div>
+
+### Defining the `ListView` in Main Layout
+
+`activity_main.xml`
+
+```xml
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/lvMovies"
+        tools:listitem="@layout/movie_list_item"
+  		android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>
+```
+
+<div align="center">
+<img src="img/clvlv.jpg" alt="clvlv.jpg" width="400px">
+</div>
+
+### Defining Model Class
+
+`Movie.kt`
+
+```kotlin
+class Movie(
+     var movie_name: String,
+     var release_date: String,
+     var img_src: Int
+) {
+    companion object {
+        fun getMovieList(): Array<Movie> {
+            return arrayOf(
+                Movie(
+                    "Harry Potter and the Sorcerer's Stone",
+                    "2006_05_30",
+                    R.drawable.harry_potter_and_the_sorcerers_stone_poster
+                ),
+                Movie("Finding Nemo", "2003_05_30", R.drawable.finding_nemo),
+                Movie(
+                    "How to Train Your Dragon",
+                    "2010_03_26",
+                    R.drawable.how_to_train_your_dragon_poster
+                ),
+                Movie("Homeward Bound: The Incredible Journey", "1995_11_22", R.drawable.toy_story),
+                Movie("WALL_E", "2008_06_27", R.drawable.walle_pi)
+            )
+        }
+    }
+}
+```
+
+### Building Adapters
+
+Define a custom adapter class with the following:
+
+`MovieAdapter.kt`
+
+```kotlin
+class MovieAdapter(
+    private val context: Context,
+    private val movieList: Array<Movie>
+) :
+    BaseAdapter() {
+
+}
+```
+
+Your next step is to implement the adapter methods. Kick it off by placing the following code :
+
+```kotlin
+class MovieAdapter(
+    private val context: Context,
+    private val movieList: Array<Movie>
+) :
+    BaseAdapter() {
+	//1
+    override fun getCount(): Int {
+        return dataSource.size
+    }
+
+	//2
+    override fun getItem(position: Int): Any {
+       return dataSource[position]
+    }
+
+	//3
+    override fun getItemId(position: Int): Long {
+         return position.toLong()
+    }
+
+	//4
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        // get/create/inflate View from XML
+        val rowView = LayoutInflater.from(context).inflate(R.layout.movie_list_item, parent, false)
+        return rowView
+    }
+}
+```
+
+
+Here’s a step-by-step breakdown:
+
+1. `getCount()` **lets ListView know how many items to display**, or in other words, it returns the size of your data source.
+2. `getItem()` **returns an item to be placed in a given position from the data source**, specifically, Movie objects obtained from dataSource.
+3. This implements the `getItemId()` method that **defines a unique ID for each row in the list**. For simplicity, you just use the position of the item as its ID.
+4. Finally, `getView()` **creates a view to be used as a row in the list**. Here you define what information shows and where it sits within the ListView. You also inflate a custom view from the XML layout defined in `res/layout/movie_list_item.xml`.
+
+<div align="center">
+ <img src="img/cus_listview.jpg" alt="cus_listview.jpg" width="1000px">
+</div>
+
+Set Adapter to ListView in Main Activity:
+
+```kotlin
+        val movieList: Array<Movie> = Movie.getMovieList()
+        vb.lvMovies.adapter = MovieAdapter(this, movieList)
+        // movieList.forEach { i -> Log.d("BTN", i.movie_name) }
+        vb.lvMovies.setOnItemClickListener { parent, view, position, id ->
+            val text = view.findViewById<TextView>(R.id.tvMovieName).text
+            Toast.makeText(this, "Movie: $text, Pos: ${position + 1} ", Toast.LENGTH_SHORT)
+                .show()
+        }
+```
+
+Output:
+
+<div align="center">
+<img src="img/err_lv.jpg" alt="err_lv.jpg" width="400px">
+</div>
+
+> Problem: `getView()` is returning same view for all items as we are not changing content of each row. So, we need to change/set content of each row. We can do this by accessing the subviews of the item view.
+
+
+```kotlin
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        // create View from XML
+        val rowItemView =
+            LayoutInflater.from(context).inflate(R.layout.movie_list_item, parent, false)
+        // get reference of the subviews of `movie_list_item.xml` layout
+        val tvMovieName = rowItemView.findViewById<TextView>(R.id.tvMovieName)
+        val tvReleaseDate = rowItemView.findViewById<TextView>(R.id.tvRelease)
+        val imgvPoster = rowItemView.findViewById<ImageView>(R.id.imgvPoster)
+        // set content
+        tvMovieName.text = movieList[position].movie_name
+        tvReleaseDate.text = movieList[position].release_date
+        imgvPoster.setImageResource(movieList[position].img_src)
+        return rowItemView
+    }
+```
+
+<div align="center">
+<img src="img/fclvjpg" alt="fclvjpg" width="400px">
 </div>
