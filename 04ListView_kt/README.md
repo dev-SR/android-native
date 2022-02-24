@@ -1,5 +1,12 @@
 # ListView
 
+- [ListView](#listview)
+	- [Adapters: Servants of the ListView](#adapters-servants-of-the-listview)
+		- [Defining the Layout of the ListView’s Rows:](#defining-the-layout-of-the-listviews-rows)
+		- [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout)
+		- [Defining the `ArrayAdapter`](#defining-the-arrayadapter)
+		- [`setOnItemClickListener`](#setonitemclicklistener)
+	- [Custom Adapter for ListView](#custom-adapter-for-listview)
 ## Adapters: Servants of the ListView
 
 <div align="center">
@@ -7,6 +14,12 @@
 </div>
 
 The `Adapter` acts as a bridge between the **UI Component** and the **Data Source**. It converts data from the data sources into view items that can be displayed into the UI Component. Data Source can be `Arrays`, `HashMap`, `Database`, etc. and UI Components can be `ListView`, `GridView`, Spinner, etc.
+
+The ListView asks the adapter what it should display, and the adapter jumps into action:
+
+- It fetches the items to be displayed from the data source
+- It decides how they should be displayed
+- It passes this information on to the ListView
 
 The `ArrayAdapter` takes in:
 
