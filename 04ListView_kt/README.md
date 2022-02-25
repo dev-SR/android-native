@@ -187,27 +187,41 @@ Android framework by default provides us the ability to create **listItems which
 
 ```kotlin
 class Movie(
-     var movie_name: String,
-     var release_date: String,
-     var img_src: Int
+    var movie_name: String,
+    var release_date: String,
+    var img_src: Int
 ) {
     companion object {
-        fun getMovieList(): Array<Movie> {
-            return arrayOf(
-                Movie(
-                    "Harry Potter and the Sorcerer's Stone",
-                    "2006_05_30",
-                    R.drawable.harry_potter_and_the_sorcerers_stone_poster
-                ),
-                Movie("Finding Nemo", "2003_05_30", R.drawable.finding_nemo),
-                Movie(
-                    "How to Train Your Dragon",
-                    "2010_03_26",
-                    R.drawable.how_to_train_your_dragon_poster
-                ),
-                Movie("Homeward Bound: The Incredible Journey", "1995_11_22", R.drawable.toy_story),
-                Movie("WALL_E", "2008_06_27", R.drawable.walle_pi)
-            )
+        private val MOVIES = mapOf<Int, Movie>(
+            0 to Movie(
+                "Harry Potter and the Sorcerer's Stone",
+                "2006_05_30",
+                R.drawable.harry_potter_and_the_sorcerers_stone_poster
+            ),
+            1 to Movie("Finding Nemo", "2003_05_30", R.drawable.finding_nemo),
+            2 to Movie(
+                "How to Train Your Dragon",
+                "2010_03_26",
+                R.drawable.how_to_train_your_dragon_poster
+            ),
+            3 to Movie(
+                "Homeward Bound: The Incredible Journey",
+                "1995_11_22",
+                R.drawable.toy_story
+            ),
+            4 to Movie("WALL_E", "2008_06_27", R.drawable.walle_pi),
+            5 to Movie("Moana", "2019_06_27", R.drawable.moana_poster00),
+            6 to Movie("The Incredibles", "2004_10_21", R.drawable.the_incredibles),
+            7 to Movie("The Toy Story", "2003_10_30", R.drawable.toy_story)
+        )
+
+        fun getMovieList(n:Int): ArrayList<Movie> {
+            val movieList = ArrayList<Movie>(n)
+            for (i in 1..n){
+                movieList.add(MOVIES[Random.nextInt(8)]!!)
+            }
+
+            return movieList
         }
     }
 }
@@ -222,7 +236,7 @@ Define a custom adapter class with the following:
 ```kotlin
 class MovieAdapter(
     //private val context: Context,
-    private val movieList: Array<Movie>
+    private val movieList: ArrayList<Movie>
 ) :
     BaseAdapter() {
 
@@ -236,7 +250,7 @@ Your next step is to implement the adapter methods. Kick it off by placing the f
 ```kotlin
 class MovieAdapter(
     //private val context: Context,
-    private val movieList: Array<Movie>
+    private val movieList: ArrayList<Movie>
 ) :
     BaseAdapter() {
 	//1
@@ -272,16 +286,16 @@ Here’s a step-by-step breakdown:
 4. Finally, `getView()` **creates a view to be used as a row in the list**. Here you define what information shows and where it sits within the ListView. You also inflate a custom view from the XML layout defined in `res/layout/movie_list_item.xml`.
 
 <div align="center">
- <img src="img/cus_listview.jpg" alt="cus_listview.jpg" width="1000px">
+ <img src="img/cus_listview.jpg" alt="cus_listview.jpg" width="100px">
 </div>
 
 Set Adapter to ListView in Main Activity:
 
 ```kotlin
-        val movieList: Array<Movie> = Movie.getMovieList()
+        val movieList: ArrayList<Movie> = Movie.getMovieList(10)
         //vb.lvMovies.adapter = MovieAdapter(this, movieList)
         vb.lvMovies.adapter = MovieAdapter(movieList)
-        // movieList.forEach { i -> Log.d("BTN", i.movie_name) }
+//        movieList.forEach { Log.d("BTN", it.movie_name) }
         vb.lvMovies.setOnItemClickListener { parent, view, position, id ->
             val text = view.findViewById<TextView>(R.id.tvMovieName).text
             Toast.makeText(this, "Movie: $text, Pos: ${position + 1} ", Toast.LENGTH_SHORT)
@@ -398,7 +412,7 @@ override fun getView(position: Int, convertView: View?, parent: ViewGroup?): Vie
 #### using `lv.setOnItemClickListener()`
 
 ```kotlin
-val movieList: Array<Movie> = Movie.getMovieList()
+        val movieList: ArrayList<Movie> = Movie.getMovieList(10)
         vb.lvMovies.adapter = MovieAdapter(movieList)
         vb.lvMovies.choiceMode = ListView.CHOICE_MODE_SINGLE
         vb.lvMovies.setOnItemClickListener { parent, view, position, id ->

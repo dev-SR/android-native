@@ -2,6 +2,7 @@ package com.example.a04listview_kt
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ListView
 import android.widget.TextView
@@ -19,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         val view = vb.root
         setContentView(view)
 
-        val movieList: Array<Movie> = Movie.getMovieList()
+        val movieList: ArrayList<Movie> = Movie.getMovieList(100)
+//        movieList.forEach { Log.d("BTN", it.movie_name) }
         vb.lvMovies.adapter = MovieAdapter(movieList)
         vb.lvMovies.choiceMode = ListView.CHOICE_MODE_SINGLE
 //        vb.lvMovies.setOnItemClickListener { parent, view, position, id ->

@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 
 class MovieAdapter(
-    private val movieList: Array<Movie>
+    private val movieList: ArrayList<Movie>
 ) :
     BaseAdapter() {
     override fun getCount(): Int {
