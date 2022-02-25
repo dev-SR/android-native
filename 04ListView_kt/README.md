@@ -149,11 +149,11 @@ Android framework by default provides us the ability to create **listItems which
         android:text="Finding Nemo"/>
 
     <TextView
-        android:id="@+id/tvRelease"
+        android:id="@+id/tvDate"
         android:text="Release Date:" />
 
     <TextView
-        android:id="@+id/tvDate"
+        android:id="@+id/tvRelease"
         android:text="10/1/2020" />
 </ConstraintLayout>
 ```
@@ -318,7 +318,7 @@ Output:
 ```
 
 <div align="center">
-<img src="img/final-lv.jpg" alt="final-lv.jpg" width="400px">
+<img src="img/flv.jpg" alt="flv.jpg" width="400px">
 </div>
 
 ### Optimizing Performance
@@ -381,7 +381,7 @@ override fun getView(position: Int, convertView: View?, parent: ViewGroup?): Vie
 ### Change the color of the clicked items
 
 <div align="center">
-<img src="img/cllv.gif" alt="cllv.gif" width="600px">
+<img src="img/cllvv.gif" alt="cllvv.gif" width="500px">
 </div>
 
 #### using `lv.setOnItemClickListener()`

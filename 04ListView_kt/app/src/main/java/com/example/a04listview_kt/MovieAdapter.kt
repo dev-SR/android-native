@@ -95,7 +95,7 @@ class MovieAdapter(
 
     private class ViewHolder(view: View) {
         var tvMovieName: TextView = view.findViewById(R.id.tvMovieName)
-        var tvReleaseDate: TextView = view.findViewById(R.id.tvReleaseFixed)
+        var tvReleaseDate: TextView = view.findViewById(R.id.tvRelease)
         var imgvPoster: ImageView = view.findViewById(R.id.imgvPoster)
         var lv_item_container: ConstraintLayout = view.findViewById(R.id.lv_item_container)
     }
