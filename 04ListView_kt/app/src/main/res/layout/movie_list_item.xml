@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/lv_item_container"
     android:padding="20dp">
 
     <ImageView
@@ -32,7 +33,7 @@
         app:layout_constraintTop_toTopOf="@+id/imgvPoster" />
 
     <TextView
-        android:id="@+id/tvRelease"
+        android:id="@+id/tvReleaseFixed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -42,15 +43,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tvMovieName" />
 
     <TextView
-        android:id="@+id/tvDate"
+        android:id="@+id/tvRelease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="10/1/2020"
-        app:layout_constraintBottom_toBottomOf="@+id/tvRelease"
+        app:layout_constraintBottom_toBottomOf="@+id/tvReleaseFixed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.036"
-        app:layout_constraintStart_toEndOf="@+id/tvRelease"
-        app:layout_constraintTop_toTopOf="@+id/tvRelease"
+        app:layout_constraintStart_toEndOf="@+id/tvReleaseFixed"
+        app:layout_constraintTop_toTopOf="@+id/tvReleaseFixed"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,11 @@
     - [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout-1)
     - [Defining Model Class](#defining-model-class)
     - [Building Adapters](#building-adapters)
+    - [Optimizing Performance](#optimizing-performance)
+      - [View Holder Pattern](#view-holder-pattern)
+    - [Change the color of the clicked items](#change-the-color-of-the-clicked-items)
+      - [using `lv.setOnItemClickListener()`](#using-lvsetonitemclicklistener)
+      - [using `ViewHolder` Pattern](#using-viewholder-pattern)
 
 ## Adapters: Servants of the ListView
 
@@ -129,6 +134,7 @@ Android framework by default provides us the ability to create **listItems which
 
 ```xml
 <ConstraintLayout
+    android:id="@+id/lv_item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
@@ -216,7 +222,7 @@ Define a custom adapter class with the following:
 
 ```kotlin
 class MovieAdapter(
-    private val context: Context,
+    //private val context: Context,
     private val movieList: Array<Movie>
 ) :
     BaseAdapter() {
@@ -224,11 +230,13 @@ class MovieAdapter(
 }
 ```
 
+or
+
 Your next step is to implement the adapter methods. Kick it off by placing the following code :
 
 ```kotlin
 class MovieAdapter(
-    private val context: Context,
+    //private val context: Context,
     private val movieList: Array<Movie>
 ) :
     BaseAdapter() {
@@ -272,7 +280,8 @@ Set Adapter to ListView in Main Activity:
 
 ```kotlin
         val movieList: Array<Movie> = Movie.getMovieList()
-        vb.lvMovies.adapter = MovieAdapter(this, movieList)
+        //vb.lvMovies.adapter = MovieAdapter(this, movieList)
+        vb.lvMovies.adapter = MovieAdapter(movieList)
         // movieList.forEach { i -> Log.d("BTN", i.movie_name) }
         vb.lvMovies.setOnItemClickListener { parent, view, position, id ->
             val text = view.findViewById<TextView>(R.id.tvMovieName).text
@@ -293,8 +302,9 @@ Output:
 ```kotlin
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         // create View from XML
+        //val rowItemView = LayoutInflater.from(context).inflate(R.layout.movie_list_item, parent, false)
         val rowItemView =
-            LayoutInflater.from(context).inflate(R.layout.movie_list_item, parent, false)
+         LayoutInflater.from(parent?.context).inflate(R.layout.movie_list_item, parent, false)
         // get reference of the subviews of `movie_list_item.xml` layout
         val tvMovieName = rowItemView.findViewById<TextView>(R.id.tvMovieName)
         val tvReleaseDate = rowItemView.findViewById<TextView>(R.id.tvRelease)
@@ -308,5 +318,128 @@ Output:
 ```
 
 <div align="center">
-<img src="img/fclv.jpg" alt="fclvjpg" width="400px">
+<img src="img/final-lv.jpg" alt="final-lv.jpg" width="400px">
 </div>
+
+### Optimizing Performance
+
+Whenever you scroll the ListView, its adapter’s `getView()` method is called in order to create a row and display it on screen.
+
+Now, if we look in our `getView()` method, we’ll notice that each time this method is called, it performs a lookup for each of the row view’s elements by using a call to the `findViewById()` method.
+
+These repeated calls can seriously harm the ListView’s performance, especially if our app is running on limited resources and/or we have a very large list. You can avoid this problem by using the `View Holder` Pattern.
+
+#### View Holder Pattern
+
+To implement the ViewHolder pattern, open `MovieAdapter` and add the following after the `getView()` method definition:
+
+```kotlin
+    private class ViewHolder(view: View) {
+        var tvMovieName: TextView = view.findViewById(R.id.tvMovieName)
+        var tvReleaseDate: TextView = view.findViewById(R.id.tvRelease)
+        var imgvPoster: ImageView = view.findViewById(R.id.imgvPoster)
+        var lv_item_container: ConstraintLayout = view.findViewById(R.id.lv_item_container)
+    }
+```
+As you can see, you create a class to hold your exact set of component views for each row view. The `ViewHolder` class stores each of the row’s subviews, and in turn is stored inside the tag field of the layout.
+
+This means you can immediately access the row’s subviews without the need to look them up repeatedly.
+
+```kotlin
+override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val viewHolder: ViewHolder
+        var convertView = convertView
+
+        if (convertView == null) {
+            // If convert view is null then inflate a custom view and use it as convert view
+            convertView = LayoutInflater.from(parent?.context)
+                .inflate(R.layout.movie_list_item, parent, false)
+
+            // Create a new view holder instance using convert view
+            viewHolder = ViewHolder(convertView)
+
+            // Set the view holder as convert view tag
+            convertView.tag = viewHolder
+        } else {
+            /*
+                If convert view is not null then
+                initialize the view holder using convert view tag.
+            */
+            viewHolder = convertView.tag as ViewHolder
+        }
+
+        // Display the current color name and value on view holder
+        viewHolder.tvMovieName.text = movieList[position].movie_name
+        viewHolder.tvReleaseDate.text = movieList[position].release_date
+        viewHolder.imgvPoster.setImageResource(movieList[position].img_src)
+
+        // Finally, return the convert view
+        return convertView!!
+    }
+```
+
+### Change the color of the clicked items
+
+<div align="center">
+<img src="img/cllv.gif" alt="cllv.gif" width="600px">
+</div>
+
+#### using `lv.setOnItemClickListener()`
+
+```kotlin
+val movieList: Array<Movie> = Movie.getMovieList()
+        vb.lvMovies.adapter = MovieAdapter(movieList)
+        vb.lvMovies.choiceMode = ListView.CHOICE_MODE_SINGLE
+        vb.lvMovies.setOnItemClickListener { parent, view, position, id ->
+            val text = view.findViewById<TextView>(R.id.tvMovieName).text
+            Toast.makeText(this, "Movie: $text, Pos: ${position + 1} ", Toast.LENGTH_SHORT)
+                .show()
+            // Change Color of All Clicked Item
+//            view.setBackgroundColor(
+//                ContextCompat.getColor(
+//                    applicationContext,
+//                    R.color.white
+//                )
+//            )
+            // Change Color of Only Currently Clicked Item
+            for (i in 0 until vb.lvMovies.childCount) {
+                if (position == i) {
+                    vb.lvMovies.getChildAt(i).setBackgroundColor(Color.rgb(157, 222, 252))
+                } else {
+                    vb.lvMovies.getChildAt(i).setBackgroundColor(Color.TRANSPARENT)
+                }
+            }
+
+        }
+```
+
+#### using `ViewHolder` Pattern
+
+```kotlin
+override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        //...
+
+        // Display the current color name and value on view holder
+        viewHolder.tvMovieName.text = movieList[position].movie_name
+        viewHolder.tvReleaseDate.text = movieList[position].release_date
+        viewHolder.imgvPoster.setImageResource(movieList[position].img_src)
+
+//        // Set a click listener for card view
+        viewHolder.lv_item_container.setOnClickListener {
+            Toast.makeText(
+                parent?.context,
+                "Clicked : ${movieList[position].movie_name}", Toast.LENGTH_SHORT
+            ).show()
+
+            for (i in 0 until parent!!.childCount) {
+                if (i == position) {
+                    parent.getChildAt(i).setBackgroundColor(Color.rgb(157, 222, 252))
+                } else {
+                    parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT)
+                }
+
+            }
+
+        return convertView!!
+    }
+```
