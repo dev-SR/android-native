@@ -21,8 +21,8 @@ class Movie(
                 R.drawable.how_to_train_your_dragon_poster
             ),
             3 to Movie(
-                "Homeward Bound: The Incredible Journey",
-                "1995_11_22",
+                "Toy Story",
+                "2005_11_22",
                 R.drawable.toy_story
             ),
             4 to Movie("WALL_E", "2008_06_27", R.drawable.walle_pi),

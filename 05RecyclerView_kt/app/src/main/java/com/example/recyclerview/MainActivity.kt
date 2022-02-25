@@ -3,12 +3,21 @@ package com.example.recyclerview
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.recyclerview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
         val movieList = Movie.getMovieList(100)
-//        movieList.forEach { Log.d("BTN", it.movie_name) }
+        vb.recyclerView.layoutManager = LinearLayoutManager(this)
+        vb.recyclerView.adapter = MovieAdapter(movieList,this)
     }
 }

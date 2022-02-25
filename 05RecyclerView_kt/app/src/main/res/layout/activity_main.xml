@@ -8,6 +8,8 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        tools:listitem="@layout/movie_list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
