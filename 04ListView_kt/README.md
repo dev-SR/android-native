@@ -12,8 +12,7 @@
     - [Defining the `ListView` in Main Layout](#defining-the-listview-in-main-layout-1)
     - [Defining Model Class](#defining-model-class)
     - [Building Adapters](#building-adapters)
-    - [Optimizing Performance](#optimizing-performance)
-      - [View Holder Pattern](#view-holder-pattern)
+    - [Optimizing Performance - `ViewHolder` Pattern](#optimizing-performance---viewholder-pattern)
     - [Change the color of the clicked items](#change-the-color-of-the-clicked-items)
       - [using `lv.setOnItemClickListener()`](#using-lvsetonitemclicklistener)
       - [using `ViewHolder` Pattern](#using-viewholder-pattern)
@@ -321,15 +320,27 @@ Output:
 <img src="img/flv.jpg" alt="flv.jpg" width="400px">
 </div>
 
-### Optimizing Performance
+### Optimizing Performance - `ViewHolder` Pattern
 
-Whenever you scroll the ListView, its adapter’s `getView()` method is called in order to create a row and display it on screen.
+Imagine you’re creating a `ListView` with complicated custom items.
 
-Now, if we look in our `getView()` method, we’ll notice that each time this method is called, it performs a lookup for each of the row view’s elements by using a call to the `findViewById()` method.
+You create a row layout for the items and use that layout inside your adapter. You inflate your item layout in `getView()`, referencing each view with the unique ID you provided in XML to customize and add view logic. You pass that to the `ListView`, and it’s ready to be drawn on the screen. Or is it?
 
-These repeated calls can seriously harm the ListView’s performance, especially if our app is running on limited resources and/or we have a very large list. You can avoid this problem by using the `View Holder` Pattern.
+`ListViews` and `GridViews` only do half the job of achieving true memory efficiency. They recycle the item layout, but don’t keep references to the layout children, forcing you to call `findViewById()` for every child of your item layout every time you call `getView()`.
 
-#### View Holder Pattern
+All this calling around can become processor-intensive, especially for complicated layouts. Furthermore, the situation can cause your `ListView` scrolling to become jerky or nonresponsive as it tries to grab view references.
+
+<div align="center">
+<img src="img/ListView.png" alt="ListView.png" width="600px">
+</div>
+
+Android initially provided a solution to this problem on the Android Developers site with smooth scrolling via the power of the `View Holder` pattern.
+
+With this pattern, a class becomes an in-memory reference to all the views needed to fill your layout. You set the references once and reuse them, working around the performance hit that comes with repeatedly calling `findViewById().`
+
+<div align="center">
+<img src="img/viewholder_new_larger.png" alt="viewholder_new_larger.png" width="600px">
+</div>
 
 To implement the ViewHolder pattern, open `MovieAdapter` and add the following after the `getView()` method definition:
 
