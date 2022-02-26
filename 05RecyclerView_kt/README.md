@@ -1,17 +1,18 @@
 # RecyclerView
 
 - [RecyclerView](#recyclerview)
-	- [Downside of ListView](#downside-of-listview)
-		- [RecyclerView](#recyclerview-1)
-	- [Creating the RecyclerView](#creating-the-recyclerview)
-		- [Laying Out RecyclerView Items](#laying-out-recyclerview-items)
-		- [Defining the `RecyclerView` in Main Layout](#defining-the-recyclerview-in-main-layout)
-		- [Defining Model Class](#defining-model-class)
-		- [Adapters for RecyclerView](#adapters-for-recyclerview)
-		- [Hooking up the Adapter and RecyclerView](#hooking-up-the-adapter-and-recyclerview)
-		- [OnClickListener for RecyclerView](#onclicklistener-for-recyclerview)
-			- [Using ViewHolder](#using-viewholder)
-				- [Changing Background Color of OnClicked Item](#changing-background-color-of-onclicked-item)
+  - [Downside of ListView](#downside-of-listview)
+    - [RecyclerView](#recyclerview-1)
+  - [Creating the RecyclerView](#creating-the-recyclerview)
+    - [Laying Out RecyclerView Items](#laying-out-recyclerview-items)
+    - [Defining the `RecyclerView` in Main Layout](#defining-the-recyclerview-in-main-layout)
+    - [Defining Model Class](#defining-model-class)
+    - [Adapters for RecyclerView](#adapters-for-recyclerview)
+    - [Hooking up the Adapter and RecyclerView](#hooking-up-the-adapter-and-recyclerview)
+    - [OnClickListener for RecyclerView](#onclicklistener-for-recyclerview)
+      - [Implementing Inside ViewHolder](#implementing-inside-viewholder)
+      - [Implementing Inside MainActivity](#implementing-inside-mainactivity)
+        - [Changing Background Color of OnClicked Item](#changing-background-color-of-onclicked-item)
 
 ## Downside of ListView
 
@@ -222,7 +223,6 @@ We make constructor for Adapter with `movieList` which acts as a data source and
 
 for Example:
 
-
 ```kotlin
 //class MovieAdapter(val movieList: ArrayList<Movie>, val context: Context) :
 class MovieAdapter(val movieList: ArrayList<Movie>) :
@@ -265,9 +265,15 @@ class MovieAdapter(val movieList: ArrayList<Movie>) :
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.tvMovieName.text = movieList[position].movie_name
-        holder.tvReleaseDate.text = movieList[position].release_date
-        holder.imgvPoster.setImageResource(movieList[position].img_src)
+        //holder.tvMovieName.text = movieList[position].movie_name
+        //holder.tvReleaseDate.text = movieList[position].release_date
+        //holder.imgvPoster.setImageResource(movieList[position].img_src)
+
+        with(holder) {
+            tvMovieName.text = movieList[position].movie_name
+            tvReleaseDate.text = movieList[position].release_date
+            imgvPoster.setImageResource(movieList[position].img_src)
+        }
     }
 
 
@@ -277,6 +283,36 @@ class MovieAdapter(val movieList: ArrayList<Movie>) :
         var tvMovieName: TextView = itemView.findViewById(R.id.tvMovieName)
         var tvReleaseDate: TextView = itemView.findViewById(R.id.tvRelease)
         var imgvPoster: ImageView = itemView.findViewById(R.id.imgvPoster)
+    }
+}
+```
+
+V2: moving viewBinding to `ViewHolder`:
+
+```kotlin
+class MovieAdapter(val movieList: ArrayList<Movie>) :
+    RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+    //.....
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+        //with(holder) {
+        //    tvMovieName.text = movieList[position].movie_name
+        //    tvReleaseDate.text = movieList[position].release_date
+        //    imgvPoster.setImageResource(movieList[position].img_src)
+        //}
+        holder.bind(movieList[position])
+    }
+   inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
+        var tvMovieName: TextView = itemView.findViewById(R.id.tvMovieName)
+        var tvReleaseDate: TextView = itemView.findViewById(R.id.tvRelease)
+        var imgvPoster: ImageView = itemView.findViewById(R.id.imgvPoster)
+        fun bind(movie: Movie) {
+            with(movie) {
+                tvMovieName.text = movie_name
+                tvReleaseDate.text = release_date
+                imgvPoster.setImageResource(img_src)
+            }
+        }
     }
 }
 ```
@@ -295,8 +331,14 @@ inner class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val movieList = Movie.getMovieList(100)
-        vb.recyclerView.layoutManager = LinearLayoutManager(this)
-        vb.recyclerView.adapter = MovieAdapter(movieList)
+        //vb.recyclerView.layoutManager = LinearLayoutManager(this)
+        //vb.recyclerView.adapter = MovieAdapter(movieList)
+        ////vb.recyclerView.adapter = MovieAdapter(movieList,this)
+
+        vb.recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = MovieAdapter(movieList,this@MainActivity)
+        }
     }
 }
 ```
@@ -307,7 +349,7 @@ inner class MainActivity : AppCompatActivity() {
 
 ### OnClickListener for RecyclerView
 
-#### Using ViewHolder
+#### Implementing Inside ViewHolder
 
 Implement the required method for `View.OnClickListener` since ViewHolders are responsible for their own event handling.
 
@@ -317,9 +359,18 @@ Implement the required method for `View.OnClickListener` since ViewHolders are r
         var tvMovieName: TextView = itemView.findViewById(R.id.tvMovieName)
         var tvReleaseDate: TextView = itemView.findViewById(R.id.tvRelease)
         var imgvPoster: ImageView = itemView.findViewById(R.id.imgvPoster)
+        var container: ConstraintLayout = itemView.findViewById(R.id.rv_item_container)
 
         init {
             itemView.setOnClickListener(this)
+        }
+
+        fun bind(movie: Movie, position: Int) {
+            with(movie) {
+                tvMovieName.text = movie_name
+                tvReleaseDate.text = release_date
+                imgvPoster.setImageResource(img_src)
+            }
         }
 
         override fun onClick(v: View?) {
@@ -329,15 +380,77 @@ Implement the required method for `View.OnClickListener` since ViewHolders are r
             // val movieText = tvMovieName.text
             // val releaseText = tvReleaseDate.text
 
-//            Toast.makeText(v?.context, "Pos: $pos Name:${movie.movie_name}", Toast.LENGTH_SHORT)
-//                .show()
+////          val intent = Intent(context, ListDetails::class.java).apply {
+//            val intent = Intent(v?.context!!, ListDetails::class.java).apply {
+//                putExtra("name", movie.movie_name)
+//                putExtra("img", movie.img_src)
+//            }
+////          context.startActivity(intent)
+//            v?.context!!.startActivity(intent)
 
-            val intent = Intent(v?.context!!, ListDetails::class.java).apply {
-                putExtra("name", movie.movie_name)
-                putExtra("img", movie.img_src)
+              v?.let {
+                val context: Context = it.context //v?.context!!
+                val intent = Intent(context, ListDetails::class.java).apply {
+                    putExtra("name", movie.movie_name)
+                    putExtra("img", movie.img_src)
+                }
+                context.startActivity(intent)
             }
-            v?.context!!.startActivity(intent)
         }
+    }
+```
+
+#### Implementing Inside MainActivity
+
+
+```kotlin
+class MovieAdapter(val movieList: ArrayList<Movie>, private val listenerCallBack: (Movie,Int) -> Unit) :
+    RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+        //...
+        inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        var tvMovieName: TextView = itemView.findViewById(R.id.tvMovieName)
+        var tvReleaseDate: TextView = itemView.findViewById(R.id.tvRelease)
+        var imgvPoster: ImageView = itemView.findViewById(R.id.imgvPoster)
+        var container: ConstraintLayout = itemView.findViewById(R.id.rv_item_container)
+
+        init {
+            itemView.setOnClickListener {
+                listenerCallBack(movieList[adapterPosition],adapterPosition)
+            }
+        }
+        fun bind(movie: Movie, position: Int) {
+            with(movie) {
+                tvMovieName.text = movie_name
+                tvReleaseDate.text = release_date
+                imgvPoster.setImageResource(img_src)
+            }
+
+        }
+    }
+}
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        val movieList = Movie.getMovieList(100)
+        vb.recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = MovieAdapter(movieList) { movie, pos ->
+//                Toast.makeText(this@MainActivity, "$movie.movie_name, i:$pos", Toast.LENGTH_SHORT)
+//                    .show()
+                val intent = Intent(applicationContext, ListDetails::class.java).apply {
+                    putExtra("name", movie.movie_name)
+                    putExtra("img", movie.img_src)
+                }
+                startActivity(intent)
+            }
+        }
+    }
+}
 ```
 
 ##### Changing Background Color of OnClicked Item
@@ -348,12 +461,7 @@ class MovieAdapter(val movieList: ArrayList<Movie>, val context: Context) :
     var index = -1
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-		//...
-        if (index == position) {
-            holder.container.setBackgroundColor(Color.rgb(157, 222, 252))
-        } else {
-            holder.container.setBackgroundColor(Color.TRANSPARENT)
-        }
+        holder.bind(movie = movieList[position], position)
     }
 
 	//...
@@ -362,13 +470,30 @@ class MovieAdapter(val movieList: ArrayList<Movie>, val context: Context) :
         View.OnClickListener {
         //...
         var container: ConstraintLayout = itemView.findViewById(R.id.rv_item_container)
+        init {
+            itemView.setOnClickListener(this)
+        }
+        fun bind(movie: Movie, position: Int) {
+            with(movie) {
+                tvMovieName.text = movie_name
+                tvReleaseDate.text = release_date
+                imgvPoster.setImageResource(img_src)
+            }
+            //
+            if (index == position) {
+                container.setBackgroundColor(Color.rgb(157, 222, 252))
+            } else {
+                container.setBackgroundColor(Color.TRANSPARENT)
+            }
+        }
 
         override fun onClick(v: View?) {
             var pos: Int = adapterPosition//getAdapterPosition()
             val movie: Movie = movieList[pos]
 
+            // set position of clicked item as index
             index = pos
-            notifyDataSetChanged()//invoke onBindViewHolder
+            notifyDataSetChanged()//invoke onBindViewHolder to change background color
 
             val intent = Intent(v?.context!!, ListDetails::class.java).apply {
                 putExtra("name", movie.movie_name)
@@ -383,3 +508,16 @@ class MovieAdapter(val movieList: ArrayList<Movie>, val context: Context) :
 <div align="center">
 <img src="img/rvlistn.gif" alt="rvlistn.gif" width="400px">
 </div>
+
+Implementing Inside MainActivity:
+
+```kotlin
+init {
+            itemView.setOnClickListener {
+                val pos = adapterPosition
+                index = pos
+                notifyDataSetChanged()
+                listenerCallBack(movieList[pos])
+            }
+        }
+```
