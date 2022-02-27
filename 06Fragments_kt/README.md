@@ -102,6 +102,12 @@ class CountDownFragment : Fragment() {
 
 Here `FragmentCountDownBinding` came from `fragment_count_down.xml`
 
+We can also create Blank Fragments Component using IDE
+
+<div align="center">
+<img src="img/cfg.jpg" alt="cfg.jpg" width="700px">
+</div>
+
 ### ViewBinding Snippet
 
 ```kotlin
@@ -115,12 +121,6 @@ Here `FragmentCountDownBinding` came from `fragment_count_down.xml`
         return vb.root
     }
 ```
-
-We can also create Blank Fragments Component using IDE
-
-<div align="center">
-<img src="img/cfg.jpg" alt="cfg.jpg" width="700px">
-</div>
 
 ## Embedding a Fragment in an Activity
 
