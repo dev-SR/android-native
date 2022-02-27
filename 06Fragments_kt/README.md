@@ -6,6 +6,8 @@
 		- [ViewBinding Snippet](#viewbinding-snippet)
 	- [Embedding a Fragment in an Activity](#embedding-a-fragment-in-an-activity)
 		- [Statically inside `activity_main.xml`](#statically-inside-activity_mainxml)
+		- [Dynamically inside `MainActivity.kt`](#dynamically-inside-mainactivitykt)
+	- [Fragment Lifecycle](#fragment-lifecycle)
 
 ## Intro
 
@@ -90,12 +92,12 @@ class CountDownFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        vb = FragmentCountDownBinding.inflate(inflater, container, false)
+        fvb = FragmentCountDownBinding.inflate(inflater, container, false)
         var count = 0
-        vb.btnMin.setOnClickListener {
-            vb.tvMin.text = (count--).toString()
+        fvb.btnMin.setOnClickListener {
+            fvb.tvMin.text = (count--).toString()
         }
-        return vb.root
+        return fvb.root
     }
 }
 ```
@@ -111,14 +113,14 @@ We can also create Blank Fragments Component using IDE
 ### ViewBinding Snippet
 
 ```kotlin
-	private lateinit var vb: $ViewBinding$
+	private lateinit var fvb: $ViewBinding$
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        vb = $ViewBinding$.inflate(inflater, container, false)
-        return vb.root
+        fvb = $ViewBinding$.inflate(inflater, container, false)
+        return fvb.root
     }
 ```
 
@@ -167,3 +169,156 @@ Just Run the app and we will see the fragment inside the activity:
 <div align="center">
 <img src="img/sfg.gif" alt="sfg.gif" width="400px">
 </div>
+
+### Dynamically inside `MainActivity.kt`
+
+<div align="center">
+<img src="img/dfg.gif" alt="dfg.gif" width="400px">
+</div>
+
+The second way is by adding the fragment dynamically in Java/Kotlin using the `FragmentManager`. The `FragmentManager` class and the `FragmentTransaction` class allow us to `add`, `remove` and `replace` fragments in the layout of our activity at **runtime**.
+
+In this case, you want to add a `"placeholder"` container (usually a `FrameLayout`) to our activity where the fragment is inserted at runtime:
+
+`activity_main.xml`
+
+```xml
+<ConstraintLayout>
+    <Button
+        android:id="@+id/btnShow1"/>
+    <Button
+        android:id="@+id/btnShow2"/>
+    <FrameLayout
+        android:id="@+id/placeholder">
+    </FrameLayout>
+</ConstraintLayout>
+```
+
+and then you can use the `FragmentManager` to create a `FragmentTransaction` which allows us to add fragments to the `FrameLayout` at runtime:
+
+```java
+// Begin the transaction
+FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+// Replace the contents of the container with the new fragment
+ft.replace(R.id.your_placeholder, new FooFragment());
+// or ft.add(R.id.your_placeholder, new FooFragment());
+// Complete the changes added above
+ft.commit();
+```
+
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        vb.btnShow1.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.placeholder,CountUpFragment())
+                .commit()
+        }
+        vb.btnShow2.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.placeholder,CountDownFragment())
+                .commit()
+        }
+    }
+}
+```
+
+If the fragment should always be within the activity, use XML to statically add the fragment but in more complex cases be sure to use the Java/Kotlin-based approach.
+
+## Fragment Lifecycle
+
+Fragment has many methods which can be overridden to plug into the lifecycle (similar to an Activity):
+
+- `onAttach()` is called when a fragment is connected to an activity.
+- `onCreate()` is called to do initial creation of the fragment.
+- `onCreateView()` is called by Android once the Fragment should inflate a view.
+- `onViewCreated()` is called after onCreateView() and ensures that the fragment's root view is non-null. Any view setup should happen here. E.g., view lookups, attaching listeners.
+- `onActivityCreated()` is called when host activity has completed its onCreate() method.
+- `onStart()` is called once the fragment is ready to be displayed on screen.
+- `onResume()` - Allocate “expensive” resources such as registering for location, sensor updates, etc.
+- `onPause()` - Release “expensive” resources. Commit any changes.
+- `onDestroyView()` is called when fragment's view is being destroyed, but the fragment is still kept around.
+- `onDestroy()` is called when fragment is no longer in use.
+- `onDetach()` is called when fragment is no longer connected to the activity.
+
+
+<div align="center">
+<img src="img/0EVReuq.png" alt="0EVReuq.png" width="600px">
+</div>
+
+The most common ones to override are `onCreateView` which is in almost every fragment to setup the inflated view, `onCreate` for any data initialization and `onActivityCreated` used for setting up things that can only take place once the Activity has been fully created.
+
+Here's an example of how you might use the various fragment lifecycle events:
+
+
+```java
+public class SomeFragment extends Fragment {
+    ThingsAdapter adapter;
+    FragmentActivity listener;
+
+    // This event fires 1st, before creation of fragment or any views
+    // The onAttach method is called when the Fragment instance is associated with an Activity.
+    // This does not mean the Activity is fully initialized.
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            this.listener = (FragmentActivity) context;
+        }
+    }
+
+    // This event fires 2nd, before views are created for the fragment
+    // The onCreate method is called when the Fragment instance is being created, or re-created.
+    // Use onCreate for any standard setup that does not require the activity to be fully created
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ArrayList<Thing> things = new ArrayList<Thing>();
+        adapter = new ThingsAdapter(getActivity(), things);
+    }
+
+    // The onCreateView method is called when Fragment should create its View object hierarchy,
+    // either dynamically or via XML layout inflation.
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_some, parent, false);
+    }
+
+    // This event is triggered soon after onCreateView().
+    // onViewCreated() is only called if the view returned from onCreateView() is non-null.
+    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ListView lv = (ListView) view.findViewById(R.id.lvSome);
+        lv.setAdapter(adapter);
+    }
+
+    // This method is called when the fragment is no longer connected to the Activity
+    // Any references saved in onAttach should be nulled out here to prevent memory leaks.
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.listener = null;
+    }
+
+    // This method is called after the parent Activity's onCreate() method has completed.
+    // Accessing the view hierarchy of the parent activity must be done in the onActivityCreated.
+    // At this point, it is safe to search for activity View objects by their ID, for example.
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+}
+```

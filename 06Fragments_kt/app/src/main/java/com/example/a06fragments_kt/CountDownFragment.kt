@@ -9,21 +9,19 @@ import com.example.a06fragments_kt.databinding.FragmentCountDownBinding
 
 
 class CountDownFragment : Fragment() {
-    private lateinit var vb: FragmentCountDownBinding
+    private lateinit var fvb: FragmentCountDownBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        vb = FragmentCountDownBinding.inflate(inflater, container, false)
+        fvb = FragmentCountDownBinding.inflate(inflater, container, false)
         var count = 0
 
-        vb.btnMin.setOnClickListener {
-            vb.tvMin.text = (count--).toString()
+        fvb.btnMin.setOnClickListener {
+            fvb.tvMin.text = (count--).toString()
         }
-        return vb.root
+        return fvb.root
     }
-
-
 }

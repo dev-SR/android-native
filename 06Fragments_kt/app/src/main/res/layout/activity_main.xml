@@ -6,28 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <fragment
-        android:id="@+id/flg"
-        android:name="com.example.a06fragments_kt.CountUpFragment"
-        android:layout_width="match_parent"
-        android:layout_height="327dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <FrameLayout
+        android:id="@+id/placeholder"
+        android:layout_width="411dp"
+        android:layout_height="662dp"
+        android:layout_marginTop="72dp"
+        android:background="#E67575"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout="@layout/fragment_count_up" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <fragment
-        android:id="@+id/flg1"
-        android:name="com.example.a06fragments_kt.CountDownFragment"
-        android:layout_width="0dp"
-        android:layout_height="409dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnShow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="16dp"
+        android:text="Show Frg.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/flg"
-        tools:layout="@layout/fragment_count_down" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnShow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="64dp"
+        android:text="Show FRG.2"
+        app:layout_constraintBottom_toBottomOf="@+id/btnShow1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/btnShow1"
+        app:layout_constraintTop_toTopOf="@+id/btnShow1"
+        app:layout_constraintVertical_bias="0.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

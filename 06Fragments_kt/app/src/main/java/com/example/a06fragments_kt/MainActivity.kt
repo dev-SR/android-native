@@ -11,5 +11,18 @@ class MainActivity : AppCompatActivity() {
         vb = ActivityMainBinding.inflate(layoutInflater)
         val view = vb.root
         setContentView(view)
+
+        vb.btnShow1.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.placeholder,CountUpFragment())
+                .commit()
+        }
+        vb.btnShow2.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.placeholder,CountDownFragment())
+                .commit()
+        }
     }
 }
