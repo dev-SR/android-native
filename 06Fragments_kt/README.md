@@ -135,13 +135,12 @@ To add the fragment statically, simply embed the fragment in the activity's xml 
 ```xml
 <ConstraintLayout>
     <fragment
-	    <!-- Define fragment class name: CountUpFragment -->
         android:name="com.example.a06fragments_kt.CountUpFragment"
-		<!-- preview  -->
         tools:layout="@layout/fragment_count_up"
-		android:layout_width="match_parent"
-        android:layout_height="327dp"
         />
+	<fragment
+        android:name="com.example.a06fragments_kt.CountDownFragment"
+        tools:layout="@layout/fragment_count_down" />
 </ConstraintLayout>
 ```
 
