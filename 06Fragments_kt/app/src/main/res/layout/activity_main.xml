@@ -6,40 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/placeholder"
-        android:layout_width="411dp"
-        android:layout_height="662dp"
-        android:layout_marginTop="72dp"
-        android:background="#E67575"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
-
     <Button
-        android:id="@+id/btnShow1"
+        android:id="@+id/btnShowFrag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
         android:layout_marginTop="16dp"
-        android:text="Show Frg.1"
+        android:text="Show Fragment Message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnShow2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:text="Show FRG.2"
-        app:layout_constraintBottom_toBottomOf="@+id/btnShow1"
+    <FrameLayout
+        android:id="@+id/main_container"
+        android:layout_width="319dp"
+        android:layout_height="582dp"
+        android:layout_marginTop="12dp"
+        android:background="#E67575"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/btnShow1"
-        app:layout_constraintTop_toTopOf="@+id/btnShow1"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnShowFrag"
+        app:layout_constraintVertical_bias="0.41">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

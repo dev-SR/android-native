@@ -10,6 +10,7 @@
 		- [add, remove and replace](#add-remove-and-replace)
 	- [Fragment Lifecycle](#fragment-lifecycle)
 	- [Communicating with Fragments](#communicating-with-fragments)
+		- [Methods](#methods)
 
 ## Intro
 
@@ -412,3 +413,108 @@ There are three ways a fragment and an activity can communicate:
 - **Bundle** - Activity can construct a fragment and set arguments
 - **Methods** - Activity can call methods on a fragment instance
 - **Listener** - Fragment can fire listener events on an activity via an interface
+
+### Methods
+
+Here is an example of how we might invoke a method of fragment and pass data to it from main activity as well as how we might receive data from a fragment and invoke a method of main activity from fragment:
+
+<div align="center">
+<img src="img/cbfg.gif" alt="cbfgm" width="400px">
+</div>
+
+`activity_main.xml`
+
+```xml
+<ConstraintLayout>
+    <Button
+        android:id="@+id/btnShowFrag"
+        android:text="Show Fragment Message"/>
+
+    <FrameLayout>
+        android:id="@+id/main_container"
+    </FrameLayout>
+
+</ConstraintLayout>
+```
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_container, OneFragment(), "OneFragmentTag")
+            .commit()
+
+        vb.btnShowFrag.setOnClickListener {
+            val oneFragment =
+                supportFragmentManager.findFragmentById(R.id.main_container) as OneFragment
+            val data = "XXXXX"
+            oneFragment.showFragmentMessage(data)
+        }
+
+    }
+
+    fun showActivityMessage(data: String) {
+
+        Toast.makeText(
+            this, "This Message is from Activity\n" +
+                    "Data receive from Fragment:$data", Toast.LENGTH_SHORT
+        ).show()
+    }
+}
+```
+
+`fragment_one.xml`
+
+```xml
+<FrameLayout >
+    <ConstraintLayout>
+        <Button
+            android:id="@+id/btnShowAct"/>
+    </ConstraintLayout>
+</FrameLayout>
+```
+
+`OneFragment.kt`
+
+```kotlin
+class OneFragment : Fragment() {
+    private lateinit var fvb: FragmentOneBinding
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        fvb = FragmentOneBinding.inflate(inflater, container, false)
+        return fvb.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fvb.btnShowAct.setOnClickListener {
+            val data = "YYYYYY"
+            //getActivity()
+            activity?.let {
+                (it as MainActivity).showActivityMessage(data)
+            }
+
+        }
+    }
+
+    fun showFragmentMessage(data: String?) {
+        activity?.let {
+            Toast.makeText(it, "This message is from Fragment\nData sent from Activity:$data", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+}
+```
