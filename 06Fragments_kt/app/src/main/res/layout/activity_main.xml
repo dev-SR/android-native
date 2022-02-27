@@ -20,4 +20,14 @@
         app:layout_constraintVertical_bias="0.0"
         tools:layout="@layout/fragment_count_up" />
 
+    <fragment
+        android:id="@+id/flg1"
+        android:name="com.example.a06fragments_kt.CountDownFragment"
+        android:layout_width="0dp"
+        android:layout_height="409dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flg"
+        tools:layout="@layout/fragment_count_down" />
 </androidx.constraintlayout.widget.ConstraintLayout>

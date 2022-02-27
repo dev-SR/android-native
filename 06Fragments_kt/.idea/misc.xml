@@ -4,8 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Others/Installations/Android/projects/Learn/06Fragments_kt/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
-        <entry key="..\:/Others/Installations/Android/projects/Learn/06Fragments_kt/app/src/main/res/layout/fragment_count_down.xml" value="0.4742468415937804" />
-        <entry key="..\:/Others/Installations/Android/projects/Learn/06Fragments_kt/app/src/main/res/layout/fragment_count_up.xml" value="0.25416666666666665" />
+        <entry key="..\:/Others/Installations/Android/projects/Learn/06Fragments_kt/app/src/main/res/layout/fragment_count_down.xml" value="0.264" />
+        <entry key="..\:/Others/Installations/Android/projects/Learn/06Fragments_kt/app/src/main/res/layout/fragment_count_up.xml" value="0.264" />
       </map>
     </option>
   </component>
