@@ -145,7 +145,7 @@ To add the fragment statically, simply embed the fragment in the activity's xml 
 ```
 
 <div align="center">
-<img src="img/fg2.jpg" alt="fg2.jpg" width="600px">
+<img src="img/fgx.jpg" alt="fgx.jpg" width="600px">
 </div>
 
 No need to change `MainActivity.kt`
