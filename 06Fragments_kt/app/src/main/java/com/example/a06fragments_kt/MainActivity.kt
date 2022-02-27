@@ -2,6 +2,8 @@ package com.example.a06fragments_kt
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import androidx.fragment.app.FragmentTransaction
 import com.example.a06fragments_kt.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,14 +17,16 @@ class MainActivity : AppCompatActivity() {
         vb.btnShow1.setOnClickListener {
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.placeholder,CountUpFragment())
+                .replace(R.id.placeholder, CountUpFragment())
                 .commit()
         }
         vb.btnShow2.setOnClickListener {
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.placeholder,CountDownFragment())
+                .replace(R.id.placeholder, CountDownFragment())
                 .commit()
         }
+
+
     }
 }

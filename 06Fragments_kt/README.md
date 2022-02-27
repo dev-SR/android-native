@@ -7,7 +7,9 @@
 	- [Embedding a Fragment in an Activity](#embedding-a-fragment-in-an-activity)
 		- [Statically inside `activity_main.xml`](#statically-inside-activity_mainxml)
 		- [Dynamically inside `MainActivity.kt`](#dynamically-inside-mainactivitykt)
+		- [add, remove and replace](#add-remove-and-replace)
 	- [Fragment Lifecycle](#fragment-lifecycle)
+	- [Communicating with Fragments](#communicating-with-fragments)
 
 ## Intro
 
@@ -277,6 +279,42 @@ class MainActivity : AppCompatActivity() {
 
 If the fragment should always be within the activity, use XML to statically add the fragment but in more complex cases be sure to use the Java/Kotlin-based approach.
 
+### add, remove and replace
+
+```kotlin
+        val addFragment = findViewById<Button>(R.id.addFragment)
+        addFragment.setOnClickListener {
+            val fragment = OneFragment()
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragmentContainer, fragment, "OneFragmentTag")
+                .commit()
+        }
+        val removeFragment = findViewById<Button>(R.id.removeFragment)
+        removeFragment.setOnClickListener {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            //or using Tag
+            val fragmentOne = supportFragmentManager.findFragmentByTag("OneFragmentTag")
+            fragment?.let {
+                supportFragmentManager
+                    .beginTransaction()
+                    .remove(fragment)
+                    .commit()
+            }
+        }
+
+        val replaceFragment = findViewById<Button>(R.id.replaceFragment)
+        replaceFragment.setOnClickListener {
+            val fragment = TwoFragment()
+            with(supportFragmentManager.beginTransaction()) {
+                replace(R.id.fragmentContainer, fragment, "OneFragmentTag")
+                addToBackStack(null)
+                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                commit()
+            }
+        }
+```
+
 ## Fragment Lifecycle
 
 Fragment has many methods which can be overridden to plug into the lifecycle (similar to an Activity):
@@ -362,3 +400,15 @@ public class SomeFragment extends Fragment {
     }
 }
 ```
+
+## Communicating with Fragments
+
+Fragments should generally only communicate with their direct parent activity. Fragments communicate through their parent activity allowing the activity to manage the inputs and outputs of data from that fragment coordinating with other fragments or activities. Think of the Activity as the controller managing all interaction with each of the fragments contained within.
+
+The important thing to keep in mind is that **fragments should not directly communicate with each other and should generally only communicate with their parent activity**. Fragments should be modular, standalone and reusable components. The fragments allow their parent activity to respond to intents and callbacks in most cases.
+
+There are three ways a fragment and an activity can communicate:
+
+- **Bundle** - Activity can construct a fragment and set arguments
+- **Methods** - Activity can call methods on a fragment instance
+- **Listener** - Fragment can fire listener events on an activity via an interface
