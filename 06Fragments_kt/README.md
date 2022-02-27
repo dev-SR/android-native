@@ -69,6 +69,34 @@ class CountUpFragment : Fragment() {
 }
 ```
 
+or For **Better Performance**, get the reference to the view inside `onViewCreated` method:
+
+```kotlin
+class CountUpFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        return inflater.inflate(R.layout.fragment_count_up, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val btnAdd = view.findViewById<Button>(R.id.bntAdd)
+        val tvAdd = view.findViewById<TextView>(R.id.tvAdd)
+        var count = 0
+        btnAdd.setOnClickListener {
+            tvAdd.text = (++count).toString()
+        }
+    }
+}
+```
+
+see [Fragment Lifecycle](#fragment-lifecycle) for more details.
+
+
 For another Fragment `CountDownFragment`, we can simplify the code above  Using `ViewBindings`,:
 
 `fragment_count_down.xml`
@@ -86,18 +114,25 @@ For another Fragment `CountDownFragment`, we can simplify the code above  Using 
 
 ```kotlin
 class CountDownFragment : Fragment() {
-    private lateinit var vb: FragmentCountDownBinding
+    private lateinit var fvb: FragmentCountDownBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         fvb = FragmentCountDownBinding.inflate(inflater, container, false)
+        return fvb.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         var count = 0
         fvb.btnMin.setOnClickListener {
-            fvb.tvMin.text = (count--).toString()
+            fvb.tvMin.text = (--count).toString()
+            Toast.makeText(requireContext(), "value: $count", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(view.context, "value: $count", Toast.LENGTH_SHORT).show()
         }
-        return fvb.root
     }
 }
 ```
@@ -113,7 +148,9 @@ We can also create Blank Fragments Component using IDE
 ### ViewBinding Snippet
 
 ```kotlin
-	private lateinit var fvb: $ViewBinding$
+
+    private lateinit var fvb: $ViewBinding$
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -121,6 +158,11 @@ We can also create Blank Fragments Component using IDE
         // Inflate the layout for this fragment
         fvb = $ViewBinding$.inflate(inflater, container, false)
         return fvb.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        $END$
     }
 ```
 
@@ -206,7 +248,6 @@ ft.replace(R.id.your_placeholder, new FooFragment());
 ft.commit();
 ```
 
-
 `MainActivity.kt`
 
 ```kotlin
@@ -260,7 +301,6 @@ Fragment has many methods which can be overridden to plug into the lifecycle (si
 The most common ones to override are `onCreateView` which is in almost every fragment to setup the inflated view, `onCreate` for any data initialization and `onActivityCreated` used for setting up things that can only take place once the Activity has been fully created.
 
 Here's an example of how you might use the various fragment lifecycle events:
-
 
 ```java
 public class SomeFragment extends Fragment {

@@ -15,16 +15,18 @@ class CountUpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val fragmentView = inflater.inflate(R.layout.fragment_count_up, container, false)
-        val btnAdd = fragmentView.findViewById<Button>(R.id.bntAdd)
-        val tvAdd = fragmentView.findViewById<TextView>(R.id.tvAdd)
+
+        return inflater.inflate(R.layout.fragment_count_up, container, false)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val btnAdd = view.findViewById<Button>(R.id.bntAdd)
+        val tvAdd = view.findViewById<TextView>(R.id.tvAdd)
         var count = 0
         btnAdd.setOnClickListener {
             tvAdd.text = (count++).toString()
         }
-        return fragmentView
     }
-
-
 }
