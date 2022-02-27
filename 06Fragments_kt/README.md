@@ -3,6 +3,7 @@
 - [Fragments](#fragments)
 	- [Intro](#intro)
 	- [Defining a Fragment](#defining-a-fragment)
+		- [ViewBinding Snippet](#viewbinding-snippet)
 	- [Embedding a Fragment in an Activity](#embedding-a-fragment-in-an-activity)
 		- [Statically inside `activity_main.xml`](#statically-inside-activity_mainxml)
 
@@ -101,7 +102,7 @@ class CountDownFragment : Fragment() {
 
 Here `FragmentCountDownBinding` came from `fragment_count_down.xml`
 
-ViewBinding Live Templates:
+### ViewBinding Snippet
 
 ```kotlin
 	private lateinit var vb: $ViewBinding$
