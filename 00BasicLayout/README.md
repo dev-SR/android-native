@@ -38,6 +38,7 @@
     - [Gradient Button](#gradient-button)
   - [Custom Font](#custom-font)
   - [Hide UI Bars](#hide-ui-bars)
+  - [Custom Shape](#custom-shape)
 
 ## `View` and `ViewGroup` Objects
 
@@ -807,3 +808,27 @@ class MainActivity : AppCompatActivity() {
 </div>
 
 - [https://developer.android.com/training/system-ui/status](https://developer.android.com/training/system-ui/status)
+
+## Custom Shape
+
+Create a drawable `drawable/round_shape.xml` file with root `shape`.
+
+<div align="center">
+<img src="img/shape.jpg" alt="shape.jpg" width="800px">
+</div>
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/white" />
+    <padding
+        android:left="5dp"
+        android:right="5dp" />
+    <corners android:radius="5dp" />
+</shape>
+```
+
+<div align="center">
+<img src="img/shapex.jpg" alt="shape.jpg" width="500px">
+</div>
