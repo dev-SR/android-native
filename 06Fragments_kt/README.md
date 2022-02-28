@@ -1,16 +1,18 @@
 # Fragments
 
 - [Fragments](#fragments)
-	- [Intro](#intro)
-	- [Defining a Fragment](#defining-a-fragment)
-		- [ViewBinding Snippet](#viewbinding-snippet)
-	- [Embedding a Fragment in an Activity](#embedding-a-fragment-in-an-activity)
-		- [Statically inside `activity_main.xml`](#statically-inside-activity_mainxml)
-		- [Dynamically inside `MainActivity.kt`](#dynamically-inside-mainactivitykt)
-		- [add, remove and replace](#add-remove-and-replace)
-	- [Fragment Lifecycle](#fragment-lifecycle)
-	- [Communicating with Fragments](#communicating-with-fragments)
-		- [Methods](#methods)
+  - [Intro](#intro)
+  - [Defining a Fragment](#defining-a-fragment)
+    - [ViewBinding Snippet](#viewbinding-snippet)
+  - [Embedding a Fragment in an Activity](#embedding-a-fragment-in-an-activity)
+    - [Statically inside `activity_main.xml`](#statically-inside-activity_mainxml)
+    - [Dynamically inside `MainActivity.kt`](#dynamically-inside-mainactivitykt)
+    - [add, remove and replace](#add-remove-and-replace)
+  - [Fragment Lifecycle](#fragment-lifecycle)
+  - [Communicating with Fragments](#communicating-with-fragments)
+    - [Using Bundle](#using-bundle)
+      - [From Activity to Fragment:](#from-activity-to-fragment)
+    - [Using Methods](#using-methods)
 
 ## Intro
 
@@ -414,7 +416,131 @@ There are three ways a fragment and an activity can communicate:
 - **Methods** - Activity can call methods on a fragment instance
 - **Listener** - Fragment can fire listener events on an activity via an interface
 
-### Methods
+### Using Bundle
+
+#### From Activity to Fragment:
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        val bundle = Bundle()
+        bundle.putString("KEY","Message from Activity")
+        val fragment = OneFragment()
+        fragment.arguments = bundle
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_container, fragment)
+            .commit()
+    }
+}
+```
+
+```kotlin
+class OneFragment : Fragment() {
+    private lateinit var fvb: FragmentOneBinding
+    private var myValue:String? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        myValue = arguments?.getString("KEY")
+        Toast.makeText(requireContext(), "$myValue", Toast.LENGTH_SHORT).show();
+    }
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        fvb = FragmentOneBinding.inflate(inflater, container, false)
+        return fvb.root
+    }
+}
+```
+
+**Using Factory Methods Approach**:
+
+```kotlin
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+class TwoFragment : Fragment() {
+    private var param1: String? = null
+    private var param2: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_two, container, false)
+    }
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment TwoFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            TwoFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
+```
+
+Now, Creating a Fragment with a Factory Method:
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        //val bundle = Bundle()
+        //bundle.putString("KEY","Message from Activity")
+        //val fragment = OneFragment()
+        //fragment.arguments = bundle
+        //supportFragmentManager
+        //    .beginTransaction()
+        //    .add(R.id.main_container, fragment, "OneFragmentTag")
+        //    .commit()
+
+        val fragmentTwo = TwoFragment.newInstance("Hello","World")
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_container, fragmentTwo, "OneFragmentTag")
+            .commit()
+    }
+}
+```
+
+### Using Methods
 
 Here is an example of how we might invoke a method of fragment and pass data to it from main activity as well as how we might receive data from a fragment and invoke a method of main activity from fragment:
 

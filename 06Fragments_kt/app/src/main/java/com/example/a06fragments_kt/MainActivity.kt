@@ -15,10 +15,21 @@ class MainActivity : AppCompatActivity() {
         val view = vb.root
         setContentView(view)
 
+        val bundle = Bundle()
+        bundle.putString("KEY","Message from Activity")
+        val fragment = OneFragment()
+        fragment.arguments = bundle
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.main_container, OneFragment(), "OneFragmentTag")
+            .add(R.id.main_container, fragment, "OneFragmentTag")
             .commit()
+
+        val fragmentTwo = TwoFragment.newInstance("Hello","World")
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_container, fragmentTwo, "OneFragmentTag")
+            .commit()
+
 
         vb.btnShowFrag.setOnClickListener {
             val oneFragment =
