@@ -829,6 +829,18 @@ Create a drawable `drawable/round_shape.xml` file with root `shape`.
 </shape>
 ```
 
+```xml
+<ConstraintLayout>
+
+    <EditText  />
+
+    <EditText
+        android:background="@drawable/round_shape"/>
+</ConstraintLayout>
+```
+
 <div align="center">
 <img src="img/shapex.jpg" alt="shape.jpg" width="500px">
 </div>
+
+
