@@ -13,6 +13,7 @@
     - [Using Bundle](#using-bundle)
       - [From Activity to Fragment:](#from-activity-to-fragment)
     - [Using Methods](#using-methods)
+    - [Using Interface](#using-interface)
 
 ## Intro
 
@@ -642,5 +643,91 @@ class OneFragment : Fragment() {
         }
     }
 
+}
+```
+
+### Using Interface
+
+see [How to Communicate Between ClassA & ClassB using Interface](https://github.com/dev-SR/exercise/tree/main/Java/functional-programming/00functional_interface_or_function_type#ex-communication-between-classa--classb)
+
+Let's say `Activity` has a method called `activityMethod()` of type `MethodFromActivity`. We can use this interface to communicate with the activity from the fragment by having a reference of interface - `MethodFromActivity` in the fragment.
+
+Also, To make sure `Activity` has `activityMethod()` method, we have to check if the activity has implemented the `MethodFromActivity` using `onAttach()` method.
+
+`ThreeFragment.kt`
+
+```kotlin
+class ThreeFragment : Fragment() {
+    private lateinit var fvb: FragmentThreeBinding
+
+    interface MethodFromActivity {
+        fun activityMethod()
+    }
+
+    var callback: MethodFromActivity? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        fvb = FragmentThreeBinding.inflate(inflater, container, false)
+        return fvb.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fvb.btnShow.setOnClickListener {
+            //invoke the activity method
+            callback?.activityMethod()
+        }
+    }
+
+    //make sure Activity has `activityMethod`.
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = context as? MethodFromActivity
+        /**
+         * `Activity` class is passed as `context`.
+         * if `MethodFromActivity` interface is implemented by Activity
+         * then `context` - Activity can be casted to `MethodFromActivity`
+         * */
+
+        if (callback == null)
+            throw ClassCastException("$context must implement MethodFromActivity")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback = null
+    }
+
+}
+```
+
+Now implement `ThreeFragment.MethodFromActivity` inside `MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity(), ThreeFragment.MethodFromActivity {
+    private lateinit var vb: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.main_container, ThreeFragment())
+            .commit()
+
+    }
+
+    override fun activityMethod() {
+        Toast.makeText(
+            this, "This Message is from Activity", Toast.LENGTH_SHORT
+        ).show()
+    }
 }
 ```
