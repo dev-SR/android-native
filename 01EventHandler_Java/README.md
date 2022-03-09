@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
         btnReset = (Button) findViewById(R.id.btnReset);
 
         btnLogin.setOnClickListener(view -> {
-            if (!isEmail(etEmail) && !isPass(etPass)) {
+            if (!isEmail(etEmail) || !isPass(etPass)) {
                 return;
             }
             Toast.makeText(getApplicationContext(), getData(etEmail, etPass), Toast.LENGTH_LONG).show();
