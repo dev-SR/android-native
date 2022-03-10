@@ -44,7 +44,11 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-Now, If we try to rotate the device after increamenting, data do not survive upon screen rotations.
+Now, If we try to rotate the device after incrementing, data do not survive upon screen rotations.
+
+<div align="center">
+<img src="img/vmsr.gif" alt="vmsr.gif" width="500px">
+</div>
 
 Architecture Components provides `ViewModel` helper class for the UI controller that is responsible for preparing data for the UI. `ViewModel` objects are automatically retained during configuration changes so that data they hold is immediately available to the next activity or fragment instance.
 
@@ -86,24 +90,30 @@ We can then access the value from an activity as follows:
 ```kotlin
 class MainActivity : AppCompatActivity() {
     private lateinit var vb: ActivityMainBinding
+
+    //    private var count = 0
     private lateinit var viewModel: MainActivityViewModel
-    private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         val view = vb.root
         setContentView(view)
-        //Associate the UI Controller and ViewModel
+        /**Associate the UI Controller and ViewModel*/
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java);
 
-        //Use the ViewModel in your UI Controller
-        vb.tvShow.text = viewModel.getCurrentCount().toString();
+        /**Use the ViewModel in your UI Controller*/
         //vb.tvShow.text = count.toString();
+        vb.tvShow.text = viewModel.getCurrentCount().toString();
         vb.btnAdd.setOnClickListener {
-//            count++
-//            vb.tvShow.text = count.toString()
+            /**Use the ViewModel in your UI Controller*/
+            //count++
+            //vb.tvShow.text = count.toString()
             vb.tvShow.text = viewModel.getUpdatedCounter().toString()
         }
     }
 }
 ```
+
+<div align="center">
+<img src="img/vmsrvm.gif" alt="vmsrvm.gif" width="500px">
+</div>
