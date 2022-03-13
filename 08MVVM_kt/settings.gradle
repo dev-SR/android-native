@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "08MVVP_kt"
+rootProject.name = "08MVVM_kt"
 include ':app'
