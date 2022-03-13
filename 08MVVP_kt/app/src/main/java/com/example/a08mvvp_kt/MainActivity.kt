@@ -33,16 +33,26 @@ class MainActivity : AppCompatActivity() {
         val view = vb.root
         setContentView(view)
         /**Associate the UI Controller and ViewModel*/
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java);
+        val dataRepo = 10 // Data source
+        val factory = MainActivityViewModel.Factory(dataRepo) // Factory
+        viewModel =
+            ViewModelProvider(this, factory).get(MainActivityViewModel::class.java) // ViewModel
+//        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java);
 
         /**Use the ViewModel in your UI Controller*/
         //vb.tvShow.text = count.toString();
-        vb.tvShow.text = viewModel.getCurrentCount().toString();
+//        vb.tvShow.text = viewModel.count.toString();
+//        vb.btnAdd.setOnClickListener {
+//            /**Use the ViewModel in your UI Controller*/
+//            //count++
+//            //vb.tvShow.text = count.toString()
+//            vb.tvShow.text = viewModel.getUpdatedCounter().toString()
+//        }
+        viewModel.getCountValue().observe(this) { count ->
+            vb.tvShow.text = count.toString()
+        }
         vb.btnAdd.setOnClickListener {
-            /**Use the ViewModel in your UI Controller*/
-            //count++
-            //vb.tvShow.text = count.toString()
-            vb.tvShow.text = viewModel.getUpdatedCounter().toString()
+            viewModel.updateCounter()
         }
     }
 }
