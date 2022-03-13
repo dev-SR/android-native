@@ -4,6 +4,7 @@
 	- [Setup and Settings](#setup-and-settings)
 		- [Android Emulator - AMD Processor](#android-emulator---amd-processor)
 		- [Changing AVD installation location](#changing-avd-installation-location)
+	- [Change Project Name / Root Directory Name](#change-project-name--root-directory-name)
 	- [`CompileSdkVersion` and `targetSdkVersion`](#compilesdkversion-and-targetsdkversion)
 		- [`compileSdkVersion`](#compilesdkversion)
 		- [`targetSdkVersion`](#targetsdkversion)
@@ -41,6 +42,19 @@ Moving avd directory from it's default `C:\users\<username>\.android\avd` to `D:
 </div>
 
 [https://stackoverflow.com/questions/40501341/how-can-i-change-the-path-to-android-avd-in-my-android-studio](https://stackoverflow.com/questions/40501341/how-can-i-change-the-path-to-android-avd-in-my-android-studio)
+
+## Change Project Name / Root Directory Name
+
+- go to `setting.gradle`
+- modify/include `rootProject.name='put the name you want here'`
+- Then go to `build` -> `clean project`
+- build -> `rebuild project`
+
+<div align="center">
+<img src="img/crn.jpg" alt="crn.jpg" width="600px">
+</div>
+
+[https://stackoverflow.com/questions/28568715/android-studio-change-project-name-root-directory-name](https://stackoverflow.com/questions/28568715/android-studio-change-project-name-root-directory-name)
 
 ## `CompileSdkVersion` and `targetSdkVersion`
 
