@@ -491,6 +491,27 @@ Creating new layout form individual Custom View item
 
 `settting_item_layout.xml`
 
+
+```xml
+<ConstraintLayout >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/imageView"/>
+
+        <TextView
+            android:id="@+id/tvPrimary"/>
+
+        <TextView
+            android:id="@+id/tvSecondary"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ConstraintLayout>
+```
+
 <div align="center">
 <img src="img/jlvs.jpg" alt="jlvs.jpg" width="400px">
 </div>
