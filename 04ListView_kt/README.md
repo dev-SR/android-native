@@ -158,7 +158,7 @@ Android framework by default provides us the ability to create **listItems which
 ```
 
 <div align="center">
-<img src="img/clvi.jpg" alt="clvi.jpg" width="400px">
+<img src="img/litm.jpg" alt="clvi.jpg" width="400px">
 </div>
 
 ### Defining the `ListView` in Main Layout
