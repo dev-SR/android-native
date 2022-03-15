@@ -14,8 +14,12 @@
     - [Building Adapters](#building-adapters)
     - [Optimizing Performance - `ViewHolder` Pattern](#optimizing-performance---viewholder-pattern)
     - [Change the color of the clicked items](#change-the-color-of-the-clicked-items)
+      - [Using Xml Attributes](#using-xml-attributes)
       - [using `lv.setOnItemClickListener()`](#using-lvsetonitemclicklistener)
       - [using `ViewHolder` Pattern](#using-viewholder-pattern)
+    - [Ex: Java](#ex-java)
+      - [V1](#v1)
+  - [Important Attributes](#important-attributes)
 
 ## Adapters: Servants of the ListView
 
@@ -286,7 +290,7 @@ Here’s a step-by-step breakdown:
 4. Finally, `getView()` **creates a view to be used as a row in the list**. Here you define what information shows and where it sits within the ListView. You also inflate a custom view from the XML layout defined in `res/layout/movie_list_item.xml`.
 
 <div align="center">
- <img src="img/cus_listview.jpg" alt="cus_listview.jpg" width="100px">
+ <img src="img/cus_listview.jpg" alt="cus_listview.jpg" width="1000px">
 </div>
 
 Set Adapter to ListView in Main Activity:
@@ -409,6 +413,12 @@ override fun getView(position: Int, convertView: View?, parent: ViewGroup?): Vie
 <img src="img/cllvv.gif" alt="cllvv.gif" width="500px">
 </div>
 
+#### Using Xml Attributes
+
+```xml
+android:listSelector="#CCCCCC"
+```
+
 #### using `lv.setOnItemClickListener()`
 
 ```kotlin
@@ -467,4 +477,133 @@ override fun getView(position: Int, convertView: View?, parent: ViewGroup?): Vie
 
         return convertView!!
     }
+```
+
+### Ex: Java
+
+<div align="center">
+<img src="img/jvlvfull.png" alt="scrn.png" width="300px">
+</div>
+
+#### V1
+
+Creating new layout form individual Custom View item
+
+`settting_item_layout.xml`
+
+<div align="center">
+<img src="img/jlvs.jpg" alt="jlvs.jpg" width="400px">
+</div>
+
+Data:
+
+`Setting.java`
+
+```java
+public class Setting {
+    String primary;
+    String secondary;
+    int img;
+
+    public Setting(String primary, String secondary, int img) {
+        this.primary = primary;
+        this.secondary = secondary;
+        this.img = img;
+    }
+
+    public static ArrayList<Setting> getSettings() {
+        ArrayList<Setting> settings = new ArrayList();
+        settings.add(new Setting("Connection", "Wi-Fi · Bluetooth · Airplane mode", R.drawable.connections));
+        settings.add(new Setting("Sounds and vibration", "Sound mode · Ringtone", R.drawable.sounds_vibration));
+        settings.add(new Setting("Notifications", "Status bar · Do not disturb", R.drawable.notifications));
+        settings.add(new Setting("Display", "Brightness · Eye comfort shield", R.drawable.display));
+        settings.add(new Setting("Wallpapers", "Home and lock screen wallpaper", R.drawable.wallpaper));
+        settings.add(new Setting("Themes", "Themes · Wallpapers · Icons", R.drawable.themes));
+        settings.add(new Setting("Home screen", "Layout · App icon badges", R.drawable.home_screen));
+        settings.add(new Setting("Software update", "Download and Install", R.drawable.software_update));
+        settings.add(new Setting("Privacy", "Permission manager", R.drawable.privacy));
+        settings.add(new Setting("App", "Default apps · App settings", R.drawable.apps));
+        settings.add(new Setting("About device", "Status · Legal information · Phone name", R.drawable.about_phone));
+        return settings;
+    }
+}
+```
+
+Bind data to view:
+
+`SettingAdapter.java`
+
+```java
+public class SettingAdapter extends BaseAdapter {
+    ArrayList<Setting> settings;
+    Context context;
+
+    public SettingAdapter(Context context, ArrayList<Setting> settings) {
+        this.settings = settings;
+        this.context = context;
+    }
+
+    @Override
+    public int getCount() {
+        return settings.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        Setting s = settings.get(position);
+
+        View itemView = LayoutInflater.from(context).inflate(R.layout.settting_item_layout, parent, false);
+        ImageView img = itemView.findViewById(R.id.imageView);
+        TextView primary = itemView.findViewById(R.id.tvPrimary);
+        TextView secondary = itemView.findViewById(R.id.tvSecondary);
+
+        img.setImageResource(s.img);
+        primary.setText(s.primary);
+        secondary.setText(s.secondary);
+
+        return itemView;
+
+    }
+}
+```
+
+`MainActivity.java`
+
+```java
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding _;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = _.getRoot();
+        setContentView(view);
+        ArrayList<Setting> settings = Setting.getSettings();
+        _.lvContainer.setAdapter(new SettingAdapter(this, settings));
+        _.lvContainer.setOnItemClickListener((adapterView, view1, i, l) -> {
+            Toast.makeText(getApplicationContext(), settings.get(i).primary + " Clicked", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+}
+```
+
+## Important Attributes
+
+```xml
+        android:clipToPadding="true"
+        android:divider="#fff"
+        android:listSelector="#CCCCCC"
+        android:dividerHeight="2dp"
 ```
