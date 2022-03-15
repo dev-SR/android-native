@@ -1,6 +1,7 @@
 # Clean Architecture
 
 - [Clean Architecture](#clean-architecture)
+  - [Using the Architecture Components](#using-the-architecture-components)
   - [MVVM Intro](#mvvm-intro)
     - [MVVM vs MVP](#mvvm-vs-mvp)
     - [ViewModel](#viewmodel)
@@ -10,13 +11,43 @@
         - [transformations](#transformations)
         - [mediators](#mediators)
 
+
+## Using the Architecture Components
+
+Here is a short diagram to introduce the Architecture Components and how they work together.
+
 <div align="center">
-<img src="img/mvvm-flows.png" alt="mvvm-flows.png" width="700px">
+<img src="img/ac-1.jpg" alt="ac-1.jpg" width="600px">
+</div>
+
+`LiveData`: A data holder class that can be observed. Always holds/caches the latest version of data, and notifies its observers when data has changed. LiveData is lifecycle aware. UI components just observe relevant data and don't stop or resume observation. LiveData automatically manages all of this since it's aware of the relevant lifecycle status changes while observing.
+
+`ViewModel`: Acts as a communication center between the Repository (data) and the UI. The UI no longer needs to worry about the origin of the data. ViewModel instances survive Activity/Fragment recreation.
+
+`Repository`: A class that you create that is primarily used to manage multiple data sources.
+
+`Entity`: Annotated class that describes a database table when working with Room.
+
+`Room database`: Simplifies database work and serves as an access point to the underlying SQLite database (hides SQLiteOpenHelper). The Room database uses the DAO to issue queries to the SQLite database.
+
+`SQLite database`: On device storage. The Room persistence library creates and maintains this database for you.
+
+`DAO`: Data access object. A mapping of SQL queries to functions. When you use a DAO, you call the methods, and Room takes care of the rest.
+
+
+Example:
+
+<div align="center">
+<img src="img/ac-2.jpg" alt="ac-1.jpg" width="600px">
+</div>
+
+## MVVM Intro
+
+<div align="center">
+<img src="img/mvvm-flows.png" alt="mvvm-flows.png" width="600px">
 </div>
 
 [source](https://proandroiddev.com/best-architecture-for-android-mvi-livedata-viewmodel-71a3a5ac7ee3)
-
-## MVVM Intro
 
 `Model` - `View`  - `ViewModel`
 
