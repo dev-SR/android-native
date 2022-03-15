@@ -19,6 +19,7 @@
       - [using `ViewHolder` Pattern](#using-viewholder-pattern)
     - [Ex: Java](#ex-java)
       - [V1](#v1)
+      - [V2](#v2)
   - [Important Attributes](#important-attributes)
 
 ## Adapters: Servants of the ListView
@@ -617,6 +618,99 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+}
+```
+
+#### V2
+
+Adding Setting Details Activity + ViewHolder Pattern
+
+```java
+public class Setting  implements Serializable {
+    //..
+}
+
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding _;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = _.getRoot();
+        setContentView(view);
+        ArrayList<Setting> settings = Setting.getSettings();
+        _.lvContainer.setAdapter(new SettingAdapter(this, settings));
+        _.lvContainer.setOnItemClickListener((adapterView, view1, i, l) -> {
+            Toast.makeText(getApplicationContext(), settings.get(i).primary + " Clicked", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SettingDetailsActivity.class);
+            intent.putExtra("bundle", settings.get(i));
+            startActivity(intent);
+        });
+    }
+}
+
+public class SettingDetailsActivity extends AppCompatActivity {
+    private ActivitySettingDetailsBinding _;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _ = ActivitySettingDetailsBinding.inflate(getLayoutInflater());
+        View view = _.getRoot();
+        setContentView(view);
+        Intent intent = getIntent();
+        Setting setting = (Setting) intent.getSerializableExtra("bundle");
+        _.tvSname.setText(setting.primary);
+        _.tvSDetails.setText(setting.secondary);
+    }
+
+}
+```
+
+Utilizing ViewHolder Pattern:
+
+```java
+public class SettingAdapter extends BaseAdapter {
+    //...
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        Setting s = settings.get(position);
+        View convertView = view;
+        ViewHolder viewHolder = null;
+
+
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.settting_item_layout, parent, false);
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+
+        viewHolder.primary.setText(s.primary);
+        viewHolder.secondary.setText(s.secondary);
+        viewHolder.img.setImageResource(s.img);
+        return convertView;
+
+
+    }
+
+    private class ViewHolder {
+        TextView primary;
+        TextView secondary;
+        ImageView img;
+
+        public ViewHolder(View view) {
+            primary = view.findViewById(R.id.tvPrimary);
+            secondary = view.findViewById(R.id.tvSecondary);
+            img = view.findViewById(R.id.imageView);
+        }
+
+
+    }
 }
 ```
 
