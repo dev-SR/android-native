@@ -12,28 +12,5 @@ class MainActivity : AppCompatActivity() {
         vb = ActivityMainBinding.inflate(layoutInflater)
         val view = vb.root
         setContentView(view)
-        vb.lv.adapter = ArrayAdapter(
-            this,
-            R.layout.single_textview_layout,
-            R.id.textView,
-            arrayOf(
-                "Apple",
-                "Mango",
-                "Guava",
-                "Banana",
-                "Kiwi",
-                "Grapes",
-                "Watermelon",
-                "Melon",
-                "Pineapple",
-                "Papaya",
-                "Kiwi",
-                "Grapes",
-                "Watermelon",
-                "Melon",
-                "Pineapple",
-                "Papaya"
-            )
-        )
     }
 }
