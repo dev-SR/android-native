@@ -49,17 +49,18 @@ public ArrayAdapter(this, R.layout.itemListView, R.id.itemTextView, T[] objects)
 
 ### Defining the Layout of the ListView’s Rows:
 
-`fruit_item.xml`
+`single_textview_layout.xml`
 
 ```xml
-<LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/tvFruitName"
-        android:text="Apple"/>
-</LinearLayout>
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:text="Item"
+    android:textSize="16sp"
+    android:textStyle="bold" />
 ```
 
 <div align="center">
@@ -71,15 +72,17 @@ public ArrayAdapter(this, R.layout.itemListView, R.id.itemTextView, T[] objects)
 `activity_main.xml`
 
 ```xml
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<?xml version="1.0" encoding="utf-8"?>
+<ConstraintLayout>
     <ListView
-        android:id="@+id/lvFruits"
-        tools:listitem="@layout/fruit_item"
-  		android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:id="@+id/lv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:divider="@color/teal_200"
+        android:listSelector="#D09EFB"
+        tools:listitem="@layout/single_textview_layout" />
+</ConstraintLayout>
 ```
 
 <div align="center">
@@ -91,8 +94,8 @@ public ArrayAdapter(this, R.layout.itemListView, R.id.itemTextView, T[] objects)
 ```kotlin
 		vb.lvFruits.adapter = ArrayAdapter(
             this,
-            R.layout.fruit_item,
-            R.id.tvFruitName,
+            R.layout.single_textview_layout,
+            R.id.textView,
             arrayOf(
                 "Apple",
                 "Mango",

@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
                 "Watermelon",
                 "Melon",
                 "Pineapple",
+                "Papaya",
+                "Kiwi",
+                "Grapes",
+                "Watermelon",
+                "Melon",
+                "Pineapple",
                 "Papaya"
             )
         )
