@@ -10,12 +10,17 @@
       - [Advanced LiveData](#advanced-livedata)
         - [transformations](#transformations)
         - [mediators](#mediators)
-  - [MVVM with Room example:](#mvvm-with-room-example)
-    - [Room Entity class](#room-entity-class)
-    - [DAO Interface](#dao-interface)
-      - [Why use Flow instead of LiveData?](#why-use-flow-instead-of-livedata)
-    - [RoomDatabase Class](#roomdatabase-class)
-    - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
+  - [MVVM with Room example](#mvvm-with-room-example)
+    - [Room](#room)
+      - [Room Entity class](#room-entity-class)
+      - [DAO Interface](#dao-interface)
+        - [Why use Flow instead of LiveData?](#why-use-flow-instead-of-livedata)
+      - [RoomDatabase Class](#roomdatabase-class)
+      - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
+    - [ViewModel Class v1](#viewmodel-class-v1)
+    - [activity_main.xml v1](#activity_mainxml-v1)
+    - [Main Activity v1](#main-activity-v1)
+    - [Result: v1](#result-v1)
 
 
 ## Using the Architecture Components
@@ -439,7 +444,7 @@ ordersData.addSource(_allOrdersLiveData) {ordersData.value = it}
 ordersData.addSource(_searchOrdersLiveData) {ordersData.value = it}
 ```
 
-## MVVM with Room example:
+## MVVM with Room example
 
 ```groovy
 apply plugin: "kotlin-kapt"
@@ -459,34 +464,37 @@ dependencies {
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     //// Coroutines(includes kotlin flow)
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'}
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+
+}
 ```
 
-### Room Entity class
+### Room
 
+#### Room Entity class
+
+
+```kotlin
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
-
 @Entity(tableName = "subscriber_data_table")
 data class Subscriber(
-
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "subscriber_id")
-    var id: Int,
-
     @ColumnInfo(name = "subscriber_name")
     var name: String,
 
     @ColumnInfo(name = "subscriber_email")
-    var email: String
+    var email: String,
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "subscriber_id")
+    var id: Int? = null,
 )
+```
 
-### DAO Interface
+#### DAO Interface
 
-Room allows us to receive the data query as a list, live data or flow. Therefore, we could have written the return types as `List<Subscriber>`  or `LiveData<List<Subscriber>>`.
+Room allows us to receive the data query as a list, live data or flow. Therefore, we could have written the return types as `List<Subscriber>`  , `LiveData<List<Subscriber>>` or `Flow<List<Subscriber>>`.
 
 ```kotlin
 @Dao
@@ -508,17 +516,17 @@ interface SubscriberDAO {
 }
 ```
 
-#### Why use Flow instead of LiveData?
+##### Why use Flow instead of LiveData?
 
 However, considering MVVM architecture, getting data as a Flow is the best practice. We can easily convert the Flow into LiveData inside the ViewModel. **Since LiveData needs a lifecycle, using LiveData inside repository or below classes can cause unexpected errors**.
 
-### RoomDatabase Class
+#### RoomDatabase Class
 
+```kotlin
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-
 
 @Database(entities = [Subscriber::class], version = 1)
 abstract class SubscriberDatabase : RoomDatabase() {
@@ -542,13 +550,25 @@ abstract class SubscriberDatabase : RoomDatabase() {
         }
     }
 }
+```
 
-### Repository Class in Android MVVM
+#### Repository Class in Android MVVM
+
+```kotlin
+import android.content.Context
+import kotlinx.coroutines.flow.Flow
 
 
-class SubscriberRepository(private val dao: SubscriberDAO) {
+class SubscriberRepository(context: Context) {
+    private val dao: SubscriberDAO = SubscriberDatabase.getInstance(context).subscriberDAO
 
-    val subscribers = dao.getAllSubscribers()
+//    val subscribers = dao.getAllSubscribers()
+//    fun getAllSubscriber(): LiveData<List<Subscriber>> {
+//        return dao.getAllSubscribers()
+//    }
+    fun getAllSubscriber(): Flow<List<Subscriber>> {
+        return dao.getAllSubscribers()
+    }
 
     suspend fun insert(subscriber: Subscriber): Long {
         return dao.insertSubscriber(subscriber)
@@ -566,3 +586,174 @@ class SubscriberRepository(private val dao: SubscriberDAO) {
         return dao.deleteAll()
     }
 }
+```
+
+### ViewModel Class v1
+
+```kotlin
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
+
+class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
+
+    val inputName = MutableLiveData<String>()
+    val inputEmail = MutableLiveData<String>()
+    val saveOrUpdateButtonText = MutableLiveData<String>()
+    val clearAllOrDeleteButtonText = MutableLiveData<String>()
+
+    private var isSave = true
+    private lateinit var subscriberToSaveOrUpdate: Subscriber
+
+    init {
+        saveOrUpdateButtonText.value = "Save"
+        clearAllOrDeleteButtonText.value = "Clear All"
+    }
+
+
+    fun saveOrUpdate(name: String, email: String) {
+        if (isSave) {
+            insert(Subscriber(name, email))
+            inputName.value = ""
+            inputEmail.value = ""
+        } else {
+            update(subscriberToSaveOrUpdate)
+        }
+    }
+
+    fun deleteOrClearAll(subscriber: Subscriber? = null) {
+        if (isSave) {
+            clearAll()
+        } else {
+            subscriber?.let {
+                delete(it)
+            }
+        }
+    }
+
+
+    private fun update(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.update(subscriber)
+        }
+    }
+
+    private fun insert(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.insert(subscriber)
+        }
+    }
+
+    private fun clearAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+
+    private fun delete(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.delete(subscriber)
+        }
+    }
+
+//Using liveData
+//    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
+//  Flow -> then convert to liveData
+    fun getSavedSubscribers() = liveData {
+        repository.getAllSubscriber().collect {
+            emit(it)
+        }
+    }
+
+    class Factory(
+        private val repository: SubscriberRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(SubscriberViewModel::class.java)) {
+                return SubscriberViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown View Model class")
+        }
+    }
+}
+```
+
+### activity_main.xml v1
+
+```xml
+<ConstraintLayout>
+    <EditText
+        android:id="@+id/etName"
+        android:hint="Name"/>
+    <EditText
+        android:id="@+id/etEmail"
+        android:hint="Email"/>
+    <Button
+        android:id="@+id/btn_save_or_update"
+        android:text="BTN"/>
+    <Button
+        android:id="@+id/btn_clearAll_delete"
+        android:text="BTN2"/>
+</ConstraintLayout>
+```
+
+<div align="center">
+<img src="img/mvvmrooml1.jpg" alt="mvvmrooml1.jpg" width="400px">
+</div>
+
+### Main Activity v1
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+
+    //    private var count = 0
+    private lateinit var viewModel: SubscriberViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vb = ActivityMainBinding.inflate(layoutInflater)
+        val view = vb.root
+        setContentView(view)
+        val repository = SubscriberRepository(applicationContext)
+        val factory = SubscriberViewModel.Factory(repository)
+        viewModel = ViewModelProvider(this, factory).get(SubscriberViewModel::class.java)
+
+        observeInputText()
+        observeButtonText()
+        vb.btnSaveOrUpdate.setOnClickListener {
+            val currentName = vb.etName.text.toString()
+            val currentEmail = vb.etEmail.text.toString()
+            viewModel.saveOrUpdate(currentName, currentEmail)
+        }
+        vb.btnClearAllDelete.setOnClickListener {
+            viewModel.deleteOrClearAll()
+        }
+        viewModel.getSavedSubscribers().observe(this) {
+            Log.d("MVVM", it.toString())
+        }
+    }
+
+    private fun observeButtonText() {
+        viewModel.saveOrUpdateButtonText.observe(this) {
+            vb.btnSaveOrUpdate.text = it
+        }
+        viewModel.clearAllOrDeleteButtonText.observe(this) {
+            vb.btnClearAllDelete.text = it
+        }
+    }
+
+    private fun observeInputText() {
+        viewModel.inputName.observe(this) {
+            vb.etName.setText(it)
+        }
+        viewModel.inputEmail.observe(this) {
+            vb.etEmail.setText(it)
+        }
+    }
+}
+```
+
+### Result: v1
+
+<div align="center">
+<img src="img/mvmmroom.gif" alt="mvmmroom.gif" width="1000px">
+</div>

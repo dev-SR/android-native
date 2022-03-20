@@ -19,6 +19,8 @@ interface SubscriberDAO {
     @Query("DELETE FROM subscriber_data_table")
     suspend fun deleteAll() : Int
 
+//    @Query("SELECT * FROM subscriber_data_table")
+//    fun getAllSubscribers(): LiveData<List<Subscriber>>
     @Query("SELECT * FROM subscriber_data_table")
     fun getAllSubscribers(): Flow<List<Subscriber>>
 }

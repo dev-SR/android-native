@@ -1,9 +1,21 @@
 package com.example.a08mvvp_kt
 
+import android.content.Context
+import kotlinx.coroutines.flow.Flow
 
-class SubscriberRepository(private val dao: SubscriberDAO) {
 
-    val subscribers = dao.getAllSubscribers()
+class SubscriberRepository(context: Context) {
+    private val dao: SubscriberDAO = SubscriberDatabase.getInstance(context).subscriberDAO
+
+//    val subscribers = dao.getAllSubscribers()
+//    fun getAllSubscriber(): LiveData<List<Subscriber>> {
+//        return dao.getAllSubscribers()
+//    }
+    fun getAllSubscriber(): Flow<List<Subscriber>> {
+        return dao.getAllSubscribers()
+    }
+
+
 
     suspend fun insert(subscriber: Subscriber): Long {
         return dao.insertSubscriber(subscriber)

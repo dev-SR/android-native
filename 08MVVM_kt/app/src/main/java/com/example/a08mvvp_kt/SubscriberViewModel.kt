@@ -1,10 +1,7 @@
 package com.example.a08mvvp_kt
 
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 
 class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
@@ -14,23 +11,68 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
+    private var isSave = true
+    private lateinit var subscriberToSaveOrUpdate: Subscriber
+
     init {
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear All"
     }
 
-    fun saveOrUpdate() {
-        val name = inputName.value!!
-        val email = inputEmail.value!!
-        insertSubscriber(Subscriber(0, name, email))
-        inputName.value = ""
-        inputEmail.value = ""
+
+    fun saveOrUpdate(name: String, email: String) {
+        if (isSave) {
+            insert(Subscriber(name, email))
+            inputName.value = ""
+            inputEmail.value = ""
+        } else {
+            update(subscriberToSaveOrUpdate)
+        }
     }
 
-    private fun insertSubscriber(subscriber: Subscriber) = viewModelScope.launch {
-        repository.insert(subscriber)
+    fun deleteOrClearAll(subscriber: Subscriber? = null) {
+        if (isSave) {
+            clearAll()
+        } else {
+            subscriber?.let {
+                delete(it)
+            }
+        }
     }
 
+
+    private fun update(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.update(subscriber)
+        }
+    }
+
+    private fun insert(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.insert(subscriber)
+        }
+    }
+
+    private fun clearAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+
+    private fun delete(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.delete(subscriber)
+        }
+    }
+
+//Using liveData
+//    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
+//  Flow -> then convert to liveData
+    fun getSavedSubscribers() = liveData {
+        repository.getAllSubscriber().collect {
+            emit(it)
+        }
+    }
 
     class Factory(
         private val repository: SubscriberRepository
