@@ -10,6 +10,12 @@
       - [Advanced LiveData](#advanced-livedata)
         - [transformations](#transformations)
         - [mediators](#mediators)
+  - [MVVM with Room example:](#mvvm-with-room-example)
+    - [Room Entity class](#room-entity-class)
+    - [DAO Interface](#dao-interface)
+      - [Why use Flow instead of LiveData?](#why-use-flow-instead-of-livedata)
+    - [RoomDatabase Class](#roomdatabase-class)
+    - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
 
 
 ## Using the Architecture Components
@@ -432,3 +438,131 @@ val ordersData = MediatorLiveData<List<Order>>()
 ordersData.addSource(_allOrdersLiveData) {ordersData.value = it}
 ordersData.addSource(_searchOrdersLiveData) {ordersData.value = it}
 ```
+
+## MVVM with Room example:
+
+```groovy
+apply plugin: "kotlin-kapt"
+
+dependencies {
+    def lifecycle_version = "2.5.0-alpha03"
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    // Room
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+    //coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    //// Coroutines(includes kotlin flow)
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'}
+```
+
+### Room Entity class
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+
+@Entity(tableName = "subscriber_data_table")
+data class Subscriber(
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "subscriber_id")
+    var id: Int,
+
+    @ColumnInfo(name = "subscriber_name")
+    var name: String,
+
+    @ColumnInfo(name = "subscriber_email")
+    var email: String
+
+)
+
+### DAO Interface
+
+Room allows us to receive the data query as a list, live data or flow. Therefore, we could have written the return types as `List<Subscriber>`  or `LiveData<List<Subscriber>>`.
+
+```kotlin
+@Dao
+interface SubscriberDAO {
+    @Insert
+    suspend fun insertSubscriber(subscriber: Subscriber) : Long
+
+    @Update
+    suspend fun updateSubscriber(subscriber: Subscriber) : Int
+
+    @Delete
+    suspend fun deleteSubscriber(subscriber: Subscriber) : Int
+
+    @Query("DELETE FROM subscriber_data_table")
+    suspend fun deleteAll() : Int
+
+    @Query("SELECT * FROM subscriber_data_table")
+    fun getAllSubscribers():Flow<List<Subscriber>>
+}
+```
+
+#### Why use Flow instead of LiveData?
+
+However, considering MVVM architecture, getting data as a Flow is the best practice. We can easily convert the Flow into LiveData inside the ViewModel. **Since LiveData needs a lifecycle, using LiveData inside repository or below classes can cause unexpected errors**.
+
+### RoomDatabase Class
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+
+@Database(entities = [Subscriber::class], version = 1)
+abstract class SubscriberDatabase : RoomDatabase() {
+    abstract val subscriberDAO: SubscriberDAO
+
+    companion object {
+        @Volatile
+        private var INSTANCE: SubscriberDatabase? = null
+        fun getInstance(context: Context): SubscriberDatabase {
+            synchronized(this) {
+                var instance = INSTANCE
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        SubscriberDatabase::class.java,
+                        "subscriber_data_database"
+                    ).build()
+                }
+                return instance
+            }
+        }
+    }
+}
+
+### Repository Class in Android MVVM
+
+
+class SubscriberRepository(private val dao: SubscriberDAO) {
+
+    val subscribers = dao.getAllSubscribers()
+
+    suspend fun insert(subscriber: Subscriber): Long {
+        return dao.insertSubscriber(subscriber)
+    }
+
+    suspend fun update(subscriber: Subscriber): Int {
+        return dao.updateSubscriber(subscriber)
+    }
+
+    suspend fun delete(subscriber: Subscriber): Int {
+        return dao.deleteSubscriber(subscriber)
+    }
+
+    suspend fun deleteAll(): Int {
+        return dao.deleteAll()
+    }
+}
