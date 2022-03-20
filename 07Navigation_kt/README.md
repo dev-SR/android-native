@@ -7,6 +7,7 @@
     - [Navigation Host](#navigation-host)
     - [Navigation Controller](#navigation-controller)
   - [Passing Arguments: Safe Args](#passing-arguments-safe-args)
+  - [Animation](#animation)
 
 The Navigation component is a suite of libraries, tooling and guidance for in-app navigation.
 The component centralizes all of the navigation information of your app in a `navigation graph`,
@@ -261,4 +262,34 @@ class SecondFragment : Fragment() {
 
 <div align="center">
 <img src="img/safaex.gif" alt="safaex.gif" width="400px">
+</div>
+
+## Animation
+
+<div align="center">
+<img src="img/anim.gif" alt="anim.gif" width="1000px">
+</div>
+
+`from_left.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate
+        android:duration="300"
+        android:fromXDelta="-100%"
+        android:toXDelta="0%" />
+</set>
+```
+
+Adding `from_left` animation to action: `action_firstFragment_to_secondFragment` as `Enter` Transition:
+
+<div align="center">
+<img src="img/anim2.gif" alt="anim2.gif" width="1000px">
+</div>
+
+result:
+
+<div align="center">
+<img src="img/anim1.gif" alt="anim1.gif" width="1000px">
 </div>

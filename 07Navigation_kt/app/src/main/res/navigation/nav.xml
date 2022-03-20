@@ -11,7 +11,8 @@
         tools:layout="@layout/fragment_first" >
         <action
             android:id="@+id/action_firstFragment_to_secondFragment"
-            app:destination="@id/secondFragment" />
+            app:destination="@id/secondFragment"
+            app:enterAnim="@anim/from_left" />
     </fragment>
     <fragment
         android:id="@+id/secondFragment"
