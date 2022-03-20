@@ -291,5 +291,5 @@ Adding `from_left` animation to action: `action_firstFragment_to_secondFragment`
 result:
 
 <div align="center">
-<img src="img/anim1.gif" alt="anim1.gif" width="1000px">
+<img src="img/anim1.gif" alt="anim1.gif" width="400px">
 </div>
