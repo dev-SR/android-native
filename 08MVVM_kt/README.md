@@ -473,7 +473,6 @@ dependencies {
 
 #### Room Entity class
 
-
 ```kotlin
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -519,6 +518,12 @@ interface SubscriberDAO {
 ##### Why use Flow instead of LiveData?
 
 However, considering MVVM architecture, getting data as a Flow is the best practice. We can easily convert the Flow into LiveData inside the ViewModel. **Since LiveData needs a lifecycle, using LiveData inside repository or below classes can cause unexpected errors**.
+
+For this project, we will use both Flow and LiveData.
+
+<div align="center">
+<img src="img/flow-live.png" alt="flow-live.png" width="600px">
+</div>
 
 #### RoomDatabase Class
 
