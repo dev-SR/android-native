@@ -11,6 +11,7 @@
         - [transformations](#transformations)
         - [mediators](#mediators)
   - [MVVM with Room example](#mvvm-with-room-example)
+    - [Dependencies](#dependencies)
     - [Room](#room)
       - [Room Entity class](#room-entity-class)
       - [DAO Interface](#dao-interface)
@@ -445,6 +446,8 @@ ordersData.addSource(_searchOrdersLiveData) {ordersData.value = it}
 ```
 
 ## MVVM with Room example
+
+### Dependencies
 
 ```groovy
 apply plugin: "kotlin-kapt"
