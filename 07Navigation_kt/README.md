@@ -266,6 +266,8 @@ class SecondFragment : Fragment() {
 
 ## Animation
 
+First we need to create Animation Resource file:
+
 <div align="center">
 <img src="img/anim.gif" alt="anim.gif" width="1000px">
 </div>
