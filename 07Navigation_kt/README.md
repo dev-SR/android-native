@@ -282,11 +282,21 @@ class SecondFragment : Fragment() {
 </set>
 ```
 
+<div align="center">
+<img src="img/anim3.jpg" alt="anim3.jpg" width="800px">
+</div>
+
 Adding `from_left` animation to action: `action_firstFragment_to_secondFragment` as `Enter` Transition:
+
+<div align="center">
+<img src="img/anim5.jpg" alt="anim5.jpg" width="800px">
+</div>
 
 <div align="center">
 <img src="img/anim2.gif" alt="anim2.gif" width="1000px">
 </div>
+
+
 
 result:
 
