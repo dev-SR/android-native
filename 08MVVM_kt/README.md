@@ -18,8 +18,8 @@
         - [Why use Flow instead of LiveData?](#why-use-flow-instead-of-livedata)
       - [RoomDatabase Class](#roomdatabase-class)
       - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
-    - [ViewModel Class v1](#viewmodel-class-v1)
     - [activity_main.xml v1](#activity_mainxml-v1)
+    - [ViewModel Class v1](#viewmodel-class-v1)
     - [Main Activity v1](#main-activity-v1)
     - [Result: v1](#result-v1)
 
@@ -596,6 +596,30 @@ class SubscriberRepository(context: Context) {
 }
 ```
 
+
+### activity_main.xml v1
+
+```xml
+<ConstraintLayout>
+    <EditText
+        android:id="@+id/etName"
+        android:hint="Name"/>
+    <EditText
+        android:id="@+id/etEmail"
+        android:hint="Email"/>
+    <Button
+        android:id="@+id/btn_save_or_update"
+        android:text="BTN"/>
+    <Button
+        android:id="@+id/btn_clearAll_delete"
+        android:text="BTN2"/>
+</ConstraintLayout>
+```
+
+<div align="center">
+<img src="img/mvvmrooml1.jpg" alt="mvvmrooml1.jpg" width="400px">
+</div>
+
 ### ViewModel Class v1
 
 ```kotlin
@@ -684,29 +708,6 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     }
 }
 ```
-
-### activity_main.xml v1
-
-```xml
-<ConstraintLayout>
-    <EditText
-        android:id="@+id/etName"
-        android:hint="Name"/>
-    <EditText
-        android:id="@+id/etEmail"
-        android:hint="Email"/>
-    <Button
-        android:id="@+id/btn_save_or_update"
-        android:text="BTN"/>
-    <Button
-        android:id="@+id/btn_clearAll_delete"
-        android:text="BTN2"/>
-</ConstraintLayout>
-```
-
-<div align="center">
-<img src="img/mvvmrooml1.jpg" alt="mvvmrooml1.jpg" width="400px">
-</div>
 
 ### Main Activity v1
 
