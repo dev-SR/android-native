@@ -212,7 +212,7 @@ plugins {
 We are going to use `Safe Args` to pass data from `FirstFragment` to `SecondFragment`, so we have to add argument to the `SecondFragment` in the `navigation graph` XML file:
 
 <div align="center">
-<img src="img/safa.gif" alt="safa.gif" width="800px">
+<img src="img/safa.gif" alt="safa.gif" width="1000px">
 </div>
 
 
