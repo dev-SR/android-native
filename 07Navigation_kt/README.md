@@ -1,11 +1,12 @@
 # Navigation Component
 
 - [Navigation Component](#navigation-component)
-	- [Basic Implementation](#basic-implementation)
-		- [Creating Navigation Graph and Fragments](#creating-navigation-graph-and-fragments)
-		- [Add Actions to Navigate:](#add-actions-to-navigate)
-		- [Navigation Host](#navigation-host)
-		- [Navigation Controller](#navigation-controller)
+  - [Basic Implementation](#basic-implementation)
+    - [Creating Navigation Graph and Fragments](#creating-navigation-graph-and-fragments)
+    - [Add Actions to Navigate](#add-actions-to-navigate)
+    - [Navigation Host](#navigation-host)
+    - [Navigation Controller](#navigation-controller)
+  - [Passing Arguments: Safe Args](#passing-arguments-safe-args)
 
 The Navigation component is a suite of libraries, tooling and guidance for in-app navigation.
 The component centralizes all of the navigation information of your app in a `navigation graph`,
@@ -53,7 +54,7 @@ Adding `fragments` to the navigation graph:
 
 Here we can see that first fragment is added to the navigation graph as a start destination which can be changed.
 
-### Add Actions to Navigate:
+### Add Actions to Navigate
 
 Now let’s add an `action` to navigate from firstFragment to secondFragment and vice-versa.
 
@@ -91,7 +92,7 @@ NavHost: An empty container that displays destinations from your navigation grap
 <img src="img/navhost.jpg" alt="navhost.jpg" width="800px">
 </div>
 
-Adding `navigation host` to the main activity with the help of navigation graph XML file:
+Adding `navigation host` to `main_activity` layout:
 
 <div align="center">
 <img src="img/navhost.gif" alt="navhost.jpg" width="800px">
@@ -111,6 +112,9 @@ Implementing `navigation controller` with the help of `action` id to navigate fr
 `FirstFragment`
 
 ```kotlin
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+
 class FirstFragment : Fragment() {
     private lateinit var fvb: FragmentFirstBinding
 
@@ -156,6 +160,105 @@ class SecondFragment : Fragment() {
 }
 ```
 
+Also, using `import androidx.navigation.fragment.findNavController`
+
+```kotlin
+import androidx.navigation.fragment.findNavController
+
+        fvb.tvFrag1.setOnClickListener {
+//            Navigation.findNavController(view)
+//                .navigate(R.id.action_firstFragment_to_secondFragment)
+            findNavController().navigate(R.id.action_firstFragment_to_secondFragment)
+        }
+```
+
 <div align="center">
 <img src="img/demng.gif" alt="demng.gif" width="400px">
+</div>
+
+## Passing Arguments: Safe Args
+
+<div align="center">
+<img src="img/nvsa.jpg" alt="nvsa.jpg" width="800px">
+</div>
+
+The Navigation component has a Gradle plugin called Safe Args that generates simple object and builder classes for type-safe navigation and access to any associated arguments. Safe Args is strongly recommended for navigating and passing data, because it ensures type-safety.
+
+To add Safe Args to your project, include the following classpath in `Project/Top level` `build.gradle` file:
+
+[Safe Args Dependency](https://developer.android.com/guide/navigation/navigation-pass-data#groovy)
+
+```groovy
+buildscript {
+    repositories {
+        google()
+    }
+    dependencies {
+        def nav_version = "2.4.1"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+    }
+}
+```
+You must also apply kotlin plugins.
+
+To generate Kotlin  language code suitable for Kotlin modules, add this line to your app or module level `build.gradle` file:
+
+```groovy
+plugins {
+  id 'androidx.navigation.safeargs.kotlin'
+}
+```
+
+We are going to use `Safe Args` to pass data from `FirstFragment` to `SecondFragment`, so we have to add argument to the `SecondFragment` in the `navigation graph` XML file:
+
+<div align="center">
+<img src="img/safa.gif" alt="safa.gif" width="800px">
+</div>
+
+
+Passing arguments to `SecondFragment`:
+
+```kotlin
+class FirstFragment : Fragment() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fvb.tvFrag1.setOnClickListener {
+//          findNavController().navigate(R.id.action_firstFragment_to_secondFragment)
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(100)
+            findNavController().navigate(action)
+        }
+    }
+}
+```
+
+Retrieving arguments in `SecondFragment`:
+
+```kotlin
+class SecondFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        fvb = FragmentSecondBinding.inflate(inflater, container, false)
+        val view = fvb.root
+
+        // Retrieving arguments
+        arguments?.let {
+            val args = SecondFragmentArgs.fromBundle(it)
+            val number = args.number // Arg name : `number`
+            Log.d("Fragments", number.toString())
+            fvb.tvFrag2.text = "Sent From Frag1 : ${number.toString()}"
+        }
+
+        fvb.tvFrag2.setOnClickListener {
+            findNavController().navigate(R.id.action_secondFragment_to_firstFragment)
+        }
+        return view
+    }
+}
+```
+
+<div align="center">
+<img src="img/safaex.gif" alt="safaex.gif" width="400px">
 </div>
