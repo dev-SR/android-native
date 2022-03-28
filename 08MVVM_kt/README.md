@@ -862,5 +862,5 @@ class MainActivity : AppCompatActivity() {
 ```
 
 <div align="center">
-<img src="img/mvvmrc.gif" alt="mvvmr.gif" width="500px">
+<img src="img/mvvmryc.gif" alt="mvvmryc.gif" width="500px">
 </div>
