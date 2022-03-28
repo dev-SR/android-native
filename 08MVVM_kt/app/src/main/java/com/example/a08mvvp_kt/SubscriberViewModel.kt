@@ -11,8 +11,8 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
-    private var isSave = true
-    private lateinit var subscriberToSaveOrUpdate: Subscriber
+//    private var isSave = true
+//    private lateinit var subscriberToSaveOrUpdate: Subscriber
 
     init {
         saveOrUpdateButtonText.value = "Save"
@@ -20,24 +20,24 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     }
 
 
-    fun saveOrUpdate(name: String, email: String) {
-        if (isSave) {
-            insert(Subscriber(name, email))
-            inputName.value = ""
-            inputEmail.value = ""
-        } else {
-            update(subscriberToSaveOrUpdate)
-        }
+    fun save(name: String, email: String) {
+//        if (isSave) {
+        insert(Subscriber(name, email))
+        inputName.value = ""
+        inputEmail.value = ""
+//        } else {
+//            update(subscriberToSaveOrUpdate)
+//        }
     }
 
-    fun deleteOrClearAll(subscriber: Subscriber? = null) {
-        if (isSave) {
-            clearAll()
-        } else {
-            subscriber?.let {
-                delete(it)
-            }
-        }
+    fun ClearAll(subscriber: Subscriber? = null) {
+//        if (isSave) {
+        clearAll()
+//        } else {
+//            subscriber?.let {
+//                delete(it)
+//            }
+//        }
     }
 
 
@@ -65,14 +65,15 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         }
     }
 
-//Using liveData
+    //Using liveData
 //    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
 //  Flow -> then convert to liveData
-    fun getSavedSubscribers() = liveData {
-        repository.getAllSubscriber().collect {
-            emit(it)
-        }
-    }
+    fun getSavedSubscribers() = repository.getAllSubscriber().asLiveData()
+//    fun getSavedSubscribers() = liveData {
+//        repository.getAllSubscriber().collect {
+//            emit(it)
+//        }
+//    }
 
     class Factory(
         private val repository: SubscriberRepository

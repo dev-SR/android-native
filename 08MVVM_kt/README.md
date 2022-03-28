@@ -16,12 +16,14 @@
       - [Room Entity class](#room-entity-class)
       - [DAO Interface](#dao-interface)
         - [Why use Flow instead of LiveData?](#why-use-flow-instead-of-livedata)
+        - [What are the issues with using Flow in the View Layer?](#what-are-the-issues-with-using-flow-in-the-view-layer)
       - [RoomDatabase Class](#roomdatabase-class)
       - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
     - [activity_main.xml v1](#activity_mainxml-v1)
     - [ViewModel Class v1](#viewmodel-class-v1)
     - [Main Activity v1](#main-activity-v1)
     - [Result: v1](#result-v1)
+    - [Setup Recycler View v1:](#setup-recycler-view-v1)
 
 
 ## Using the Architecture Components
@@ -522,7 +524,23 @@ interface SubscriberDAO {
 
 However, considering MVVM architecture, getting data as a Flow is the best practice. We can easily convert the Flow into LiveData inside the ViewModel. **Since LiveData needs a lifecycle, using LiveData inside repository or below classes can cause unexpected errors**.
 
-For this project, we will use both Flow and LiveData.
+##### What are the issues with using Flow in the View Layer?
+
+Can we use Flow in ViewModels? Of course we can! But for keeping the subscription active during orientation changes, it’s recommended to use LiveData when propagating data to a View. The first problem with this approach is the handling of the Lifecycle, which `LiveData` does automatically for us.
+We can transform Flow to LiveData in two ways:
+
+```kotlin
+val users: LiveData<List<User>> = repository.getAllUsersFlow().asLiveData()
+```
+
+Or using the liveData builder function
+
+```kotlin
+val users: LiveData<List<User>> = liveData {
+    // some additional work
+    repository.getAllUsersFlow()
+}
+```
 
 <div align="center">
 <img src="img/flow-live.png" alt="flow-live.png" width="600px">
@@ -565,7 +583,6 @@ abstract class SubscriberDatabase : RoomDatabase() {
 ```kotlin
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
-
 
 class SubscriberRepository(context: Context) {
     private val dao: SubscriberDAO = SubscriberDatabase.getInstance(context).subscriberDAO
@@ -633,33 +650,20 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
-    private var isSave = true
-    private lateinit var subscriberToSaveOrUpdate: Subscriber
-
     init {
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear All"
     }
 
 
-    fun saveOrUpdate(name: String, email: String) {
-        if (isSave) {
-            insert(Subscriber(name, email))
-            inputName.value = ""
-            inputEmail.value = ""
-        } else {
-            update(subscriberToSaveOrUpdate)
-        }
+    fun save(name: String, email: String) {
+        insert(Subscriber(name, email))
+        inputName.value = ""
+        inputEmail.value = ""
     }
 
-    fun deleteOrClearAll(subscriber: Subscriber? = null) {
-        if (isSave) {
-            clearAll()
-        } else {
-            subscriber?.let {
-                delete(it)
-            }
-        }
+    fun ClearAll(subscriber: Subscriber? = null) {
+        clearAll()
     }
 
 
@@ -689,12 +693,14 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
 //Using liveData
 //    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
+
 //  Flow -> then convert to liveData
-    fun getSavedSubscribers() = liveData {
-        repository.getAllSubscriber().collect {
-            emit(it)
-        }
-    }
+    fun getSavedSubscribers() = repository.getAllSubscriber().asLiveData()
+//    fun getSavedSubscribers() = liveData {
+//        repository.getAllSubscriber().collect {
+//            emit(it)
+//        }
+//    }
 
     class Factory(
         private val repository: SubscriberRepository
@@ -707,6 +713,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         }
     }
 }
+
 ```
 
 ### Main Activity v1
@@ -731,10 +738,10 @@ class MainActivity : AppCompatActivity() {
         vb.btnSaveOrUpdate.setOnClickListener {
             val currentName = vb.etName.text.toString()
             val currentEmail = vb.etEmail.text.toString()
-            viewModel.saveOrUpdate(currentName, currentEmail)
+            viewModel.save(currentName, currentEmail)
         }
         vb.btnClearAllDelete.setOnClickListener {
-            viewModel.deleteOrClearAll()
+            viewModel.ClearAll()
         }
         viewModel.getSavedSubscribers().observe(this) {
             Log.d("MVVM", it.toString())
@@ -765,4 +772,85 @@ class MainActivity : AppCompatActivity() {
 
 <div align="center">
 <img src="img/mvmmroom.gif" alt="mvmmroom.gif" width="1000px">
+</div>
+
+### Setup Recycler View v1:
+
+`subscriber_layout.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvName"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/tvEmail"
+        android:text="email"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+Adapter Class v1:
+
+```kotlin
+class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
+    RecyclerView.Adapter<SubscriberAdapter.SubscriberViewHolder>() {
+
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): SubscriberViewHolder {
+        val inflatedView =
+            LayoutInflater.from(parent.context).inflate(R.layout.subscriber_layout, parent, false)
+        return SubscriberViewHolder(inflatedView)
+    }
+
+    override fun onBindViewHolder(holder: SubscriberViewHolder, position: Int) {
+        holder.bind(subscriber = subscriberList[position])
+    }
+
+    override fun getItemCount(): Int = subscriberList.size
+
+    inner class SubscriberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var tvName = itemView.findViewById<TextView>(R.id.tvName)
+        var tvEmail = itemView.findViewById<TextView>(R.id.tvEmail)
+
+        fun bind(subscriber: Subscriber) {
+            tvName.text = subscriber.name
+            tvEmail.text = subscriber.email
+        }
+    }
+}
+```
+
+Connecting adapter to RecyclerView:
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    private lateinit var viewModel: SubscriberViewModel
+    //.....
+    override fun onCreate(savedInstanceState: Bundle?) {
+        viewModel.getSavedSubscribers().observe(this) {
+                    Log.d("MVVM", it.toString())
+                    vb.rvContainer.apply {
+                        layoutManager = LinearLayoutManager(this@MainActivity)
+                        adapter = SubscriberAdapter(it)
+                }
+        }
+    }
+    //.....
+
+}
+```
+
+<div align="center">
+<img src="img/mvvmr.gif" alt="mvvmr.gif" width="400px">
 </div>

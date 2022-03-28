@@ -2,8 +2,10 @@ package com.example.a08mvvp_kt
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a08mvvp_kt.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -25,14 +27,19 @@ class MainActivity : AppCompatActivity() {
         vb.btnSaveOrUpdate.setOnClickListener {
             val currentName = vb.etName.text.toString()
             val currentEmail = vb.etEmail.text.toString()
-            viewModel.saveOrUpdate(currentName, currentEmail)
+            viewModel.save(currentName, currentEmail)
         }
         vb.btnClearAllDelete.setOnClickListener {
-            viewModel.deleteOrClearAll()
+            viewModel.ClearAll()
         }
         viewModel.getSavedSubscribers().observe(this) {
             Log.d("MVVM", it.toString())
+            vb.rvContainer.apply {
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                adapter = SubscriberAdapter(it)
+            }
         }
+
     }
 
     private fun observeButtonText() {
