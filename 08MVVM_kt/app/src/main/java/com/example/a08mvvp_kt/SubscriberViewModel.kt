@@ -3,7 +3,12 @@ package com.example.a08mvvp_kt
 
 import android.util.Log
 import androidx.lifecycle.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+
 
 class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
 
@@ -11,6 +16,10 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val inputEmail = MutableLiveData<String>()
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message: LiveData<Event<String>>
+        get() = statusMessage
+
 
     private var isSave = true
     private lateinit var subscriberToUpdateOrDelete: Subscriber
@@ -71,6 +80,8 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     private fun update(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.update(subscriber)
+            statusMessage.value = Event("Subscriber Updated Successfully")
+
 
         }
     }
@@ -78,18 +89,23 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     private fun insert(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.insert(subscriber)
+            statusMessage.value = Event("Subscriber Inserted Successfully")
         }
     }
 
     private fun clearAll() {
         viewModelScope.launch {
             repository.deleteAll()
+            statusMessage.value = Event("All Subscribers Deleted Successfully")
+
         }
     }
 
     private fun delete(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.delete(subscriber)
+            statusMessage.value = Event("Subscriber Deleted Successfully")
+
         }
     }
 

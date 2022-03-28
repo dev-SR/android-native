@@ -25,7 +25,9 @@
     - [Setup Recycler View](#setup-recycler-view)
     - [MainActivity v2](#mainactivity-v2)
     - [ViewModel v2](#viewmodel-v2)
-    - [Final Result](#final-result)
+    - [Result v2](#result-v2)
+    - [UI events](#ui-events)
+      - [Use an Event wrapper](#use-an-event-wrapper)
 
 ## Using the Architecture Components
 
@@ -453,7 +455,7 @@ ordersData.addSource(_searchOrdersLiveData) {ordersData.value = it}
 Example:
 
 <div align="center">
-<img src="img/mvvmfull.gif" alt="mvvmfull.gif" width="450px">
+<img src="img/mvvmfinalex.gif" alt="mvvmfull.gif" width="450px">
 </div>
 
 ### Dependencies
@@ -1048,8 +1050,104 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 }
 ```
 
-### Final Result
+### Result v2
 
 <div align="center">
-<img src="img/mvvmfull.gif" alt="mvvmfull.gif" width="450px">
+<img src="img/mvvmfull.gif" alt="mvvmfull.gif" width="400px">
 </div>
+
+### UI events
+
+A convenient way for a view (activity or fragment) to communicate with a ViewModel is to use `LiveData` observables. The view subscribes to changes in LiveData and reacts to them. This works well for data that is displayed in a screen continuously.
+
+**However, some data should be consumed only once**, like a `Snackbar` message, a `navigation` event or a `dialog` trigger.
+
+<div align="center">
+<img src="img/mvvmfinalex.gif" alt="mvvmfull.gif" width="450px">
+</div>
+
+#### Use an Event wrapper
+
+In this approach you manage explicitly whether the event has been handled or not, reducing mistakes.
+
+[source](https://medium.com/androiddevelopers/livedata-with-snackbar-navigation-and-other-events-the-singleliveevent-case-ac2622673150)
+
+`Event.kt`
+
+```kotlin
+open class Event<out T>(private val content: T) {
+
+    var hasBeenHandled = false
+        private set // Allow external read but not write
+
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+
+    /**
+     * Returns the content, even if it's already been handled.
+     */
+    fun peekContent(): T = content
+}
+```
+
+`SubscriberViewModel.kt`
+
+```kotlin
+class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
+
+    //..
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message: LiveData<Event<String>>
+        get() = statusMessage
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState
+
+    private fun update(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.update(subscriber)
+            statusMessage.value = Event("Subscriber Updated Successfully")
+        }
+    }
+
+    private fun insert(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.insert(subscriber)
+            statusMessage.value = Event("Subscriber Inserted Successfully")
+        }
+    }
+
+    private fun clearAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+            statusMessage.value = Event("All Subscribers Deleted Successfully")
+        }
+    }
+
+    private fun delete(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.delete(subscriber)
+            statusMessage.value = Event("Subscriber Deleted Successfully")
+        }
+    }
+    //...
+}
+```
+
+`MainActivity.kt`
+
+```kotlin
+viewModel.message.observe(this) { event ->
+    event.getContentIfNotHandled()?.let {
+        Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+    }
+}
+```

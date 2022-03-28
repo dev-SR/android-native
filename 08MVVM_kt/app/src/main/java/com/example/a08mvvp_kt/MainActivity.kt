@@ -7,14 +7,17 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a08mvvp_kt.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var vb: ActivityMainBinding
-
-    //    private var count = 0
     private lateinit var viewModel: SubscriberViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.message.observe(this) { event ->
+            event.getContentIfNotHandled()?.let {
+                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun observeButtonText() {
