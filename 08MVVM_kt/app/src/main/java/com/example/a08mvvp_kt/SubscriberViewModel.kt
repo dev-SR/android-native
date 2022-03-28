@@ -1,6 +1,7 @@
 package com.example.a08mvvp_kt
 
 
+import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 
@@ -12,11 +13,23 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
     private var isSave = true
-    private lateinit var subscriberToSaveOrUpdate: Subscriber
+    private lateinit var subscriberToUpdateOrDelete: Subscriber
 
     init {
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear All"
+    }
+
+    fun initUpdateAndDeleteButton(subscriber: Subscriber) {
+        isSave = false
+        //init Subscriber Reference : [subscriber id is important to save for later usage]
+        subscriberToUpdateOrDelete = subscriber
+        // update view
+        inputName.value = subscriber.name
+        inputEmail.value = subscriber.email
+        saveOrUpdateButtonText.value = "Update"
+        clearAllOrDeleteButtonText.value = "Delete"
+
     }
 
 
@@ -26,16 +39,30 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
             inputName.value = ""
             inputEmail.value = ""
         } else {
-            update(subscriberToSaveOrUpdate)
+//            Log.d("Test", subscriberToSaveOrUpdate.toString())
+            //update reference with current input content
+            subscriberToUpdateOrDelete.name = name
+            subscriberToUpdateOrDelete.email = email
+            update(subscriberToUpdateOrDelete)
+            inputName.value = ""
+            inputEmail.value = ""
+            saveOrUpdateButtonText.value = "Save"
+            clearAllOrDeleteButtonText.value = "Clear All"
+            isSave = true
         }
     }
 
-    fun deleteOrClearAll(subscriber: Subscriber? = null) {
+    fun deleteOrClearAll() {
         if (isSave) {
             clearAll()
         } else {
-            subscriber?.let {
-                delete(it)
+            subscriberToUpdateOrDelete?.let {
+                delete(subscriberToUpdateOrDelete)
+                inputName.value = ""
+                inputEmail.value = ""
+                saveOrUpdateButtonText.value = "Save"
+                clearAllOrDeleteButtonText.value = "Clear All"
+                isSave = true
             }
         }
     }
@@ -44,6 +71,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     private fun update(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.update(subscriber)
+
         }
     }
 
@@ -65,15 +93,10 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         }
     }
 
-//Using liveData
-//    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
-//  Flow -> then convert to liveData
+
+    //  Flow -> then convert to liveData
     fun getSavedSubscribers() = repository.getAllSubscriber().asLiveData()
-//    fun getSavedSubscribers() = liveData {
-//        repository.getAllSubscriber().collect {
-//            emit(it)
-//        }
-//    }
+
 
     class Factory(
         private val repository: SubscriberRepository

@@ -38,8 +38,6 @@ class SubscriberAdapter(
             itemView.setOnClickListener {
                 clickListenerCallback(subscriber)
             }
-
         }
-
     }
 }

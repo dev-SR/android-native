@@ -19,12 +19,13 @@
         - [What are the issues with using Flow in the View Layer?](#what-are-the-issues-with-using-flow-in-the-view-layer)
       - [RoomDatabase Class](#roomdatabase-class)
       - [Repository Class in Android MVVM](#repository-class-in-android-mvvm)
-    - [activity_main.xml v1](#activity_mainxml-v1)
     - [ViewModel Class v1](#viewmodel-class-v1)
     - [Main Activity v1](#main-activity-v1)
     - [Result: v1](#result-v1)
-    - [Setup Recycler View v1:](#setup-recycler-view-v1)
-
+    - [Setup Recycler View](#setup-recycler-view)
+    - [MainActivity v2](#mainactivity-v2)
+    - [ViewModel v2](#viewmodel-v2)
+    - [Final Result](#final-result)
 
 ## Using the Architecture Components
 
@@ -449,6 +450,12 @@ ordersData.addSource(_searchOrdersLiveData) {ordersData.value = it}
 
 ## MVVM with Room example
 
+Example:
+
+<div align="center">
+<img src="img/mvvmfull.gif" alt="mvvmfull.gif" width="450px">
+</div>
+
 ### Dependencies
 
 ```groovy
@@ -613,30 +620,6 @@ class SubscriberRepository(context: Context) {
 }
 ```
 
-
-### activity_main.xml v1
-
-```xml
-<ConstraintLayout>
-    <EditText
-        android:id="@+id/etName"
-        android:hint="Name"/>
-    <EditText
-        android:id="@+id/etEmail"
-        android:hint="Email"/>
-    <Button
-        android:id="@+id/btn_save_or_update"
-        android:text="BTN"/>
-    <Button
-        android:id="@+id/btn_clearAll_delete"
-        android:text="BTN2"/>
-</ConstraintLayout>
-```
-
-<div align="center">
-<img src="img/mvvmrooml1.jpg" alt="mvvmrooml1.jpg" width="400px">
-</div>
-
 ### ViewModel Class v1
 
 ```kotlin
@@ -691,8 +674,6 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         }
     }
 
-//Using liveData
-//    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
 
 //  Flow -> then convert to liveData
     fun getSavedSubscribers() = repository.getAllSubscriber().asLiveData()
@@ -701,6 +682,8 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 //            emit(it)
 //        }
 //    }
+// If LiveData is used in repository, then we can use the below code
+//    fun getSavedSubscribers(): LiveData<List<Subscriber>> = repository.getAllSubscriber()
 
     class Factory(
         private val repository: SubscriberRepository
@@ -717,6 +700,30 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 ```
 
 ### Main Activity v1
+
+`activity_main.xml`
+
+
+```xml
+<ConstraintLayout>
+    <EditText
+        android:id="@+id/etName"
+        android:hint="Name"/>
+    <EditText
+        android:id="@+id/etEmail"
+        android:hint="Email"/>
+    <Button
+        android:id="@+id/btn_save_or_update"
+        android:text="BTN"/>
+    <Button
+        android:id="@+id/btn_clearAll_delete"
+        android:text="BTN2"/>
+</ConstraintLayout>
+```
+
+<div align="center">
+<img src="img/mvvmrooml1.jpg" alt="mvvmrooml1.jpg" width="400px">
+</div>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -774,7 +781,7 @@ class MainActivity : AppCompatActivity() {
 <img src="img/mvmmroom.gif" alt="mvmmroom.gif" width="1000px">
 </div>
 
-### Setup Recycler View v1:
+### Setup Recycler View
 
 `subscriber_layout.xml`
 
@@ -794,6 +801,31 @@ class MainActivity : AppCompatActivity() {
         android:id="@+id/tvEmail"
         android:text="email"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+`activity_main.xml`
+
+```xml
+<ConstraintLayout>
+    <EditText
+        android:id="@+id/etName"
+        android:hint="Name"/>
+    <EditText
+        android:id="@+id/etEmail"
+        android:hint="Email"/>
+    <Button
+        android:id="@+id/btn_save_or_update"
+        android:text="BTN"/>
+    <Button
+        android:id="@+id/btn_clearAll_delete"
+        android:text="BTN2"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:listitem="@layout/subscriber_layout" />
+</ConstraintLayout>
 ```
 
 Adapter Class v1:
@@ -863,4 +895,161 @@ class MainActivity : AppCompatActivity() {
 
 <div align="center">
 <img src="img/mvvmryc.gif" alt="mvvmryc.gif" width="500px">
+</div>
+
+### MainActivity v2
+
+Implement Update and Delete:
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var vb: ActivityMainBinding
+    private lateinit var viewModel: SubscriberViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //...
+
+        observeInputText()
+        observeButtonText()
+        vb.btnSaveOrUpdate.setOnClickListener {
+            val currentName = vb.etName.text.toString()
+            val currentEmail = vb.etEmail.text.toString()
+            viewModel.saveOrUpdate(currentName, currentEmail)
+
+        }
+        vb.btnClearAllDelete.setOnClickListener {
+            viewModel.deleteOrClearAll()
+        }
+
+        viewModel.getSavedSubscribers().observe(this) {
+            Log.d("MVVM", it.toString())
+            vb.rvContainer.apply {
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                adapter = SubscriberAdapter(it) { subscriber ->
+                    viewModel.initUpdateAndDeleteButton(subscriber)
+
+//                    Toast.makeText(applicationContext, "${subscriber.name}", Toast.LENGTH_SHORT)
+//                        .show()
+                }
+            }
+        }
+
+    }
+    //..
+
+}
+```
+
+### ViewModel v2
+
+```kotlin
+class SubscriberViewModel(private val repository: SubscriberRepository) : ViewModel() {
+
+    val inputName = MutableLiveData<String>()
+    val inputEmail = MutableLiveData<String>()
+    val saveOrUpdateButtonText = MutableLiveData<String>()
+    val clearAllOrDeleteButtonText = MutableLiveData<String>()
+
+    private var isSave = true
+    private lateinit var subscriberToUpdateOrDelete: Subscriber
+
+    init {
+        saveOrUpdateButtonText.value = "Save"
+        clearAllOrDeleteButtonText.value = "Clear All"
+    }
+
+    fun initUpdateAndDeleteButton(subscriber: Subscriber) {
+        isSave = false
+        //init Subscriber Reference : [subscriber id is important to save for later usage]
+        subscriberToUpdateOrDelete = subscriber
+        // update view
+        inputName.value = subscriber.name
+        inputEmail.value = subscriber.email
+        saveOrUpdateButtonText.value = "Update"
+        clearAllOrDeleteButtonText.value = "Delete"
+
+    }
+
+
+    fun saveOrUpdate(name: String, email: String) {
+        if (isSave) {
+            insert(Subscriber(name, email))
+            inputName.value = ""
+            inputEmail.value = ""
+        } else {
+//          Log.d("Test", subscriberToSaveOrUpdate.toString())
+            //update reference with current input content
+            subscriberToUpdateOrDelete.name = name
+            subscriberToUpdateOrDelete.email = email
+            update(subscriberToUpdateOrDelete)
+            inputName.value = ""
+            inputEmail.value = ""
+            saveOrUpdateButtonText.value = "Save"
+            clearAllOrDeleteButtonText.value = "Clear All"
+            isSave = true
+        }
+    }
+
+    fun deleteOrClearAll() {
+        if (isSave) {
+            clearAll()
+        } else {
+            subscriberToUpdateOrDelete?.let {
+                delete(subscriberToUpdateOrDelete)
+                inputName.value = ""
+                inputEmail.value = ""
+                saveOrUpdateButtonText.value = "Save"
+                clearAllOrDeleteButtonText.value = "Clear All"
+                isSave = true
+            }
+        }
+    }
+
+
+    private fun update(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.update(subscriber)
+
+        }
+    }
+
+    private fun insert(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.insert(subscriber)
+        }
+    }
+
+    private fun clearAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+
+    private fun delete(subscriber: Subscriber) {
+        viewModelScope.launch {
+            repository.delete(subscriber)
+        }
+    }
+
+
+    //  Flow -> then convert to liveData
+    fun getSavedSubscribers() = repository.getAllSubscriber().asLiveData()
+
+
+    class Factory(
+        private val repository: SubscriberRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(SubscriberViewModel::class.java)) {
+                return SubscriberViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown View Model class")
+        }
+    }
+}
+```
+
+### Final Result
+
+<div align="center">
+<img src="img/mvvmfull.gif" alt="mvvmfull.gif" width="450px">
 </div>

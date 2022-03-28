@@ -1,6 +1,8 @@
 package com.example.a08mvvp_kt
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -29,17 +31,21 @@ class MainActivity : AppCompatActivity() {
             val currentName = vb.etName.text.toString()
             val currentEmail = vb.etEmail.text.toString()
             viewModel.saveOrUpdate(currentName, currentEmail)
+
         }
         vb.btnClearAllDelete.setOnClickListener {
             viewModel.deleteOrClearAll()
         }
+
         viewModel.getSavedSubscribers().observe(this) {
             Log.d("MVVM", it.toString())
             vb.rvContainer.apply {
                 layoutManager = LinearLayoutManager(this@MainActivity)
                 adapter = SubscriberAdapter(it) { subscriber ->
-                    Toast.makeText(applicationContext, "${subscriber.name}", Toast.LENGTH_SHORT)
-                        .show()
+                    viewModel.initUpdateAndDeleteButton(subscriber)
+
+//                    Toast.makeText(applicationContext, "${subscriber.name}", Toast.LENGTH_SHORT)
+//                        .show()
                 }
             }
         }
