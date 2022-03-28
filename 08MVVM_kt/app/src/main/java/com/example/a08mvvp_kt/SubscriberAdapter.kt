@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
+class SubscriberAdapter(
+    private val subscriberList: List<Subscriber>,
+    private val clickListenerCallback: (Subscriber) -> Unit
+) :
     RecyclerView.Adapter<SubscriberAdapter.SubscriberViewHolder>() {
 
 
@@ -29,10 +32,14 @@ class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
     inner class SubscriberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var tvName = itemView.findViewById<TextView>(R.id.tvName)
         var tvEmail = itemView.findViewById<TextView>(R.id.tvEmail)
-
         fun bind(subscriber: Subscriber) {
             tvName.text = subscriber.name
             tvEmail.text = subscriber.email
+            itemView.setOnClickListener {
+                clickListenerCallback(subscriber)
+            }
+
         }
+
     }
 }

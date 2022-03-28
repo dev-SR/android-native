@@ -799,7 +799,10 @@ class MainActivity : AppCompatActivity() {
 Adapter Class v1:
 
 ```kotlin
-class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
+class SubscriberAdapter(
+    private val subscriberList: List<Subscriber>,
+    private val clickListenerCallback: (Subscriber) -> Unit
+) :
     RecyclerView.Adapter<SubscriberAdapter.SubscriberViewHolder>() {
 
 
@@ -825,6 +828,10 @@ class SubscriberAdapter(private val subscriberList: List<Subscriber>) :
         fun bind(subscriber: Subscriber) {
             tvName.text = subscriber.name
             tvEmail.text = subscriber.email
+            //register click listener callback
+            itemView.setOnClickListener {
+                clickListenerCallback(subscriber)
+            }
         }
     }
 }
@@ -842,7 +849,10 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MVVM", it.toString())
                     vb.rvContainer.apply {
                         layoutManager = LinearLayoutManager(this@MainActivity)
-                        adapter = SubscriberAdapter(it)
+                    adapter = SubscriberAdapter(it) { subscriber ->
+                        Toast.makeText(applicationContext, "${subscriber.name}", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
         }
     }
@@ -852,5 +862,5 @@ class MainActivity : AppCompatActivity() {
 ```
 
 <div align="center">
-<img src="img/mvvmr.gif" alt="mvvmr.gif" width="400px">
+<img src="img/mvvmrc.gif" alt="mvvmr.gif" width="400px">
 </div>

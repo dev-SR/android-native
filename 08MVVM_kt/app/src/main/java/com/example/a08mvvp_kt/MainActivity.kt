@@ -3,6 +3,7 @@ package com.example.a08mvvp_kt
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,16 +28,19 @@ class MainActivity : AppCompatActivity() {
         vb.btnSaveOrUpdate.setOnClickListener {
             val currentName = vb.etName.text.toString()
             val currentEmail = vb.etEmail.text.toString()
-            viewModel.save(currentName, currentEmail)
+            viewModel.saveOrUpdate(currentName, currentEmail)
         }
         vb.btnClearAllDelete.setOnClickListener {
-            viewModel.ClearAll()
+            viewModel.deleteOrClearAll()
         }
         viewModel.getSavedSubscribers().observe(this) {
             Log.d("MVVM", it.toString())
             vb.rvContainer.apply {
                 layoutManager = LinearLayoutManager(this@MainActivity)
-                adapter = SubscriberAdapter(it)
+                adapter = SubscriberAdapter(it) { subscriber ->
+                    Toast.makeText(applicationContext, "${subscriber.name}", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
 
