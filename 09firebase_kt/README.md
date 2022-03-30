@@ -201,7 +201,7 @@ class FirebaseRepository {
      * outside a coroutine with the offer function.
      * */
 
-    fun getTodosFromFirestore(): Flow<List<Todo>> = callbackFlow {
+    suspend fun getTodosFromFirestore(): Flow<List<Todo>> = callbackFlow {
         //callbackFlow * Suspends until the callback is invoked
         // Registers callback to firestore, which will be called on new events
         val snapshotListener = fireStoreInstance.addSnapshotListener { snapshot, err ->
@@ -244,8 +244,8 @@ Unlike the flow builder, `callbackFlow` allows values to be emitted from a diffe
 ```kotlin
 class FireStoreViewModel(val context: Context, var repository: FirebaseRepository) :
     ViewModel() {
-    fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
-    fun getTodosAsLiveData2() = liveData {
+//   fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
+    suspend fun getTodosAsLiveData2() = liveData {
         repository.getTodosFromFirestore().collect {
             emit(it)
         }
@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(FireStoreViewModel::class.java)
 
         //OP1: Observe LiveData
-        viewModel.getTodosAsLiveData().observe(this) {
+        viewModel.getTodosAsLiveData2().observe(this) {
             var value = "";
             it.forEach { todo: Todo -> value += "\n${todo.title}" }
             Log.d("FireStore", value)
@@ -370,7 +370,7 @@ class FirebaseRepository {
         }
     }
 
-    fun getTodosFromFirestore(): Flow<UiState<List<Todo>>> = callbackFlow {
+    suspend fun getTodosFromFirestore(): Flow<UiState<List<Todo>>> = callbackFlow {
         trySend(UiState.Loading()).isSuccess
 
         val snapshotListener = fireStoreInstance.addSnapshotListener { snapshot, err ->
@@ -399,12 +399,12 @@ import kotlin.random.Random
 
 class FireStoreViewModel(var repository: FirebaseRepository) :
     ViewModel() {
-    fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
-//    fun getTodosAsLiveData2() = liveData {
-//        repository.getTodosFromFirestore().collect {
-//            emit(it)
-//        }
-//    }
+//   fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
+    suspend fun getTodosAsLiveData2() = liveData {
+        repository.getTodosFromFirestore().collect {
+            emit(it)
+        }
+    }
 //
 //    fun getTodosAsFlow() = repository.getTodosFromFirestore()
 
@@ -450,7 +450,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[FireStoreViewModel::class.java]
 
         //Observe LiveData
-        viewModel.getTodosAsLiveData().observe(this) {
+        viewModel.getTodosAsLiveData2().observe(this) {
             when (it) {
                 is UiState.Loading -> {
                     Log.d("FireStore", "LOADING")

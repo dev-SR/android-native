@@ -27,7 +27,7 @@ class FirebaseRepository {
         }
     }
 
-    fun getTodosFromFirestore(): Flow<UiState<List<Todo>>> = callbackFlow {
+    suspend fun getTodosFromFirestore(): Flow<UiState<List<Todo>>> = callbackFlow {
         trySend(UiState.Loading()).isSuccess
 
         val snapshotListener = fireStoreInstance.addSnapshotListener { snapshot, err ->

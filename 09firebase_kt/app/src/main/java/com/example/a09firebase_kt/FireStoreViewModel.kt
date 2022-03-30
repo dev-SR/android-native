@@ -7,12 +7,12 @@ import kotlin.random.Random
 
 class FireStoreViewModel(var repository: FirebaseRepository) :
     ViewModel() {
-    fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
-//    fun getTodosAsLiveData2() = liveData {
-//        repository.getTodosFromFirestore().collect {
-//            emit(it)
-//        }
-//    }
+//    fun getTodosAsLiveData() = repository.getTodosFromFirestore().asLiveData()
+    fun getTodosAsLiveData2() = liveData {
+        repository.getTodosFromFirestore().collect {
+            emit(it)
+        }
+    }
 //
 //    fun getTodosAsFlow() = repository.getTodosFromFirestore()
 

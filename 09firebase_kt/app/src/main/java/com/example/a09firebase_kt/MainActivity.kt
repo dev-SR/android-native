@@ -25,11 +25,10 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[FireStoreViewModel::class.java]
 
         //Observe LiveData
-        viewModel.getTodosAsLiveData().observe(this) {
+        viewModel.getTodosAsLiveData2().observe(this) {
             when (it) {
                 is UiState.Loading -> {
                     Log.d("FireStore", "LOADING")
-
                     showProgress()
                 }
                 is UiState.Success -> {
