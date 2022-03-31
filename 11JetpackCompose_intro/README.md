@@ -1,22 +1,23 @@
 # Jetpack Compose
 
 - [Jetpack Compose](#jetpack-compose)
-	- [Introduction](#introduction)
-	- [Composable functions](#composable-functions)
-		- [Add a text element](#add-a-text-element)
-		- [Define a composable function](#define-a-composable-function)
-		- [Preview](#preview)
-	- [Layouts](#layouts)
-		- [Add multiple texts](#add-multiple-texts)
-		- [Using a Column](#using-a-column)
-		- [Add an image element](#add-an-image-element)
-		- [Configuring layout](#configuring-layout)
-	- [Material Design](#material-design)
-		- [Enable dark theme Preview](#enable-dark-theme-preview)
-	- [Lists and animations](#lists-and-animations)
-		- [Data](#data)
-		- [Create a list of messages](#create-a-list-of-messages)
-		- [Animate messages while expanding](#animate-messages-while-expanding)
+  - [Introduction](#introduction)
+  - [Composable functions](#composable-functions)
+    - [Add a text element](#add-a-text-element)
+    - [Define a composable function](#define-a-composable-function)
+    - [Preview](#preview)
+  - [Layouts](#layouts)
+    - [Add multiple texts](#add-multiple-texts)
+    - [Using a Column](#using-a-column)
+    - [Add an image element](#add-an-image-element)
+    - [Configuring layout](#configuring-layout)
+  - [Material Design](#material-design)
+    - [Enable dark theme Preview](#enable-dark-theme-preview)
+  - [Lists and animations](#lists-and-animations)
+    - [Data](#data)
+    - [Create a list of messages](#create-a-list-of-messages)
+    - [Animate messages while expanding](#animate-messages-while-expanding)
+  - [EX2](#ex2)
 
 ## Introduction
 
@@ -132,7 +133,11 @@ This code creates two text elements inside the content view. However, since we h
 ### Using a Column
 
 The `Column` function lets us arrange elements **vertically**. Add Column to the `MessageCard()` function.
-You can use `Row` to arrange items **horizontally** and `Box` to **stack elements** like FrameLayout.
+We can use `Row` to arrange items **horizontally** and `Box` to **stack elements** like FrameLayout.
+
+<div align="center">
+<img src="img/cfex1.jpg" alt="cfex1.jpg" width="700px">
+</div>
 
 ```kotlin
 @Composable
@@ -397,6 +402,8 @@ By using Compose’s state APIs like remember and mutableStateOf, any changes to
 
 Now we can change the background of the message content based on `isExpanded` when we click on a message. We will use the `clickable` modifier to handle click events on the composable. Instead of just toggling the background color of the Surface, we will animate the background color by gradually modifying its value from `MaterialTheme.colors.surface` to `MaterialTheme.colors.primary` and vice versa. To do so, we will use the `animateColorAsState` function. Lastly, we will use the `animateContentSize` modifier to animate the message container size smoothly:
 
+for more on [animation](https://developer.android.com/jetpack/compose/animation)
+
 ```kotlin
 @Composable
 fun MessageCard(msg: Message) {
@@ -454,3 +461,178 @@ fun MessageCard(msg: Message) {
 <div align="center">
 <img src="img/cff.gif" alt="cff.gif" width="450px">
 </div>
+
+## EX2
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            ComposeTheme {
+                MyApp()
+            }
+        }
+    }
+}
+
+@Composable
+private fun MyApp() {
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
+
+    if (shouldShowOnboarding) {
+        OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+    } else {
+        Greetings()
+    }
+}
+
+@Composable
+private fun OnboardingScreen(onContinueClicked: () -> Unit) {
+    Surface {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Welcome to the Basics Codelab!")
+            Button(
+                modifier = Modifier.padding(vertical = 24.dp),
+                onClick = onContinueClicked
+            ) {
+                Text("Continue")
+            }
+        }
+    }
+}
+
+@Composable
+private fun Greetings(names: List<String> = List(1000) { "$it" }) {
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        items(items = names) { name ->
+            Greeting(name = name)
+        }
+    }
+}
+
+@Composable
+private fun Greeting(name: String) {
+    Card(
+        backgroundColor = MaterialTheme.colors.primary,
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+    ) {
+        CardContent(name)
+    }
+}
+
+@Composable
+private fun CardContent(name: String) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .padding(12.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(12.dp)
+        ) {
+            Text(text = "Hello, ")
+            Text(
+                text = name,
+                style = MaterialTheme.typography.h4.copy(
+                    fontWeight = FontWeight.ExtraBold
+                )
+            )
+            if (expanded) {
+                Text(
+                    text = ("Composem ipsum color sit lazy, " +
+                            "padding theme elit, sed do bouncy. ").repeat(4),
+                )
+            }
+        }
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(
+                imageVector = if (expanded) Filled.ExpandLess else Filled.ExpandMore,
+//                contentDescription = if (expanded) "Show less" else "Show more" ,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 320,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "DefaultPreviewDark"
+)
+@Preview(showBackground = true, widthDp = 320)
+@Composable
+fun DefaultPreview() {
+    ComposeTheme {
+        Greetings()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    ComposeTheme {
+        OnboardingScreen(onContinueClicked = {})
+    }
+}
+```
+
+<div align="center">
+<img src="img/cfex1.gif" alt="cfex1.gif" width="400px">
+</div>
+
+`Theme.kt`
+
+```kotlin
+val Navy = Color(0xFF073042)
+val Blue = Color(0xFF4285F4)
+val LightBlue = Color(0xFFD7EFFE)
+val Chartreuse = Color(0xFFEFF7CF)
+
+private val DarkColorPalette = darkColors(
+    surface = Blue,
+    onSurface = Navy,
+    primary = Navy,
+    onPrimary = Chartreuse
+)
+
+private val LightColorPalette = lightColors(
+    surface = Blue,
+    onSurface = Color.White,
+    primary = LightBlue,
+    onPrimary = Navy
+)
+
+@Composable
+fun ComposeTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colors = if (darkTheme) {
+        DarkColorPalette
+    } else {
+        LightColorPalette
+    }
+
+    MaterialTheme(
+        colors = colors,
+        typography = typography,
+        shapes = shapes,
+        content = content
+    )
+}
+```

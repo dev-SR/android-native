@@ -1,4 +1,5 @@
 package com.example.a11jetpackcompose_intro
+data class Message(val author: String, val body: String)
 
 object SampleData {
     // Sample conversation data
