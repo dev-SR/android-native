@@ -1,29 +1,32 @@
-# Jetpack Compose Built-in UI Element - Part I
+package com.example.a13jpcomposeui_i.ui_elements
 
-- [Jetpack Compose Built-in UI Element - Part I](#jetpack-compose-built-in-ui-element---part-i)
-	- [Text](#text)
-		- [Init](#init)
-		- [StyleText](#styletext)
-		- [FontText](#fonttext)
-		- [TextOverflow](#textoverflow)
-		- [TextAlignment](#textalignment)
-		- [TextSpan](#textspan)
-		- [TextSpanClick](#textspanclick)
-		- [TextSelection](#textselection)
+import android.content.res.Configuration
+import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.a13jpcomposeui_i.ui.theme.ComposeTheme
 
-## Text
-
-### Init
-
-<div align="center">
-<img src="img/t1.jpg" alt="t1.jpg" width="800px">
-</div>
-
-<div align="center">
-<img src="img/t2.gif" alt="t2.gif" width="500px">
-</div>
-
-```kotlin
 @Preview(name = "Light Mode", showBackground = true)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -36,6 +39,8 @@ fun DefaultPreview() {
         TextExample()
     }
 }
+
+
 @Composable
 fun TextExample() {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -54,6 +59,7 @@ fun TextExample() {
     }
 }
 
+
 @Composable
 fun JustText() {
     Text(text = "Hello World")
@@ -63,21 +69,12 @@ fun JustText() {
 fun TextParameter(name: String) {
     Text(text = "Hello $name!")
 }
-//...
-```
 
-### StyleText
-
-```kotlin
 @Composable
 fun StyleText() {
     Text(text = "Hello World", style = MaterialTheme.typography.h5)
 }
-```
 
-### FontText
-
-```kotlin
 @Composable
 fun FontText() {
     Text(
@@ -90,11 +87,7 @@ fun FontText() {
         )
     )
 }
-```
 
-### TextOverflow
-
-```kotlin
 @Composable
 fun TextOverflowEx() {
     Text(
@@ -104,11 +97,7 @@ fun TextOverflowEx() {
         style = MaterialTheme.typography.body2
     )
 }
-```
 
-### TextAlignment
-
-```kotlin
 @Composable
 fun TextAlignment() {
     Surface(color = Color.LightGray) {
@@ -132,9 +121,6 @@ fun TextAlignment() {
 
 }
 
-### Clickable Text
-
-```kotlin
 @Composable
 fun TextWithClick() {
     val context = LocalContext.current
@@ -150,11 +136,7 @@ fun TextWithClick() {
     }
 
 }
-```
 
-### TextSpan
-
-```kotlin
 @Composable
 fun TextSpan() {
     Text(buildAnnotatedString {
@@ -170,11 +152,7 @@ fun TextSpan() {
         }
     })
 }
-```
 
-### TextSpanClick
-
-```kotlin
 @Composable
 fun TextSpanClick() {
     val context = LocalContext.current
@@ -203,15 +181,12 @@ fun TextSpanClick() {
     })
 
 }
-```
 
-### TextSelection
-
-```kotlin
 @Composable
 fun TextSelection() {
     SelectionContainer {
         Text(text = "Hello World", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
     }
 }
-```
+
+
