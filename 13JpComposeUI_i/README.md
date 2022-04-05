@@ -1,15 +1,18 @@
 # Jetpack Compose Built-in UI Element - Part I
 
 - [Jetpack Compose Built-in UI Element - Part I](#jetpack-compose-built-in-ui-element---part-i)
-	- [Text](#text)
-		- [Init](#init)
-		- [StyleText](#styletext)
-		- [FontText](#fonttext)
-		- [TextOverflow](#textoverflow)
-		- [TextAlignment](#textalignment)
-		- [TextSpan](#textspan)
-		- [TextSpanClick](#textspanclick)
-		- [TextSelection](#textselection)
+  - [Text](#text)
+    - [Init](#init)
+    - [StyleText](#styletext)
+    - [FontText](#fonttext)
+    - [TextOverflow](#textoverflow)
+    - [TextAlignment](#textalignment)
+    - [Clickable Text](#clickable-text)
+    - [TextSpan](#textspan)
+    - [TextSpanClick](#textspanclick)
+    - [TextSelection](#textselection)
+  - [Button](#button)
+    - [Button Init](#button-init)
 
 ## Text
 
@@ -131,6 +134,7 @@ fun TextAlignment() {
     }
 
 }
+```
 
 ### Clickable Text
 
@@ -215,3 +219,8 @@ fun TextSelection() {
     }
 }
 ```
+
+## Button
+
+### Button Init
+
