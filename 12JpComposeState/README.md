@@ -169,6 +169,10 @@ A `stateless` composable is a composable that doesn't hold any state. An easy wa
 
 As we develop reusable composables, we often want to expose both a stateful and a stateless version of the same composable. The stateful version is convenient for callers that don't care about the state, and the stateless version is necessary for callers that need to control or hoist the state.
 
+<div align="center">
+<img src="img/s5.jpg" alt="s5.jpg" width="700px">
+</div>
+
 ## State hoisting
 
 State hoisting in Compose is a pattern of moving state to a composable's caller to make a composable stateless. The general pattern for state hoisting in Jetpack Compose is to replace the state variable with two parameters:
@@ -216,7 +220,7 @@ fun HelloContent(name: String, onNameChange: (String) -> Unit) {
 By hoisting the state out of `HelloContent`, it's easier to reason about the composable, reuse it in different situations, and test. `HelloContent` is decoupled from how its state is stored. Decoupling means that if you modify or replace HelloScreen, you don't have to change how `HelloContent` is implemented.
 
 <div align="center">
-<img src="img/s5.jpg" alt="s5.jpg" width="700px">
+<img src="img/s6.jpg" alt="s6.jpg" width="300px">
 </div>
 
 The pattern where the state goes down, and events go up is called a `unidirectional` data flow. In this case, the state goes down from `HelloScreen` to `HelloContent` and events go up from `HelloContent` to `HelloScreen`. By following unidirectional data flow, you can decouple composables that display state in the UI from the parts of your app that store and change state.
