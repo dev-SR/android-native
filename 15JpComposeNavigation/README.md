@@ -17,6 +17,10 @@
       - [Building Screens](#building-screens)
     - [With Nested Navigation 🚀](#with-nested-navigation-)
       - [Improved Screen Definitions 🚀](#improved-screen-definitions-)
+  - [Navigation Animation](#navigation-animation)
+    - [Setup](#setup-1)
+    - [Replace NavHost with AnimatedNavHost:](#replace-navhost-with-animatednavhost)
+    - [Implementing the animations](#implementing-the-animations)
 
 ## Setup
 
@@ -782,3 +786,99 @@ sealed class RootScreen(val route: String) {
     object Splash : RootScreen("splash_screen")
 }
 ```
+
+## Navigation Animation
+
+<div align="center">
+<img src="img/na.gif" alt="nn" width="350px">
+</div>
+
+### Setup
+
+```groovy
+    //Replace  implementation "androidx.navigation:navigation-compose:$nav_version" with
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.24.5-alpha"
+```
+
+- [https://google.github.io/accompanist/navigation-animation/](https://google.github.io/accompanist/navigation-animation/)
+- [samples](https://github.com/google/accompanist/blob/main/sample/src/main/java/com/google/accompanist/sample/navigation/animation/AnimatedNavHostSample.kt)
+
+### Replace NavHost with AnimatedNavHost:
+
+```kotlin
+@OptIn(ExperimentalAnimationApi::class)
+//import com.google.accompanist.navigation.animation.AnimatedNavHost
+//import com.google.accompanist.navigation.animation.composable
+//import com.google.accompanist.navigation.animation.navigation
+//import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+@Composable
+fun BuildNavigation() {
+    val navController = rememberAnimatedNavController()
+    AnimatedNavHost(
+        navController = navController,
+        startDestination = RootScreen.Splash.route,
+    ) {
+        composable(route = RootScreen.Splash.route){
+            SplashScreen(navController = navController)
+        }
+        loginGraph(navController = navController)
+        homeGraph(navController = navController)
+    }
+}
+```
+
+### Implementing the animations
+
+The `AnimatedNavHost` composable offers a way to add custom transitions to composables in Navigation Compose via parameters that can be attached to either an individual `composable` destination, a `navigation` element, or to the `AnimatedNavHost` itself.
+
+Each lambda has an `AnimatedContentScope<NavBackStackEntry>` receiver scope that allows you to use special transitions (such as `slideIntoContainer` and `slideOutOfContainer`) and gives you access to the `initialState` and `targetState` properties that let you customize what transitions are run based on what screen you are transitioning from (the `initialState`) and transitioning to (the `targetState`).
+
+- `enterTransition` controls what EnterTransition is run when the targetState NavBackStackEntry is appearing on the screen.
+- `exitTransition` controls what ExitTransition is run when the initialState NavBackStackEntry is disappearing from the screen.
+- `popEnterTransition` defaults to enterTransition, but can be overridden to provide a separate EnterTransition when the targetState NavBackStackEntry is appearing on the screen due to a pop operation (i.e., popBackStack()).
+- `popExitTransition` defaults to exitTransition, but can be overridden to provide a separate ExitTransition when the initialState NavBackStackEntry is disappearing from the screen due to a pop operation (i.e., popBackStack()).
+
+```kotlin
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.homeGraph(navController: NavController) {
+    //home/list
+    //home/registration
+    navigation(startDestination = HomeScreen.List.route, route = HOME_ROUTE) {
+        composable(
+            route = HomeScreen.List.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    //if coming form any of Auth route silde in from left
+                    AuthScreen.Login.route, AuthScreen.Register.route -> slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Left,
+                        animationSpec = tween(700)
+                    )
+                    // if coming Details route silde in from left
+                    HomeScreen.Details.route -> slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Right,
+                        animationSpec = tween(700)
+                    )
+
+                    else -> null
+                }
+            }
+
+        ) {
+            ListScreen(navController = navController)
+        }
+        composable(
+            route = HomeScreen.Details.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Up, animationSpec = tween(700)
+                )
+            }
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("item_id")
+            DetailsScreen(navController = navController, id)
+        }
+    }
+}
+```
+
+

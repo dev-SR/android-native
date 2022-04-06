@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,11 +28,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
+
+
 import com.example.a15jpcomposenavigation.ui.theme.NavigationTheme
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
@@ -78,15 +83,23 @@ fun MyApp() {
 
 val lists = listOf("A", "B", "C", "D")
 
+@OptIn(ExperimentalAnimationApi::class)
+//import com.google.accompanist.navigation.animation.AnimatedNavHost
+//import com.google.accompanist.navigation.animation.composable
+//import com.google.accompanist.navigation.animation.navigation
+//import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 @Composable
 fun BuildNavigation() {
-    val navController = rememberNavController()
-    NavHost(
+    val navController = rememberAnimatedNavController()
+    AnimatedNavHost(
         navController = navController,
         startDestination = RootScreen.Splash.route,
 //        route = ROOT_ROUTE
     ) {
-        composable(route = RootScreen.Splash.route) {
+        composable(
+            route = RootScreen.Splash.route
+        )
+        {
             SplashScreen(navController = navController)
         }
         loginGraph(navController = navController)
@@ -94,20 +107,46 @@ fun BuildNavigation() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     //home/list
     //home/registration
     navigation(startDestination = HomeScreen.List.route, route = HOME_ROUTE) {
-        composable(route = HomeScreen.List.route) {
+        composable(
+            route = HomeScreen.List.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    AuthScreen.Login.route, AuthScreen.Register.route -> slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Left,
+                        animationSpec = tween(700)
+                    )
+                    HomeScreen.Details.route -> slideIntoContainer(
+                        AnimatedContentScope.SlideDirection.Right,
+                        animationSpec = tween(700)
+                    )
+
+                    else -> null
+                }
+            }
+
+        ) {
             ListScreen(navController = navController)
         }
-        composable(route = HomeScreen.Details.route) { backStackEntry ->
+        composable(
+            route = HomeScreen.Details.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentScope.SlideDirection.Up, animationSpec = tween(700)
+                )
+            }
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("item_id")
             DetailsScreen(navController = navController, id)
         }
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.loginGraph(navController: NavController) {
     //auth/login
     //auth/registration
