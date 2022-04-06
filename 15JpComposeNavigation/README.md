@@ -29,6 +29,11 @@
 
 ## Getting started
 
+
+<div align="center">
+<img src="img/ss2.gif" alt="ss1.gif" width="350px">
+</div>
+
 The `NavController` is the central API for the Navigation component. It is stateful and keeps track of the back stack of composables that make up the screens in your app and the state of each screen.
 
 You can create a NavController by using the `rememberNavController`() method in your composable:
