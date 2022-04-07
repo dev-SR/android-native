@@ -17,10 +17,11 @@
       - [Building Screens](#building-screens)
     - [With Nested Navigation 🚀](#with-nested-navigation-)
       - [Improved Screen Definitions 🚀](#improved-screen-definitions-)
-  - [Navigation Animation](#navigation-animation)
+  - [🍹 Navigation Animation 🍹](#-navigation-animation-)
     - [Setup](#setup-1)
-    - [Replace NavHost with AnimatedNavHost:](#replace-navhost-with-animatednavhost)
+    - [Replace NavHost with AnimatedNavHost](#replace-navhost-with-animatednavhost)
     - [Implementing the animations](#implementing-the-animations)
+  - [Integration with the Bottom Navigation Bar](#integration-with-the-bottom-navigation-bar)
 
 ## Setup
 
@@ -440,33 +441,30 @@ Destinations can be grouped into a nested graph to modularize a particular flow 
 
 ```kotlin
 @Composable
+fun showStatusBar(flag: Boolean = true, color: Color = Color.Black) {
+    rememberSystemUiController().apply {
+        isStatusBarVisible = flag
+        isNavigationBarVisible = flag
+        isStatusBarVisible = flag
+        setStatusBarColor(color = color)
+    }
+}
+
+@Composable
 fun NavigationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    //S: hide status bar
-    //https://github.com/google/accompanist/tree/main/systemuicontroller
-    //implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.5-alpha"
-    val systemUiController = rememberSystemUiController()
-    systemUiController.isStatusBarVisible = false // Status bar
-//    systemUiController.isNavigationBarVisible = false // Navigation bar
-   //systemUiController.isSystemBarsVisible = false // Status & Navigation bars
-    //E: hide status bar
-
+    //...
+    showStatusBar(false)
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
         LightColorPalette
     }
-
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    //..
 }
+
 ```
 
 #### Define Screens
@@ -504,9 +502,12 @@ fun BuildNavigation() {
             RegisterScreen(navController = navController)
         }
         composable(route = Screen.List.route) {
+            //show Status Bar Again
+            showStatusBar(color = Color.Black)
             ListScreen(navController = navController)
         }
         composable(route = Screen.Details.route) { backStackEntry ->
+            // showStatusBar(color = Color.Black) -> Status Bar is already shown
             val id = backStackEntry.arguments?.getString("item_id")
             DetailsScreen(navController = navController, id)
         }
@@ -522,7 +523,6 @@ fun SplashScreen(navController: NavController) {
     val scale = remember {
         Animatable(0f)        //  androidx.compose.animation.core
     }
-    val systemUiController = rememberSystemUiController()
     // Animation
     LaunchedEffect(key1 = true) {
         scale.animateTo(
@@ -536,9 +536,6 @@ fun SplashScreen(navController: NavController) {
         )
         // Customize the delay time
         delay(1000L)
-
-        systemUiController.isStatusBarVisible = true //Show Status bar
-        systemUiController.setStatusBarColor(Color.Black)
 
         navController.navigate(route = Screen.Login.route) {
             popUpTo(0)
@@ -787,7 +784,7 @@ sealed class RootScreen(val route: String) {
 }
 ```
 
-## Navigation Animation
+## 🍹 Navigation Animation 🍹
 
 <div align="center">
 <img src="img/na.gif" alt="nn" width="350px">
@@ -803,7 +800,7 @@ sealed class RootScreen(val route: String) {
 - [https://google.github.io/accompanist/navigation-animation/](https://google.github.io/accompanist/navigation-animation/)
 - [samples](https://github.com/google/accompanist/blob/main/sample/src/main/java/com/google/accompanist/sample/navigation/animation/AnimatedNavHostSample.kt)
 
-### Replace NavHost with AnimatedNavHost:
+### Replace NavHost with AnimatedNavHost
 
 ```kotlin
 @OptIn(ExperimentalAnimationApi::class)
@@ -847,7 +844,7 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         composable(
             route = HomeScreen.List.route,
             enterTransition = {
-                when (initialState.destination.route) {
+                when (initialState.destination.route) {//this.initialState
                     //if coming form any of Auth route silde in from left
                     AuthScreen.Login.route, AuthScreen.Register.route -> slideIntoContainer(
                         AnimatedContentScope.SlideDirection.Left,
@@ -880,5 +877,12 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
     }
 }
 ```
+
+## Integration with the Bottom Navigation Bar
+
+In the `BottomNavigation` composable, get the current `NavBackStackEntry` using the `currentBackStackEntryAsState()` function. This entry gives you access to the current `NavDestination`. The selected state of each `BottomNavigationItem` can then be determined by comparing the item's route with the route of the current destination and its parent destinations (to handle cases when you are using nested navigation) via the hierarchy helper method.
+
+
+
 
 

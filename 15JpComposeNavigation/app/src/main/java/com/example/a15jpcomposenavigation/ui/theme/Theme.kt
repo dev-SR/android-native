@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import com.example.a15jpcomposenavigation.showStatusBar
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
@@ -34,14 +35,12 @@ fun NavigationTheme(
     content: @Composable () -> Unit
 ) {
     //S: hide status bar
-    //https://github.com/google/accompanist/tree/main/systemuicontroller
-    //implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.5-alpha"
-    val systemUiController = rememberSystemUiController()
-    systemUiController.isStatusBarVisible = false // Status bar
+   // val systemUiController = rememberSystemUiController()
+    //systemUiController.isStatusBarVisible = false // Status bar
 //    systemUiController.isNavigationBarVisible = false // Navigation bar
-   //systemUiController.isSystemBarsVisible = false // Status & Navigation bars
+    //systemUiController.isSystemBarsVisible = false // Status & Navigation bars
     //E: hide status bar
-
+    showStatusBar(false)
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
