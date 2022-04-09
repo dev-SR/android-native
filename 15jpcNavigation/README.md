@@ -1006,8 +1006,6 @@ fun BuildNavigation() {
 }
 ```
 
-
-
 ## 🍹 Navigation Animation 🍹
 
 <div align="center">
@@ -1107,6 +1105,61 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
 In the `BottomNavigation` composable, get the current `NavBackStackEntry` using the `currentBackStackEntryAsState()` function. This entry gives you access to the current `NavDestination`. The selected state of each `BottomNavigationItem` can then be determined by comparing the item's route with the route of the current destination and its parent destinations (to handle cases when you are using nested navigation) via the hierarchy helper method.
 
 
+```kotlin
+sealed class HomeScreen(val route: String) {
+    object List : HomeScreen("list_screen")
+    object Profile : HomeScreen("profile")
+    object Details : HomeScreen("details_screen/{item_id}") {
+        fun createRoute(id: Int) = "details_screen/$id"
+    }
+}
 
+sealed class BottomMenuData(
+    val icon: ImageVector,
+    val title: String,
+    val route: String
+) {
+    object List : BottomMenuData(icon = Icons.Default.Home, "Home", "list_screen")
+    object Profile : BottomMenuData(icon = Icons.Default.Person, "Profile", "profile")
+}
 
+@Composable
+fun BottomMenuBar(navController: NavController) {
+    val items = listOf(
+        BottomMenuData.List,
+        BottomMenuData.Profile
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    BottomNavigation(backgroundColor = Color.White, contentColor = Color.Black) {
+        items.forEach { screen ->
+            BottomNavigationItem(
+                label = { Text(text = screen.title) },
+                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
+                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+                onClick = {
+                    navController.navigate(screen.route) {
+                        // Pop up to the start destination of the graph to
+                        // avoid building up a large stack of destinations
+                        // on the back stack as users select items
+                        //popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(HomeScreen.List.route) {
+                            saveState = true
+                        }
+                        // Avoid multiple copies of the same destination when
+                        // reselecting the same item
+                        launchSingleTop = true
+                        // Restore state when reselecting a previously selected item
+                        restoreState = true
+                    }
+                },
+            )
+        }
+    }
+}
+```
 
+<div align="center">
+<img src="img/bb.gif" alt="bb.gif" width="350px">
+</div>

@@ -320,36 +320,8 @@ fun RegisterScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun SplashScreen(navController: NavController) {
-    val scale = remember {
-        Animatable(0f)        //  androidx.compose.animation.core
-    }
-    // Animation
-    LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 0.7f,
-            // tween Animation
-            animationSpec = tween(500)
-        )
-//         Customize the delay time
-        delay(1000L)
-        navController.navigate(route = AUTH_ROUTE) {
-            popUpTo(0)
-        }
-    }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "Logo",
-            modifier = Modifier.scale(scale.value)
-        )
-    }
-}
+
 
 @Composable
 fun ProfileScreen(navController: NavController) {
