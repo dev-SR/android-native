@@ -54,6 +54,17 @@ Moving avd directory from it's default `C:\users\<username>\.android\avd` to `D:
 <img src="img/crn.jpg" alt="crn.jpg" width="600px">
 </div>
 
+- Change `app_name`:
+
+`string.xml`
+
+```xml
+<resources>
+    <string name="app_name">NewName</string>
+</resources>
+```
+
+
 [https://stackoverflow.com/questions/28568715/android-studio-change-project-name-root-directory-name](https://stackoverflow.com/questions/28568715/android-studio-change-project-name-root-directory-name)
 
 ## `CompileSdkVersion` and `targetSdkVersion`
