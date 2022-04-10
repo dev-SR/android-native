@@ -37,7 +37,7 @@ fun Scaffold(
 ## Building Templates with Scaffold
 
 <div align="center">
-<img src="img/sc.gif" alt="sc.gif" width="350px">
+<img src="img/sc1.gif" alt="sc.gif" width="350px">
 </div>
 
 Dependencies
