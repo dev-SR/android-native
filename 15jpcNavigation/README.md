@@ -39,6 +39,16 @@
 
 [https://developer.android.com/jetpack/compose/navigation#groovy](https://developer.android.com/jetpack/compose/navigation#groovy)
 
+All used dependencies are :.
+
+```groovy
+    def nav_version = "2.4.1"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.24.5-alpha"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.5-alpha"
+    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+```
+
 ## Getting started
 
 
