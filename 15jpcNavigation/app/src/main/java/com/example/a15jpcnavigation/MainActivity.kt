@@ -19,6 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -26,8 +27,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -164,12 +167,31 @@ fun BottomMenuBar(navController: NavController) {
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    BottomNavigation(backgroundColor = Color.White, contentColor = Color.Black) {
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black,
+        modifier = Modifier.clip(
+            RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        )
+    ) {
         items.forEach { screen ->
+            val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+            val color = if (isSelected)
+                MaterialTheme.colors.primary
+            else
+                MaterialTheme.colors.surface.copy(alpha = 0.5f)
+
+
             BottomNavigationItem(
                 label = { Text(text = screen.title) },
-                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = screen.title,
+                        tint = color
+                    )
+                },
+                selected = isSelected,
                 unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
                 onClick = {
                     navController.navigate(screen.route) {
@@ -255,6 +277,7 @@ fun NavGraphBuilder.loginGraph(
 @Composable
 fun LoginScreen(navController: NavController) {
     val systemUiController = rememberSystemUiController()
+//    val color = MaterialTheme.colors.primary
     systemUiController.setStatusBarColor(Color.Black)
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -264,8 +287,6 @@ fun LoginScreen(navController: NavController) {
         Text(text = "LoginPage", style = MaterialTheme.typography.h2)
         Button(
             onClick = {
-                systemUiController.isStatusBarVisible = true // Status bar
-                systemUiController.setStatusBarColor(Color.Black)
                 navController.navigate(route = HOME_ROUTE) {
                     popUpTo(0)
                 }
@@ -319,8 +340,6 @@ fun RegisterScreen(navController: NavController) {
         }
     }
 }
-
-
 
 
 @Composable

@@ -1131,12 +1131,31 @@ fun BottomMenuBar(navController: NavController) {
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    BottomNavigation(backgroundColor = Color.White, contentColor = Color.Black) {
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black,
+        modifier = Modifier.clip(
+            RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        )
+    ) {
         items.forEach { screen ->
+            val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+            val color = if (isSelected)
+                MaterialTheme.colors.primary
+            else
+                MaterialTheme.colors.surface.copy(alpha = 0.5f)
+
+
             BottomNavigationItem(
                 label = { Text(text = screen.title) },
-                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = screen.title,
+                        tint = color
+                    )
+                },
+                selected = isSelected,
                 unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
                 onClick = {
                     navController.navigate(screen.route) {
@@ -1161,5 +1180,5 @@ fun BottomMenuBar(navController: NavController) {
 ```
 
 <div align="center">
-<img src="img/bb.gif" alt="bb.gif" width="350px">
+<img src="img/b.gif" alt="bb.gif" width="350px">
 </div>
