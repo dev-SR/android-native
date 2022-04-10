@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +51,9 @@ import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -159,60 +162,6 @@ fun BuildNavigation() {
     }
 }
 
-@Composable
-fun BottomMenuBar(navController: NavController) {
-    val items = listOf(
-        BottomMenuData.List,
-        BottomMenuData.Profile
-    )
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    BottomNavigation(
-        backgroundColor = Color.White,
-        contentColor = Color.Black,
-        modifier = Modifier.clip(
-            RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-        )
-    ) {
-        items.forEach { screen ->
-            val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-            val color = if (isSelected)
-                MaterialTheme.colors.primary
-            else
-                MaterialTheme.colors.surface.copy(alpha = 0.5f)
-
-
-            BottomNavigationItem(
-                label = { Text(text = screen.title) },
-                icon = {
-                    Icon(
-                        imageVector = screen.icon,
-                        contentDescription = screen.title,
-                        tint = color
-                    )
-                },
-                selected = isSelected,
-                unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-                onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        //popUpTo(navController.graph.findStartDestination().id) {
-                        popUpTo(HomeScreen.List.route) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                },
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.homeGraph(navController: NavController) {
@@ -270,7 +219,6 @@ fun NavGraphBuilder.loginGraph(
         composable(route = AuthScreen.Register.route) {
             RegisterScreen(navController = navController)
         }
-
     }
 }
 
@@ -356,10 +304,42 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
+fun MainScreen(navController: NavController) {
+
+}
+
+
+@Composable
 fun ListScreen(navController: NavController) {
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scope = rememberCoroutineScope()
 
-
-    Scaffold(bottomBar = { BottomMenuBar(navController = navController) }) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Home"
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "")
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.primaryVariant
+            )
+        },
+        drawerContent = {
+            BuildNavigationDrawer(navController = navController,scaffoldState,scope)
+        },
+        drawerGesturesEnabled = true,
+        bottomBar = { BottomMenuBar(navController = navController) }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -412,6 +392,102 @@ fun DetailsScreen(navController: NavController, itemId: String?) {
     }
 }
 
+@Composable
+fun BottomMenuBar(navController: NavController) {
+    val items = listOf(
+        BottomMenuData.List,
+        BottomMenuData.Profile
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black,
+        modifier = Modifier.clip(
+            RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        )
+    ) {
+        items.forEach { screen ->
+            val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+            val color = if (isSelected)
+                MaterialTheme.colors.primary
+            else
+                MaterialTheme.colors.surface.copy(alpha = 0.5f)
+
+
+            BottomNavigationItem(
+                label = { Text(text = screen.title) },
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = screen.title,
+                        tint = color
+                    )
+                },
+                selected = isSelected,
+                unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+                onClick = {
+                    navController.navigate(screen.route) {
+                        // Pop up to the start destination of the graph to
+                        // avoid building up a large stack of destinations
+                        // on the back stack as users select items
+                        //popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(HomeScreen.List.route) {
+                            saveState = true
+                        }
+                        // Avoid multiple copies of the same destination when
+                        // reselecting the same item
+                        launchSingleTop = true
+                        // Restore state when reselecting a previously selected item
+                        restoreState = true
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+fun BuildNavigationDrawer(
+    navController: NavController,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        val items = listOf(
+            BottomMenuData.List,
+            BottomMenuData.Profile
+        )
+        items.forEach{ screen->
+
+            Text(text = screen.title, modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                    navController.navigate(screen.route) {
+                        popUpTo(HomeScreen.List.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                })
+        }
+
+    }
+}
+
+@Composable
+fun ColumnScope.NavigationDrawer(
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope,
+    navController: NavController
+) {
+
+
+}
 
 @Preview(showBackground = true)
 @Composable

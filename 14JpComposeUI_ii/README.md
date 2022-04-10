@@ -1,2 +1,2 @@
-# Theme-Animation
+# Theme-Animation in Jetpack Compose
 
