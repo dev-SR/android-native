@@ -32,29 +32,38 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<MainViewModel>()
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.apply {
-            setKeepOnScreenCondition {
-                viewModel.loading.value
-            }
-            setOnExitAnimationListener { splashScreenProvider ->
-                val splashScreenView = splashScreenProvider.view
-                val anim = ObjectAnimator.ofFloat(
-                    splashScreenView,
-                    View.TRANSLATION_Y,
-                    0f,
-                    splashScreenView.height.toFloat()
-                )
+//        Log.d("rotation", savedInstanceState.toString())
+        // Only Show Splash Screen for the first time running the app...and
+        // prevent showing again on screen rotation.
+        // savedInstanceState == `null` for the first line
+        // on screen rotation it will not be `null`
+        if (savedInstanceState == null) {
+            val splashScreen = installSplashScreen()
+            splashScreen.apply {
+                setKeepOnScreenCondition {
+                    viewModel.loading.value
+                }
+                setOnExitAnimationListener { splashScreenProvider ->
+                    val splashScreenView = splashScreenProvider.view
+                    val anim = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.TRANSLATION_Y,
+                        0f,
+                        splashScreenView.height.toFloat()
+                    )
 //                anim.interpolator = BounceInterpolator()
-                anim.interpolator = AnticipateInterpolator()
-                anim.duration = 500L
-                anim.doOnEnd { splashScreenProvider.remove() }
-                anim.start()
+                    anim.interpolator = AnticipateInterpolator()
+                    anim.duration = 500L
+                    anim.doOnEnd { splashScreenProvider.remove() }
+                    anim.start()
+                }
             }
         }
+
+
         setContent {
             ScaffoldTemplateTheme {
                 AppScaffold(viewModel)
@@ -189,3 +198,4 @@ fun DefaultPreview() {
     ScaffoldTemplateTheme {
     }
 }
+

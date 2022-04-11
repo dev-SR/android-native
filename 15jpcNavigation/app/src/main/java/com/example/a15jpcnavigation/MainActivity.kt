@@ -59,9 +59,15 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private val viewmodel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.apply {
+//        Log.d("rotation", savedInstanceState.toString())
+        // Only Show Splash Screen for the first time running the app...and
+        // prevent showing again on screen rotation.
+        // savedInstanceState == `null` for the first line
+        // on screen rotation it will not be `null`
+        if (savedInstanceState == null) {
+            val splashScreen = installSplashScreen()
+            splashScreen.apply {
             setKeepOnScreenCondition {
                 viewmodel.loading.value
             }
@@ -94,6 +100,7 @@ class MainActivity : ComponentActivity() {
                 anim.doOnEnd { splashScreenProvider.remove() }
                 anim.start()
             }
+        }
         }
         setContent {
             NavigationTheme {

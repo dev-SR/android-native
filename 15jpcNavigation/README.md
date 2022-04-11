@@ -20,6 +20,7 @@
   - [👌 Splash Api 👌](#-splash-api-)
     - [dependencies](#dependencies)
     - [Create a theme](#create-a-theme)
+      - [Custom Theme For Splash Screen](#custom-theme-for-splash-screen)
     - [Call `installSplashScreen`](#call-installsplashscreen)
     - [Longer period](#longer-period)
     - [animation](#animation)
@@ -857,6 +858,16 @@ In the manifest, replace the theme of the starting activity to the theme created
 </manifest>
 ```
 
+#### Custom Theme For Splash Screen
+
+Maintain following size ~ `57X57`
+
+<div align="center">
+<img src="img/logo.jpg" alt="logo.jpg" width="400px">
+</div>
+
+Then Export as `SVG` from `figma`. And Import as `Vector Asset` in Android Studio.
+
 ### Call `installSplashScreen`
 
 Call `installSplashScreen` in the starting activity before calling `super.onCreate()`.
@@ -864,8 +875,15 @@ Call `installSplashScreen` in the starting activity before calling `super.onCrea
 ```kotlin
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
+        // Log.d("rotation", savedInstanceState.toString())
+        // Only Show Splash Screen for the first time running the app...and
+        // prevent showing again on screen rotation.
+        // savedInstanceState == `null` for the first line
+        // on screen rotation it will not be `null`
+        if (savedInstanceState == null) {
+                installSplashScreen()
+        }
         setContent {
             NavigationTheme {
                 // A surface container using the 'background' color from the theme
@@ -912,11 +930,18 @@ class MainViewModel : ViewModel() {
 class MainActivity : ComponentActivity() {
     private val viewmodel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.apply {
-            setKeepOnScreenCondition {
-                viewmodel.loading.value
+        //        Log.d("rotation", savedInstanceState.toString())
+        // Only Show Splash Screen for the first time running the app...and
+        // prevent showing again on screen rotation.
+        // savedInstanceState == `null` for the first line
+        // on screen rotation it will not be `null`
+        if (savedInstanceState == null) {
+            val splashScreen = installSplashScreen()
+            splashScreen.apply {
+                setKeepOnScreenCondition {
+                    viewmodel.loading.value
+                }
             }
         }
         setContent {
@@ -940,40 +965,47 @@ class MainActivity : ComponentActivity() {
 class MainActivity : ComponentActivity() {
     private val viewmodel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.apply {
-            setKeepOnScreenCondition {
-                viewmodel.loading.value
-            }
-//          animation for icon
-//            setOnExitAnimationListener{ splashScreenView->
-//                splashScreenView.iconView.apply {
-//                    animate().apply {
-//                        duration = 200
-//                        scaleXBy(2f)
-//                        scaleYBy(2f)
-//                        withEndAction {
-//                            splashScreenView.remove()
-//                        }
-//                        start()
-//                    }
-//                }
-//            }
-//            animating whole page on exit
-            setOnExitAnimationListener { splashScreenProvider ->
-                val splashScreenView = splashScreenProvider.view
-                val anim = ObjectAnimator.ofFloat(
-                    splashScreenView,
-                    View.TRANSLATION_Y,
-                    0f,
-                    splashScreenView.height.toFloat()
-                )
-//                anim.interpolator = BounceInterpolator()
-                anim.interpolator = AnticipateInterpolator()
-                anim.duration = 500L
-                anim.doOnEnd { splashScreenProvider.remove() }
-                anim.start()
+        //        Log.d("rotation", savedInstanceState.toString())
+        // Only Show Splash Screen for the first time running the app...and
+        // prevent showing again on screen rotation.
+        // savedInstanceState == `null` for the first line
+        // on screen rotation it will not be `null`
+        if (savedInstanceState == null) {
+            val splashScreen = installSplashScreen()
+            splashScreen.apply {
+                setKeepOnScreenCondition {
+                    viewmodel.loading.value
+                }
+    //          animation for icon
+    //            setOnExitAnimationListener{ splashScreenView->
+    //                splashScreenView.iconView.apply {
+    //                    animate().apply {
+    //                        duration = 200
+    //                        scaleXBy(2f)
+    //                        scaleYBy(2f)
+    //                        withEndAction {
+    //                            splashScreenView.remove()
+    //                        }
+    //                        start()
+    //                    }
+    //                }
+    //            }
+    //            animating whole page on exit
+                setOnExitAnimationListener { splashScreenProvider ->
+                    val splashScreenView = splashScreenProvider.view
+                    val anim = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.TRANSLATION_Y,
+                        0f,
+                        splashScreenView.height.toFloat()
+                    )
+    //                anim.interpolator = BounceInterpolator()
+                    anim.interpolator = AnticipateInterpolator()
+                    anim.duration = 500L
+                    anim.doOnEnd { splashScreenProvider.remove() }
+                    anim.start()
+                }
             }
         }
         setContent {
