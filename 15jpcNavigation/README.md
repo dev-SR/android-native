@@ -18,9 +18,9 @@
     - [With Nested Navigation 🚀](#with-nested-navigation-)
       - [Improved Screen Definitions 🚀](#improved-screen-definitions-)
   - [👌 Splash Api 👌](#-splash-api-)
-    - [dependencies](#dependencies)
+    - [Dependencies](#dependencies)
     - [Create a theme](#create-a-theme)
-      - [Custom Theme For Splash Screen](#custom-theme-for-splash-screen)
+      - [Custom Logo For Splash Screen](#custom-logo-for-splash-screen)
     - [Call `installSplashScreen`](#call-installsplashscreen)
     - [Longer period](#longer-period)
     - [animation](#animation)
@@ -805,7 +805,7 @@ sealed class RootScreen(val route: String) {
 
 ## 👌 Splash Api 👌
 
-### dependencies
+### Dependencies
 
 ```groovy
 dependencies {
@@ -815,8 +815,8 @@ dependencies {
 ```
 
 ### Create a theme
-Create a theme with a parent of `Theme.SplashScreen`, and set the values of `postSplashScreenTheme` to the theme that the Activity should use and `windowSplashScreenAnimatedIcon` to a drawable or animated drawable. The other attributes are optional.
 
+Create a theme with a parent of `Theme.SplashScreen`, and set the values of `postSplashScreenTheme` to the theme that the Activity should use and `windowSplashScreenAnimatedIcon` to a drawable or animated drawable. The other attributes are optional.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -858,7 +858,7 @@ In the manifest, replace the theme of the starting activity to the theme created
 </manifest>
 ```
 
-#### Custom Theme For Splash Screen
+#### Custom Logo For Splash Screen
 
 Maintain following size ~ `57X57`
 
