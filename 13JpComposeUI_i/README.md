@@ -1,6 +1,7 @@
 # Jetpack Compose Built-in UI Element - Part I
 
 - [Jetpack Compose Built-in UI Element - Part I](#jetpack-compose-built-in-ui-element---part-i)
+  - [Resources](#resources)
   - [Text](#text)
     - [Init](#init)
     - [StyleText](#styletext)
@@ -13,6 +14,19 @@
     - [TextSelection](#textselection)
   - [Button](#button)
     - [Button Init](#button-init)
+    - [Basic](#basic)
+    - [DisabledButton](#disabledbutton)
+    - [ButtonShape](#buttonshape)
+    - [ColorButton](#colorbutton)
+    - [OutlinedButton](#outlinedbutton)
+    - [TextButton](#textbutton)
+    - [IconTextButton](#icontextbutton)
+    - [IconButton](#iconbutton)
+
+
+## Resources
+
+- [https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#top-level-functions](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#top-level-functions)
 
 ## Text
 
@@ -223,4 +237,189 @@ fun TextSelection() {
 ## Button
 
 ### Button Init
+
+
+```kotlin
+@Composable
+fun ButtonExample() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SpaceLine()
+            JustButton()
+            SpaceLine()
+            ColorButton()
+            SpaceLine()
+            IconTextButton()
+            SpaceLine()
+            IconButtons()
+            SpaceLine()
+            ButtonShape()
+        }
+    }
+}
+@Composable
+fun SpaceLine() {
+    Spacer(
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .height(1.dp)
+            .fillMaxWidth()
+            .background(Color.Black)
+    )
+}
+```
+
+### Basic
+
+```kotlin
+@Composable
+fun JustButton() {
+    val context = LocalContext.current
+    Button(onClick = {
+        Toast.makeText(context, "Button Clicked", Toast.LENGTH_SHORT).show()
+    }) {
+        Text("Button")
+    }
+}
+```
+
+### DisabledButton
+
+
+```kotlin
+@Composable
+fun DisableButton() {
+    Button(
+        onClick = {},
+        enabled = false
+    ) {
+        Text("Add To Cart")
+    }
+}
+```
+
+
+### ButtonShape
+
+
+```kotlin
+@Composable
+fun ButtonShape() {
+    Button(onClick = {}, shape = RoundedCornerShape(100.dp), elevation = null) {
+        Text(text = "Button")
+    }
+}
+```
+
+### ColorButton
+
+```kotlin
+@Composable
+fun ColorButton() {
+    val context = LocalContext.current
+    Button(
+//      colors = Color.Black//Required: ButtonColors
+       colors = ButtonDefaults.buttonColors(Color.Black),
+        onClick = {
+            Toast.makeText(context, "Button Clicked", Toast.LENGTH_SHORT).show()
+        }) {
+        Text("Button", color = Color.Yellow)
+    }
+}
+```
+
+### OutlinedButton
+
+
+```kotlin
+@Composable
+fun OutlinedButtonExample() {
+    OutlinedButton(
+        onClick = { /* Do something! */ },
+        border = BorderStroke(ButtonDefaults.OutlinedBorderSize,Color.Cyan)
+    ) {
+        Text("Outlined Button", color = Color.Black)
+    }
+}
+```
+
+### TextButton
+
+
+```kotlin
+@Composable
+fun TextButtonExample() {
+    TextButton(onClick = { /* Do something! */ }) {
+        Text("I'm a Text Button")
+    }
+}
+```
+
+
+### IconTextButton
+
+
+```kotlin
+@Composable
+fun IconTextButton() {
+    val context = LocalContext.current
+    Button(
+        onClick = {
+            Toast.makeText(context, "Button Clicked", Toast.LENGTH_SHORT).show()
+        }) {
+        Icon(
+            Icons.Filled.Email,
+            contentDescription = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+        Text("Button")
+    }
+}
+```
+
+
+### IconButton
+
+
+```kotlin
+@Composable
+fun IconButtons() {
+    //    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    Row {
+        IconButton(
+            onClick = { },
+        ) {
+            Icon(
+                Icons.Filled.Favorite,
+                contentDescription = "Localized description"
+            )
+        }
+
+        IconButton(
+            onClick = { },
+        ) {
+            Icon(
+                Icons.Filled.Upload,
+                contentDescription = "Localized description",
+                tint = Color.Red
+            )
+        }
+
+        IconButton(
+            onClick = { },
+        ) {
+            Icon(
+                Icons.Filled.Refresh,
+                contentDescription = "Localized description",
+                tint = Color.Blue
+            )
+        }
+
+    }
+}
+```
 
