@@ -1,11 +1,13 @@
 package com.example.a13jpcomposeui_i.ui_elements
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -32,13 +34,11 @@ fun CardExample() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SpaceLine()
             Card1()
             SpaceLine()
             Card2()
             SpaceLine()
             Card3()
-
         }
     }
 }
@@ -51,19 +51,24 @@ fun Card1() {
             .fillMaxWidth()
             .padding(10.dp)
             .clickable(
-                interactionSource = CreateMutableInteraction(),
-                indication = CreateIndication(),
                 onClick = {
                     Toast
                         .makeText(context, "Clicked", Toast.LENGTH_SHORT)
                         .show()
                 }),
-        backgroundColor = Color.Yellow,
-        elevation = 8.dp
-    ) {
-        Text(text = "Card Example 1", modifier = Modifier.padding(10.dp))
-    }
+        backgroundColor = Color(0xFFE7F3FD),
+        contentColor = Color.DarkGray,
+        elevation = 8.dp,
+        shape = RoundedCornerShape(10.dp),
+        border = BorderStroke(2.dp, Color.Black)
 
+    ) {
+        Column(modifier = Modifier.padding(all = 10.dp)) {
+            Text("AB CDE", fontWeight = FontWeight.W700)
+            Text("+0 12345678")
+            Text("XYZ city.", color = Color.Gray)
+        }
+    }
 }
 
 @Composable
@@ -94,20 +99,7 @@ fun Card2() {
                 }),
         elevation = 8.dp
     ) {
-        Box(
-            modifier = Modifier
-                .padding(15.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(70.dp)
-                    .clip(CircleShape)
-            )
-        }
+        Text(text = "Card Custom Interaction", modifier = Modifier.padding(10.dp))
     }
 
 }
@@ -140,7 +132,10 @@ fun Card3() {
             )
             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
             Column {
-                Text(text = "Hello World", style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold))
+                Text(
+                    text = "Hello World",
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                )
                 Text(text = "Hello World.............")
             }
         }

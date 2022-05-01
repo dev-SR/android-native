@@ -32,6 +32,13 @@
       - [x center only](#x-center-only)
       - [x center + y center (Auto Center)](#x-center--y-center-auto-center)
       - [x center + y center (Top)](#x-center--y-center-top)
+  - [Column Layout](#column-layout)
+    - [Default Column Layout](#default-column-layout)
+    - [Weighted Column Layout](#weighted-column-layout)
+    - [verticalScroll](#verticalscroll)
+    - [Y: verticalArrangement (⇵)](#y-verticalarrangement-)
+    - [X:horizontalAlignment(⇄) + Y: verticalArrangement (⇵)](#xhorizontalalignment--y-verticalarrangement-)
+  - [Card](#card)
 
 ## Resources
 
@@ -129,6 +136,21 @@ fun FontText() {
             fontSize = 20.sp,
             letterSpacing = 5.sp
         )
+    )
+}
+```
+
+or:
+
+```kotlin
+@Composable
+fun FontText() {
+    Text(
+        text = "Hello World",
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.W800,
+        fontSize = 20.sp,
+        letterSpacing = 5.sp
     )
 }
 ```
@@ -686,3 +708,169 @@ fun RowOnlyX() {
     }
 }
 ```
+
+## Column Layout
+
+<div align="center">
+<img src="img/jpccl.gif" alt="jpccl.gif" width="400px">
+</div>
+
+```kotlin
+@Composable
+fun ColumnLayoutExample() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Row {
+            ColumnExample1()
+            SpaceLineCol()
+            ColumnExample2()
+            SpaceLineCol()
+            ColumnExample3()
+            SpaceLineCol()
+            ColumnExample4()
+            SpaceLineCol()
+
+        }
+    }
+}
+@Composable
+fun SpaceLineCol() {
+    Spacer(
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
+            .width(1.dp)
+            .fillMaxHeight()
+            .background(Color.Black)
+    )
+}
+```
+
+### Default Column Layout
+
+```kotlin
+@Composable
+fun ColumnExample1() {
+    Column {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+        Box(modifier = Modifier.size(30.dp).background(Color.Green))
+        Box(modifier = Modifier.size(30.dp).background(Color.Red))
+    }
+}
+```
+
+### Weighted Column Layout
+
+```kotlin
+@Composable
+fun ColumnExample2() {
+    Column {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+        Box(
+            modifier = Modifier
+                .width(30.dp)
+                .weight(1f)
+                .background(Color.Green)
+        )
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .weight(1f)
+                .background(Color.Red)
+        )
+
+    }
+}
+```
+
+### verticalScroll
+
+```kotlin
+
+@Composable
+fun ColumnExample3() {
+    Box {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            Box(modifier = Modifier
+                    .size(40.dp, height = 300.dp)
+                    .background(Color.Green)
+            )
+            Box(modifier = Modifier
+                    .size(30.dp, height = 500.dp)
+                    .background(Color.Blue)
+            )
+            Box(modifier = Modifier
+                    .size(30.dp, height = 600.dp)
+                    .fillMaxSize()
+                    .background(Color.Red)
+            )
+        }
+        Text(
+            modifier = Modifier
+                .rotate(-90f)
+                .align(Alignment.Center),
+            text = "scrollable"
+        )
+    }
+}
+```
+
+### Y: verticalArrangement (⇵)
+
+```kotlin
+@Composable
+fun ColumnExample4() {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+    Box(
+        modifier = Modifier.size(width = 80.dp, height = screenHeight.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .rotate(-90f),
+            text = "Y (⇄)"
+        )
+        Column(
+            modifier = Modifier.size(width = 80.dp, height = screenHeight.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+            Box(modifier = Modifier.size(30.dp).background(Color.Green))
+            Box(modifier = Modifier.size(30.dp).background(Color.Red))
+
+        }
+    }
+}
+```
+
+### X:horizontalAlignment(⇄) + Y: verticalArrangement (⇵)
+
+```kotlin
+@Composable
+fun ColumnExample5() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+            Box(modifier = Modifier.size(30.dp).background(Color.Green))
+            Box(modifier = Modifier.size(30.dp).background(Color.Red))
+        }
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = " X(⇄) | Y(⇵)",
+            color = Color.Black
+        )
+    }
+}
+```
+
+## Card
+

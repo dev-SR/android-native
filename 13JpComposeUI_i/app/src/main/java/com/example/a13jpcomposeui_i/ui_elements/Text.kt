@@ -79,12 +79,16 @@ fun StyleText() {
 fun FontText() {
     Text(
         text = "Hello World",
-        style = TextStyle(
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            letterSpacing = 5.sp
-        )
+//        style = TextStyle(
+//            fontFamily = FontFamily.Monospace,
+//            fontWeight = FontWeight.Bold,
+//            fontSize = 20.sp,
+//            letterSpacing = 5.sp
+//        )
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.W800,
+        fontSize = 20.sp,
+        letterSpacing = 5.sp
     )
 }
 
