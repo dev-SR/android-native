@@ -2,6 +2,8 @@
 
 - [Jetpack Compose Built-in UI Element - Part I](#jetpack-compose-built-in-ui-element---part-i)
   - [Resources](#resources)
+  - [Modifiers](#modifiers)
+    - [Order of Modifiers](#order-of-modifiers)
   - [Text](#text)
     - [Init](#init)
     - [StyleText](#styletext)
@@ -22,11 +24,33 @@
     - [OutlinedButton](#outlinedbutton)
     - [TextButton](#textbutton)
     - [DisableButton](#disablebutton)
-
+  - [RowLayout](#rowlayout)
+    - [Default](#default)
+    - [Weighted](#weighted)
+    - [x: horizontalArrangement (⇄)](#x-horizontalarrangement-)
+    - [x: horizontalArrangement (⇄) + y: verticalAlignment (⇵)](#x-horizontalarrangement---y-verticalalignment-)
+      - [x center only](#x-center-only)
+      - [x center + y center (Auto Center)](#x-center--y-center-auto-center)
+      - [x center + y center (Top)](#x-center--y-center-top)
 
 ## Resources
 
 - [https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#top-level-functions](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#top-level-functions)
+
+## Modifiers
+
+- [https://www.jetpackcompose.net/jetpack-compose-modifiers](https://www.jetpackcompose.net/jetpack-compose-modifiers)
+- [https://appdevnotes.com/jetpack-compose-modifiers/](https://appdevnotes.com/jetpack-compose-modifiers/)
+- [https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier](https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier)
+
+There are 4 things we can do with modifiers.
+
+- We use modifiers to decorate or add behavior to Compose UI elements.
+- We use them for processing user input.
+- We can make ui elements interactive using modifiers. That means using modifiers we can make an ui element `clickable`, `zoomable` , `draggable` or `scrollable`.
+- Also, we can use modifiers to add information like accessibility labels to a ui element.
+
+### Order of Modifiers
 
 ## Text
 
@@ -242,7 +266,6 @@ fun TextSelection() {
 
 ### Button Init
 
-
 ```kotlin
 @Composable
 fun ButtonExample() {
@@ -438,6 +461,228 @@ fun DisableButton() {
         enabled = false
     ) {
         Text("Add To Cart")
+    }
+}
+```
+
+## RowLayout
+
+<div align="center">
+<img src="img/jpcrl1.jpg" alt="jpcrl1.jpg" width="400px">
+</div>
+
+<div align="center">
+<img src="img/jpcrl2.jpg" alt="jpcrl2.jpg" width="400px">
+</div>
+
+```kotlin
+@Composable
+fun LayoutExample() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Default", color = Color.Red)
+            RowExample1()
+            SpaceLineRow()
+            Text("Weighted", color = Color.Red)
+            RowExample2()
+            SpaceLineRow()
+            Text("x: horizontalArrangement (⇄)", color = Color.Red)
+            RowExample3()
+            SpaceLineRow()
+            Text("x: horizontalArrangement (⇄) + y: verticalAlignment (⇵)", color = Color.Red)
+            RowExample4()
+            SpaceLineRow()
+        }
+    }
+}
+
+@Composable
+fun SpaceLineRow() {
+    Spacer(
+        modifier = Modifier
+            .padding(vertical = 5.dp)
+            .height(1.dp)
+            .fillMaxWidth()
+            .background(Color.Black)
+    )
+}
+```
+
+### Default
+
+```kotlin
+@Composable
+fun RowExample1() {
+    Row {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+        Box(modifier = Modifier.size(30.dp).background(Color.Green))
+        Box(modifier = Modifier.size(30.dp).background(Color.Red))
+    }
+}
+```
+
+### Weighted
+
+```kotlin
+@Composable
+fun RowExample2() {
+    Row {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue)
+        )
+        Box(modifier = Modifier
+                .height(30.dp)
+                .weight(1f)
+                .background(Color.Green)
+        )
+        Box(modifier = Modifier
+                .height(40.dp)
+                .weight(1f)
+                .background(Color.Red)
+        )
+    }
+}
+```
+
+### x: horizontalArrangement (⇄)
+
+Arrangement is used to specify the arrangement of child elements in "Column" and "Row" layouts in the axis direction (vertical and horizontal).
+
+Available values for Rows are:
+
+`horizontalArrangement` =
+
+- `Arrangement.Start`
+- `Arrangement.Center`
+- `Arrangement.End`
+- `Arrangement.SpaceEvenly`
+- `Arrangement.SpaceBetween`
+- `Arrangement.SpaceAround`
+
+```kotlin
+@Composable
+fun RowExample3() {
+    Surface(color = Color.LightGray) {
+        Column {
+            Text(text = "x start", style = TextStyle(fontSize = 12.sp))
+            ArrangementStart()
+            Text(text = "x center", style = TextStyle(fontSize = 12.sp))
+            ArrangementCenter()
+            Text(text = "x end", style = TextStyle(fontSize = 12.sp))
+            ArrangementEnd()
+            Text(text = "x evenly", style = TextStyle(fontSize = 12.sp))
+            ArrangeEvenly()
+            Text(text = "x around", style = TextStyle(fontSize = 12.sp))
+            ArrangeAround()
+            Text(text = "x between", style = TextStyle(fontSize = 12.sp))
+            ArrangeBetween()
+        }
+    }
+}
+```
+
+For example:
+
+```kotlin
+@Composable
+fun ArrangeEvenly() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+        Box(modifier = Modifier.size(30.dp).background(Color.Green))
+        Box(modifier = Modifier.size(30.dp).background(Color.Red))
+    }
+}
+```
+
+### x: horizontalArrangement (⇄) + y: verticalAlignment (⇵)
+
+<div align="center">
+<img src="img/jpcrl2.jpg" alt="jpcrl2.jpg" width="400px">
+</div>
+
+```kotlin
+@Composable
+fun RowExample4() {
+    Surface(color = Color.LightGray) {
+        Column(Modifier.fillMaxSize()) {
+            Text(text = "x center", style = TextStyle(fontSize = 12.sp))
+            RowOnlyX()
+            Text(text = "x center + y center (Auto Center)", style = TextStyle(fontSize = 12.sp))
+            RowXY1()
+            Text(text = "x center + y center (TOP)", style = TextStyle(fontSize = 12.sp))
+            RowXY2()
+        }
+    }
+}
+```
+
+#### x center only
+
+```kotlin
+@Composable
+fun RowOnlyX() {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    Row(
+        modifier = Modifier
+            .size(width = screenWidth.dp, height = 100.dp)
+            .background(Color(0xFFDDC8F7)),
+        horizontalArrangement = Arrangement.Center,
+        ) {
+        Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+        Box(modifier = Modifier.size(50.dp).background(Color.Green))
+        Box(modifier = Modifier.size(20.dp).background(Color.Red))
+    }
+}
+```
+
+#### x center + y center (Auto Center)
+
+```kotlin
+@Composable
+fun RowOnlyX() {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    Row(
+        modifier = Modifier
+            .size(width = screenWidth.dp, height = 100.dp)
+            .background(Color(0xFFDDC8F7)),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+            Box(modifier = Modifier.size(50.dp).background(Color.Green))
+            Box(modifier = Modifier.size(20.dp).background(Color.Red))
+    }
+}
+```
+
+#### x center + y center (Top)
+
+```kotlin
+@Composable
+fun RowOnlyX() {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    Row(
+        modifier = Modifier
+            .size(width = screenWidth.dp, height = 100.dp)
+            .background(Color(0xFFDDC8F7)),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+            Row(verticalAlignment = Alignment.Top) {
+                Box(modifier = Modifier.size(30.dp).background(Color.Blue))
+                Box(modifier = Modifier.size(50.dp).background(Color.Green))
+                Box(modifier = Modifier.size(20.dp).background(Color.Red))
+            }
     }
 }
 ```
