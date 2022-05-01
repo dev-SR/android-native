@@ -15,13 +15,13 @@
   - [Button](#button)
     - [Button Init](#button-init)
     - [Basic](#basic)
-    - [DisabledButton](#disabledbutton)
-    - [ButtonShape](#buttonshape)
     - [ColorButton](#colorbutton)
+    - [IconTextButton](#icontextbutton)
+    - [IconButtons](#iconbuttons)
+    - [ButtonShape](#buttonshape)
     - [OutlinedButton](#outlinedbutton)
     - [TextButton](#textbutton)
-    - [IconTextButton](#icontextbutton)
-    - [IconButton](#iconbutton)
+    - [DisableButton](#disablebutton)
 
 
 ## Resources
@@ -236,13 +236,17 @@ fun TextSelection() {
 
 ## Button
 
+<div align="center">
+<img src="img/jpcb.jpg" alt="jpcb.jpg" width="800px">
+</div>
+
 ### Button Init
 
 
 ```kotlin
 @Composable
 fun ButtonExample() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -257,6 +261,12 @@ fun ButtonExample() {
             IconButtons()
             SpaceLine()
             ButtonShape()
+            SpaceLine()
+            OutlinedButtonExample()
+            SpaceLine()
+            TextButtonExample()
+            SpaceLine()
+            DisableButton()
         }
     }
 }
@@ -269,6 +279,18 @@ fun SpaceLine() {
             .fillMaxWidth()
             .background(Color.Black)
     )
+}
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+    name = "Dark Mode"
+)
+@Composable
+fun ButtonPreview() {
+    ComposeTheme {
+        ButtonExample()
+    }
 }
 ```
 
@@ -286,81 +308,25 @@ fun JustButton() {
 }
 ```
 
-### DisabledButton
-
-
-```kotlin
-@Composable
-fun DisableButton() {
-    Button(
-        onClick = {},
-        enabled = false
-    ) {
-        Text("Add To Cart")
-    }
-}
-```
-
-
-### ButtonShape
-
-
-```kotlin
-@Composable
-fun ButtonShape() {
-    Button(onClick = {}, shape = RoundedCornerShape(100.dp), elevation = null) {
-        Text(text = "Button")
-    }
-}
-```
-
 ### ColorButton
 
 ```kotlin
 @Composable
 fun ColorButton() {
     val context = LocalContext.current
+    val isLight = MaterialTheme.colors.isLight
     Button(
-//      colors = Color.Black//Required: ButtonColors
-       colors = ButtonDefaults.buttonColors(Color.Black),
+//       Not colors = Color.Black,//Required: ButtonColors
+        colors = if (isLight) buttonColors(Color.Black) else buttonColors(Color.White),
         onClick = {
             Toast.makeText(context, "Button Clicked", Toast.LENGTH_SHORT).show()
         }) {
-        Text("Button", color = Color.Yellow)
+        Text("Button", color = if (isLight) Color.White else Color.Black)
     }
 }
 ```
-
-### OutlinedButton
-
-
-```kotlin
-@Composable
-fun OutlinedButtonExample() {
-    OutlinedButton(
-        onClick = { /* Do something! */ },
-        border = BorderStroke(ButtonDefaults.OutlinedBorderSize,Color.Cyan)
-    ) {
-        Text("Outlined Button", color = Color.Black)
-    }
-}
-```
-
-### TextButton
-
-
-```kotlin
-@Composable
-fun TextButtonExample() {
-    TextButton(onClick = { /* Do something! */ }) {
-        Text("I'm a Text Button")
-    }
-}
-```
-
 
 ### IconTextButton
-
 
 ```kotlin
 @Composable
@@ -378,30 +344,25 @@ fun IconTextButton() {
         Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
         Text("Button")
     }
+
 }
 ```
 
-
-### IconButton
-
+### IconButtons
 
 ```kotlin
 @Composable
 fun IconButtons() {
     //    implementation "androidx.compose.material:material-icons-extended:$compose_version"
     Row {
-        IconButton(
-            onClick = { },
-        ) {
+        IconButton(onClick = { }) {
             Icon(
                 Icons.Filled.Favorite,
                 contentDescription = "Localized description"
             )
         }
 
-        IconButton(
-            onClick = { },
-        ) {
+        IconButton(onClick = { }) {
             Icon(
                 Icons.Filled.Upload,
                 contentDescription = "Localized description",
@@ -409,9 +370,7 @@ fun IconButtons() {
             )
         }
 
-        IconButton(
-            onClick = { },
-        ) {
+        IconButton(onClick = { }) {
             Icon(
                 Icons.Filled.Refresh,
                 contentDescription = "Localized description",
@@ -423,3 +382,62 @@ fun IconButtons() {
 }
 ```
 
+### ButtonShape
+
+```kotlin
+@Composable
+fun ButtonShape() {
+    Button(
+        onClick = {},
+        shape = RoundedCornerShape(100.dp),
+//        shape = CutCornerShape(10),
+        elevation = null
+    ) {
+        Text(text = "Button")
+    }
+}
+```
+
+### OutlinedButton
+
+```kotlin
+@Composable
+fun OutlinedButtonExample() {
+    OutlinedButton(
+        onClick = { /* Do something! */ },
+        border = BorderStroke(
+            ButtonDefaults.OutlinedBorderSize,
+            color = Color.Green
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+
+    ) {
+        Text("Outlined Button")
+    }
+}
+```
+
+### TextButton
+
+```kotlin
+@Composable
+fun TextButtonExample() {
+    TextButton(onClick = { /* Do something! */ }) {
+        Text("I'm a Text Button")
+    }
+}
+```
+
+### DisableButton
+
+```kotlin
+@Composable
+fun DisableButton() {
+    Button(
+        onClick = {},
+        enabled = false
+    ) {
+        Text("Add To Cart")
+    }
+}
+```
