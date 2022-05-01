@@ -38,6 +38,9 @@
     - [verticalScroll](#verticalscroll)
     - [Y: verticalArrangement (⇵)](#y-verticalarrangement-)
     - [X:horizontalAlignment(⇄) + Y: verticalArrangement (⇵)](#xhorizontalalignment--y-verticalarrangement-)
+  - [Image](#image)
+    - [Image Basic](#image-basic)
+    - [Icons](#icons)
   - [Card](#card)
     - [CardEx1](#cardex1)
     - [CardEx2](#cardex2)
@@ -876,6 +879,30 @@ fun ColumnExample5() {
         )
     }
 }
+```
+
+## Image
+
+### Image Basic
+
+```kotlin
+Image(
+     painter = painterResource(id = R.drawable.background),
+     contentDescription = null,
+     contentScale = ContentScale.Crop,
+     modifier = Modifier.clip(CircleShape).size(100.dp),
+)
+```
+
+### Icons
+
+```kotlin
+Icon(
+    Icons.Filled.Upload,
+    contentDescription = "Localized description",
+    tint = Color.Red,
+    modifier = Modifier.size(ButtonDefaults.IconSize)
+)
 ```
 
 ## Card
