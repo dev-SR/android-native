@@ -42,9 +42,13 @@ Connect to FireStore from Android Studio: `Tools > Firebase > Firebase Cloud Fir
 
 You can use the alternative Kotlin extensions (KTX) libraries which enable you to write beautiful and idiomatic Kotlin code.
 
-replace `implementation 'com.google.firebase:firebase-firestore`  with  `implementation 'com.google.firebase:firebase-firestore-ktx'`
+- replace `implementation 'com.google.firebase:firebase-firestore`  with  `implementation 'com.google.firebase:firebase-firestore-ktx'`
 
 - [https://firebase.google.com/docs/android/setup#kotlin+ktx_2](https://firebase.google.com/docs/android/setup#kotlin+ktx_2)
+
+- Wait for Browser Launch: Click `"Add Project"` to create a new project.
+- Add dependencies:(Replace Later with KTX)
+
 - [https://github.com/firebase/firebase-android-sdk/blob/master/docs/ktx/firestore.md](https://github.com/firebase/firebase-android-sdk/blob/master/docs/ktx/firestore.md)
 
 ### final
