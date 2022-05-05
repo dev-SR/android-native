@@ -10,24 +10,28 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.a17jpcdaggerhilt.ui.theme
+import com.example.a17jpcdaggerhilt.ui.theme.DaggerHiltTheme
 
-.17jpcDaggerHiltTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            17 jpcDaggerHiltTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+            DaggerHiltTheme {
+                App()
             }
         }
+    }
+}
+
+@Composable
+fun App() {
+    // A surface container using the 'background' color from the theme
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        Greeting("Android")
     }
 }
 
@@ -39,7 +43,7 @@ fun Greeting(name: String) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    17 jpcDaggerHiltTheme {
-        Greeting("Android")
+    DaggerHiltTheme {
+        App()
     }
 }

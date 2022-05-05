@@ -28,7 +28,10 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun 17jpcDaggerHiltTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() -> Unit) {
+fun DaggerHiltTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
