@@ -12,6 +12,7 @@
 				- [multiple classes of same interface](#multiple-classes-of-same-interface)
 			- [Hilt and third-party libraries🚀](#hilt-and-third-party-libraries)
 		- [Hilt with primitive types + Named parameters for same types](#hilt-with-primitive-types--named-parameters-for-same-types)
+	- [with ViewModel](#with-viewmodel)
 
 ## Dependency Injection
 
@@ -355,6 +356,99 @@ class Mobile @Inject constructor(
 ) {
     fun print() {
         Log.d("inject", "Mobile Created")
+    }
+}
+```
+
+## with ViewModel
+
+With hilt, you can avoid the boilerplate of creating a ViewModel class using factory methods.
+
+<div align="center">
+<img src="img/1_J-m5-5WQW3AUQ1C8xgFsZw.png" alt="1_J-m5-5WQW3AUQ1C8xgFsZw.png" width="800px">
+</div>
+
+```kotlin
+data class User(val id: Long,val name: String,val email: String)
+
+@Singleton
+class UserRepository @Inject constructor() {
+    fun getUser(id: Long): User? {
+        return getUsers().find { it.id == id }
+    }
+    fun getUsers(): List<User> {
+        return listOf(
+            User(id = 123, name = "James Bond", "jamesbond@007.com"),
+            User(id = 345, name = "Batman", "batman@cave.com"),
+            User(id = 999, name = "Arya Stark", "arya@winterfell.com")
+        )
+    }
+}
+
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+    private val _users = MutableStateFlow(userRepository.getUsers())
+    val users: StateFlow<List<User>> = _users
+}
+
+@HiltViewModel
+class UserDetailScreenViewModel @Inject constructor(private val userRepository: UserRepository) :
+    ViewModel() {
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user
+
+    fun load(userId: Long) {
+        _user.value = userRepository.getUser(id = userId)
+    }
+}
+
+@Composable
+fun UserDetailScreen(navController: NavController, vm: UserDetailScreenViewModel, userId: Long) {
+    Column {
+        vm.load(userId = userId)
+        val user by vm.user.collectAsState()
+        Column(Modifier.padding(all = 16.dp)) {
+            Text(text = "Hello, I'm ${user?.name}")
+            Text(text = "My email is ${user?.email}")
+        }
+    }
+
+}
+
+@Composable
+fun HomeScreen(navController: NavController, vm: HomeScreenViewModel) {
+    Column {
+        val users by vm.users.collectAsState()
+        users.forEach { user ->
+            ClickableText(text = AnnotatedString(user.name), Modifier.padding(all = 16.dp),
+                onClick = {
+                    navController.navigate("users/${user.id}")
+                })
+        }
+    }
+}
+
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            DaggerHiltTheme {
+                Surface(color = MaterialTheme.colors.background) {
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") {
+                            val vm: HomeScreenViewModel by viewModels()
+                            HomeScreen(navController, vm)
+                        }
+                        composable("users/{userId}") { backStackEntry ->
+                            val vm: UserDetailScreenViewModel by viewModels()
+                            UserDetailScreen(navController, vm, (backStackEntry.arguments?.getString("userId", "") ?: "").toLong())
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 ```
