@@ -17,6 +17,14 @@
       - [Updated ViewModel](#updated-viewmodel)
       - [Updated Activity](#updated-activity)
       - [Final Result](#final-result)
+  - [FirestoreCleanArchitecture 🚀](#firestorecleanarchitecture-)
+    - [Model](#model)
+    - [State](#state)
+    - [HiltAndroidApp](#hiltandroidapp)
+    - [AppModule](#appmodule)
+    - [Repository](#repository)
+    - [HiltViewModel](#hiltviewmodel)
+    - [MainActivity](#mainactivity)
 
 ## Add Firebase using the Firebase Assistant
 
@@ -512,3 +520,166 @@ class MainActivity : AppCompatActivity() {
 <div align="center">
 <img src="img/ff3.gif" alt="ff3.gif" width="800px">
 </div>
+
+## FirestoreCleanArchitecture 🚀
+
+### Model
+
+```kotlin
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.FirebaseFirestore
+
+data class Todo(
+    var title: String? = "",
+    @DocumentId var todoId: String? = "",
+)
+```
+
+### State
+
+```kotlin
+sealed class Response<out T> {
+    object Loading : Response<Nothing>()
+
+    data class Success<out T>(
+        val data: T
+    ) : Response<T>()
+
+    data class Error(
+        val message: String
+    ) : Response<Nothing>()
+}
+```
+
+### HiltAndroidApp
+
+```kotlin
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class MyApplication : Application() {}
+```
+
+### AppModule
+
+```kotlin
+@Module
+@ExperimentalCoroutinesApi
+@InstallIn(SingletonComponent::class)
+object FireStoreAppModule {
+    // How to get FireStore Instance??
+    @Provides
+    fun provideFirebaseFirestore() = FirebaseFirestore.getInstance()
+
+    //How to get FireStore Ref?? -> gets FireStore Instance first...then passed to this fun as param.
+    @TodoRef //param type:FirebaseFirestore same with `provideOtherRef` fun
+    @Provides
+    fun provideTodosRef(db: FirebaseFirestore) = db.collection("todo_collection")
+
+    @OtherRef //param type:FirebaseFirestore same with `provideTodosRef` fun
+    @Provides
+    fun provideOtherRef(db: FirebaseFirestore) = db.collection("other_collection")
+
+
+    // How to construct TodoRepository?
+    @Provides
+    fun provideTodosRepository(
+        @TodoRef
+        todoRef: CollectionReference,
+    ) = TodoRepository(todoRef)
+}
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class TodoRef
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OtherRef
+```
+
+### Repository
+
+```kotlin
+class TodoRepository @Inject constructor(
+    @TodoRef // todoRef will be injected by hilt
+    private val todoRef: CollectionReference
+) {
+    //So need of: private val todoRef = Firebase.firestore.collection("todo_collection")
+    suspend fun getTodosFromFirestore() = callbackFlow {
+        val snapshotListener = todoRef.addSnapshotListener { snapshot, e ->
+            val response = if (snapshot != null) {
+                val books = snapshot.toObjects<Todo>()
+                Response.Success(books)
+            } else {
+                Response.Error(e?.message ?: e.toString())
+            }
+            trySend(response).isSuccess
+        }
+        awaitClose {
+            snapshotListener.remove()
+        }
+    }
+
+}
+```
+
+### HiltViewModel
+
+```kotlin
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val cartService: CartService,
+    private val todoRepository: TodoRepository
+) : ViewModel() {
+
+    private val _todos = mutableStateOf<Response<List<Todo>>>(Response.Loading)
+    val todos: State<Response<List<Todo>>> = _todos
+
+    init {
+        getBooks()
+    }
+
+    private fun getBooks() {
+        viewModelScope.launch {
+            todoRepository.getTodosFromFirestore().collect { response ->
+                _todos.value = response
+            }
+        }
+    }
+}
+```
+
+### MainActivity
+
+```kotlin
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<MainViewModel>()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            Theme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    MyApp(viewModel)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MyApp(viewModel: MainViewModel) {
+    when (viewModel.todos.value) {
+        is Response.Loading -> CircularProgressIndicator()
+        is Response.Success -> Log.d(
+            "firestore_log",
+            (viewModel.todos.value as Response.Success<List<Todo>>).data.toString()
+        )
+    }
+}
+```
