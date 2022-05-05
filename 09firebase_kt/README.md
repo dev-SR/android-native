@@ -26,11 +26,15 @@
 <img src="img/fcc.jpg" alt="fcc.jpg" width="800px">
 </div>
 
-Connect to FireStore from Android Studio: `Tools > Firebase > Firebase Cloud FireStore > Connect to FireStore`
+- Connect to FireStore from Android Studio: `Tools > Firebase > Cloud FireStore > Connect to FireStore`
 
 <div align="center">
 <img src="img/fc.jpg" alt="fc.jpg" width="500px">
 </div>
+
+- Wait for Browser Launch: Click `"Add Project"` to create a new project.
+- Add dependencies:(Replace Later with KTX)
+
 
 <div align="center">
 <img src="img/fc1.jpg" alt="fc1.jpg" width="500px">
@@ -45,9 +49,6 @@ You can use the alternative Kotlin extensions (KTX) libraries which enable you t
 - replace `implementation 'com.google.firebase:firebase-firestore`  with  `implementation 'com.google.firebase:firebase-firestore-ktx'`
 
 - [https://firebase.google.com/docs/android/setup#kotlin+ktx_2](https://firebase.google.com/docs/android/setup#kotlin+ktx_2)
-
-- Wait for Browser Launch: Click `"Add Project"` to create a new project.
-- Add dependencies:(Replace Later with KTX)
 
 - [https://github.com/firebase/firebase-android-sdk/blob/master/docs/ktx/firestore.md](https://github.com/firebase/firebase-android-sdk/blob/master/docs/ktx/firestore.md)
 
