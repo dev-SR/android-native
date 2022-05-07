@@ -25,6 +25,10 @@
     - [Repository](#repository)
     - [HiltViewModel](#hiltviewmodel)
     - [MainActivity](#mainactivity)
+  - [Google SignIn](#google-signin)
+    - [Configuration](#configuration)
+    - [Code:](#code)
+    - [Hide Keys](#hide-keys)
 
 ## Add Firebase using the Firebase Assistant
 
@@ -682,4 +686,242 @@ fun MyApp(viewModel: MainViewModel) {
         )
     }
 }
+```
+
+
+## Google SignIn
+
+### Configuration
+
+- [firebase-authentication-with-android-jetpack-compose/](https://code.luasoftware.com/tutorials/android/firebase-authentication-with-android-jetpack-compose/)
+
+1. Add Firebase using the Firebase Assistant
+    [docs/android/setup#assistant](https://firebase.google.com/docs/android/setup#assistant)
+
+- Open the Firebase Assistant: `Tools > Firebase`.
+- In the Assistant pane, choose a Firebase product to add to your app. (for example, Add `Authentication` to the app).
+- Click Connect to Firebase to connect your Android project with Firebase.
+    - Choose `Atuthenticate using Google[Kotlin]`
+    - Click on `Connect your app to Firebase`
+        - Firebase Console will open in browser, where you have to add a new project.
+    - Click on `Add SDK`(will be updated later on)
+- Sync your app to ensure that all dependencies have the necessary versions.
+
+2. Additional Dependencies
+
+- [docs/auth/android/google-signin#kotlin+ktx](https://firebase.google.com/docs/auth/android/google-signin#kotlin+ktx)
+
+```groovy
+   // Import the BoM for the Firebase platform
+   implementation platform('com.google.firebase:firebase-bom:30.0.0')
+
+   // Declare the dependency for the Firebase Authentication library
+   // When using the BoM, you don't specify versions in Firebase library dependencies
+   //    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
+   implementation 'com.google.firebase:firebase-auth-ktx'
+
+   // Also declare the dependency for the Google Play services library and specify its version
+   implementation 'com.google.android.gms:play-services-auth:20.2.0'
+```
+
+3. Add `SHA-1` fingerprint at Firebase Settings. use: `gradlew signingreport` to get the fingerprint.
+4. Enable `Google Sign-In` at Auth section of Firebase Console. After that, get the `Web client ID` from
+   `Web SDK configuration`.
+
+
+
+
+
+### Code:
+
+```kotlin
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
+class MainViewModel : ViewModel() {
+    var currentUser by mutableStateOf<FirebaseUser?>(null)
+        private set
+
+    @JvmName("setCurrentUser1")
+    fun setCurrentUser(user: FirebaseUser?) {
+        currentUser = user
+    }
+}
+
+class MainActivity : ComponentActivity() {
+    private val auth: FirebaseAuth = Firebase.auth
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var authResultLauncher: ActivityResultLauncher<Intent>
+    private val viewModel: MainViewModel by viewModels()
+    val key = BuildConfig.KEY
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        auth.addAuthStateListener { auth ->
+            Log.d("LOG", "addAuthStateListener: ${auth.currentUser}")
+            viewModel.setCurrentUser(auth.currentUser)
+
+        }
+        // R.string.default_web_client_id is created automatically as per google-services.json,
+        // though sometimes the IDE might not recognize it
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(key)
+            .requestEmail()
+            .build()
+
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        authResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                // if (result.resultCode == Activity.RESULT_OK) {
+                // There are no request codes
+                val data: Intent? = result.data
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    val account = task.getResult(ApiException::class.java)!!
+                    Log.d("LOG", "account: ${account.id}")
+                    firebaseAuthWithGoogle(account.idToken!!)
+                } catch (e: ApiException) {
+                    // Google Sign In failed, update UI appropriately
+                    Log.d("LOG", "Google sign in failed ${e}")
+                }
+                // }
+            }
+
+        setContent {
+            GoogleSignInTheme {
+                UserProfileScreen(
+                    viewModel = viewModel,
+                    onSignIn = { signIn() },
+                    onSignOut = { auth.signOut() }
+                )
+            }
+        }
+
+    }
+
+    fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        // startActivityForResult(signInIntent, RC_SIGN_IN)
+
+        authResultLauncher.launch(signInIntent)
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("LOG", "addAuthStateListener: ${auth.currentUser}")
+                    // val user = auth.currentUser
+                    // updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.d("LOG", "Failed to sign in with google ${task.exception}")
+                    // updateUI(null)
+                }
+            }
+    }
+}
+
+@Composable
+fun UserProfileScreen(viewModel: MainViewModel, onSignIn: () -> Unit, onSignOut: () -> Unit) {
+    val currentUser = viewModel.currentUser
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        if (currentUser == null) {
+            Button(onClick = { onSignIn() }) {
+                Text(text = "Sign in with Google")
+            }
+        } else {
+            Text(text = "Welcome, ${currentUser.displayName}")
+            Button(onClick = { onSignOut() }) {
+                Text(text = "Sign out")
+            }
+        }
+    }
+}
+
+```
+
+### Hide Keys
+
+- [https://github.com/google/secrets-gradle-plugin](https://github.com/google/secrets-gradle-plugin)
+- [https://www.geeksforgeeks.org/how-to-hide-api-and-secret-keys-in-android-studio/](https://www.geeksforgeeks.org/how-to-hide-api-and-secret-keys-in-android-studio/)
+
+1. In your project's `root/build.gradle` file:
+Groovy:
+
+```groovy
+buildscript {
+    dependencies {
+        classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
+    }
+}
+```
+
+2. In your app-level `app/build.gradle` file:
+
+```groovy
+plugins {
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+}
+```
+
+
+3. Inside `local.properties` (already ignored by `.gitignore`) place api keys
+
+```groovy
+KEY=some_api_key
+or
+KEY="some_api_key"
+
+```
+
+4. Go to `AndroidManifest.xml` and create a meta-data
+
+```xml
+<application>
+    <activity>
+    </activity>
+    <meta-data
+        android:name = "keyValue"
+        android:value = "${KEY}"/>
+</application>
+```
+
+5. Now Access the meta-data in your code
+
+```kotlin
+   val key = BuildConfig.KEY
 ```
